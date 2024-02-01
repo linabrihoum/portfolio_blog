@@ -1,0 +1,147 @@
+---
+title: "Making a Tech Blog with Next.JS, Contentlayer, Supabase, and More"
+description: "How I built this tech blog with the best web development tools."
+image: "../../public/blogs/making-a-tech-blog.jpeg"
+publishedAt: "2024-01-04"
+updatedAt: "2024-01-04"
+author: "Lina Brihoum"
+isPublished: true
+tags: 
+- website development
+---
+
+# Building a Tech Blog with Next.JS, Contentlayer, Supabase, and More
+
+Hi there! This is my very first post :) I started this blog to share new and exciting technology surrounding Cloud Technology, DevSecOps, and Artificial Intelligence. I knew with my website though I didn't want to use Wix, SquareSpace, or any website builder or template to fully support the notion I am a competent programmer (to some degree 😊).
+
+From a young age, my enthusiasm for engineering has been a core part of my identity. My journey in the realm of technology began early, influenced by my father who is an incredible engineer, distinguished professor and my role model. His work in robotics and mechatronics opened my eyes to the wonders of technology, igniting a deep-seated passion for science and technological innovation. <br/>  <br/>
+Over the years, I have dedicated myself to honing my skills in various technological fields. This journey has involved disciplined learning and a consistent focus on enhancing my technical expertise. I have developed a robust approach to project management, ensuring successful completion of tasks, whether working individually or as part of a team. <br/>  <br/>
+With a decade of experience in the tech industry, my career has spanned a diverse range of sectors. These include game, website, and application development, cloud computing, DevSecOps, artificial intelligence, and cybersecurity. This extensive experience has not only broadened my skill set but also reinforced my profound passion for learning and contributing to technological advancements. <br/>  <br/>
+I continue to be driven by an insatiable curiosity and a commitment to excel in the ever-evolving landscape of technology which is why I wanted to start this blog!.
+
+---
+## Overview of the tech used
+
+In building this blog, I prioritized a few metrics to help:
+- Search Engine Optimization (SEO)
+- Aesthetics and animation that would not slow down my performance
+- Latest technologies that I am unfamiliar with to learn and share <br/>
+
+With all this in mind, I chose Next.JS for my backend, React, Tailwind CSS, framer-motion for my front-end, Contentlayer for creating blog content, Supabase for my database, and Mailchimp for my exchange server.
+
+[Next.JS](https://nextjs.org/) is the React framework for the web, offering server-side rendering and static website generation. It is the best backend framework that will help with Search Engine Optimization (SEO) and performance. Its ability to pre-render pages ensures faster load times, a key factor in both user experience and search engine rankings.
+
+[Contentlayer](https://www.contentlayer.dev/) is a crucial tool for converting blog content into type-safe code. This seamless integration with Next.JS ensures that content-related errors are caught during the build process, not in production, which enhances the reliability of the website. Contentlayer's ability to handle various content formats easily makes managing blog content a breeze.
+
+[Supabase](https://supabase.io/), an open-source alternative to Firebase, offers a comprehensive backend solution. Its PostgreSQL database is not only powerful but also easy to work with, ensuring data integrity and scalability. Supabase's authentication features and real-time capabilities make it an excellent choice for handling user data and interactions on the site.
+
+[React's](https://react.dev/) component-based architecture allows for building reusable UI elements, making the development process efficient and the user interface consistent. Its vast ecosystem and community support make it an ideal choice for building modern web applications.
+
+[React Framer-Motion](https://www.framer.com/motion/) is a library specifically designed for creating animations in React applications. It adds an extra layer of interactivity and engagement, making the user experience more dynamic and enjoyable. Framer Motion's simplicity and power in creating complex animations are unmatched, making it a no-brainer for this project.
+
+[Tailwind CSS](https://tailwindcss.com/), a utility-first CSS framework, makes designing responsive and stylish interfaces much quicker. Its focus on utility classes reduces the amount of custom CSS you need to write, speeding up the development process. The result is a highly responsive and visually appealing user interface.
+
+[Mailchimp](https://mailchimp.com/) plays a vital role in user engagement through its newsletter services. It's an excellent tool for keeping the audience updated and driving traffic back to the site. The ease of integrating Mailchimp with the website, combined with its powerful email marketing features, makes it invaluable for growing and maintaining an engaged user base.
+
+---
+## Next.JS for SEO and Performance
+
+Next.JS is a React framework for building full-stack web applications that is optimized, efficient, and user-friendly. It was created by [Vercel](https://vercel.com/) in 2016 and founded by Guillermo Rauch, who is the creator of a very impressive and well known library - Socket.IO (which made me fan girl just a little).
+The main reason why I chose Next.JS compared to other frameworks was it's search engine optimization (SEO) capabilities. Due to it's server-side rendering capabilities that ensure faster load times and enhanced performance that most search engines prioritize. 
+
+The main features include:
+- <ins> Routing:</ins> The pages router has a file-system based routing mechanism, where pages are automatically routed based on the file structure in the directory. This simplifies the process of creating new routes, as each file in the folder corresponds  to a route with the same name. This approach not only enhances developer productivity but also ensures a more organized and intuitive routing system for web applications. 
+- <ins> Rendering:</ins> The server-side rendering (SSR) and static site generation (SSG) are the two rendering options. SSR enables each page to be pre-rendered on the server side, providing faster load times and improved SEO by serving fully rendered pages to search engines. Meanwhile, SSG allows for generating HTML at build time, which is ideal for pages that can be pre-built and rehydrated with client-side JavaScript (or Typescript), leading to enhanced performance and scalability.
+- <ins> Data Fetching:</ins> There are two data fetching methods, static generation and server-side rendering. These functions allow for fetching data at build time or request time, ensuring that the data is up-to-date when each page is rendered. This flexibility in fetching data makes Next.JS highly adaptable for various use cases, from static blogs to dynamic e-commerce sites.
+- <ins> Optimizations:</ins> Designed for optimal performance, featuring automatic code-splitting that loads only the necessary JavaScript for each page, significantly speeding up the sites load time. It also implements image optimization, resizing and optimizing images on-demand, which enhances page speed and user experience.
+- <ins> Styling:</ins> Next.js offers flexible styling options, supporting CSS Modules, Styled JSX, and popular CSS-in-JS libraries, allowing developers to write CSS directly within JavaScript files. The versatility of styling enables versatility on choosing a method that best suits each project's needs. 
+
+Here is a code snippet of a Next.js example and how it leverages server-side rendering to enhance both performance and SEO. By fetching and rendering data on the server, the app delivers fully formed pages to the client, ensuring faster load times and better indexing by search engines.
+```js title="index.js"
+import React from 'react';
+
+const HomePage = ({ posts }) => {
+    return (
+        <div>
+            <h1>Building a Tech Blog</h1>
+            <ul>
+                {posts.map(post => (
+                    <li key={post.id}>{post.title}</li>
+                ))}
+            </ul>
+        </div>
+    );
+};
+
+export async function getServerSideProps() {
+    // Fetch data from an external API
+    const res = await fetch('https://jsonplaceholder.typicode.com/posts');
+    const posts = await res.json();
+
+    // Pass data to the page via props
+    return { props: { posts } };
+}
+
+export default HomePage;
+```
+
+---
+## Contentlayer for Efficient Content Management
+
+Contentlayer is a content preprocessor that validates and transforms your content into type-safe JSON you can easily import into any application. Next.JS remains fairly neutral in regards to content management and creation, however, it allows developers to decide how to navigate that - luckily Contentlayer has everything to do this.
+Likewise, it lets me use MDX, a superset of markdown. MDX allows JSX inside markdown and includes import and and rendering React components making these blogs **super cool**.
+
+Contentlayer serves three main functions, all centered around its core purpose of converting your content into data that seamlessly integrates with your code.
+- <ins> Transformation Content into Data:</ins> Contentlayer's fundamental role is to transform content into data that can be readily utilized by your code, regardless of the data's origin or its application in the code. It achieves this by sourcing data, whether from external sources or local files, and converting it into a format comprehensible to your code, such as importable JavaScript files. This conversion process brings several advantages, with a notable one being that it allows your content to be treated akin to code. This integration makes it easier for frameworks like Next.js to detect content updates and swiftly refresh the DOM using hot module reloading (HMR).
+- <ins> Structuring Loose Data:</ins> When working with data from an external source, there's typically a predefined schema, ensuring the data's structure is predictable. Contentlayer, recognizing this structure, adapts its responses accordingly for external content sources. However, with local files, there's no inherent structure linking the content to your code, which means changes in these files could potentially disrupt your site's functionality. To mitigate this, Contentlayer allows you to define a schema for local files, giving you the confidence in the consistency of your data's format, and enabling you to write more robust code that reflects this structure.
+- <ins> Defining Data types:</ins> Since this is my first website using (and learning) Typescript, Contentlayer offers an additional advantage. It is able to convert content into data, generating corresponding type definitions. This feature allows you to introspect the content structure directly within your code, offering a degree of assurance comparable to what you'd achieve through programmatic testing.
+---
+## Supabase for Backend Service
+
+Supabase is a dynamic and versatile open-source alternative to backend platforms. Likewise, Supabase doesn't just use PostgreSQL; it amplifies its strengths by offering a user-friendly approach to engage with the database using SQL. This smooths the learning curve significantly for anyone, and since it's open source it offers community backup making a change in their backend service.
+
+Supabase offers a comprehensible toolkit containing:
+- <ins> Database:</ins> Supabase enhances your projects with a robust PostgreSQL database, offering user-friendly features like a spreadsheet-like table view and an intuitive SQL editor for seamless data management. It amplifies PostgreSQL's capabilities with real-time functions, easy-to-use extensions, and efficient backup management, making complex database tasks straightforward and accessible. T
+- <ins> Authentication:</ins> Supabase Authentication offers robust security with dual functions: determining user access and defining their permissions. It supports diverse authentication methods, including password-based, passwordless (like magic links or OTPs), OAuth with social providers, and SAML SSO, catering to both standalone and integrated setups with other Supabase products.
+- <ins> Storage:</ins> Supabase Storage is a versatile solution for storing a wide range of file types, including images, videos, and documents. It leverages a global CDN, distributing content from over 285 cities worldwide to minimize latency. Plus, with its integrated image optimizer, it is able to effortlessly resize and compress media files in real-time.
+- <ins> Real-time data management:</ins> Supabase offers a global network of Realtime servers, enabling features like Broadcast for low-latency messaging between clients, Presence to track and sync shared client states, and Postgres Changes, which allows listening to database changes and relaying them to authorized clients.
+
+<Image
+  src="/blogs/supabase_metrics.jpg"
+  width="718"
+  height="404"
+  alt="Image"
+  sizes="100vw"
+/>
+
+---
+## Frontend Magic with React Framer-Motion and Tailwind CSS
+
+The combination of React Framer-Motion and Tailwind CSS is like a magic wand for developers. 
+
+React Framer-Motion, an incredibly powerful animation library for React, brings motion and life to user interfaces. With its intuitive API, Framer Motion allows developers to implement complex animations that respond to user interactions, giving a sense of depth and dynamism to the application. Framer Motion breathes life into React applications by providing a simple yet robust framework for creating fluid, natural animations and transitions.
+
+
+
+Tailwind CSS, a utility-first CSS framework that streamlines the process of creating responsive designs, focuses on utility classes to build custom designs much quicker and efficiently. Unlike regular CSS or even SCSS, you do not have to leave the HTML or Javascript file to create styles that results in cleaner and more readable code.  
+
+Here is a code snippet to show how the two work together:
+```html title="index.html"
+import { motion } from 'framer-motion';
+// ... React component setup
+
+return (
+  <motion.button
+    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+    whileHover={{ scale: 1.1 }}
+    whileTap={{ scale: 0.9 }}
+  >
+    Click Me
+  </motion.button>
+);
+```
+---
+
+Thank you for reading my first blog post! To connect with me, visit my Contact page or click any of the social media links :)
+Have a great day learning!
+
