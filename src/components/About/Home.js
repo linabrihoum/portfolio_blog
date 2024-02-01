@@ -5,8 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { LinkArrow } from "../Header/Icons";
 
-const Description = () => {
-
+const Home = () => {
   return (
     <section className="w-full h-screen md:h-[60vh] flex flex-col md:flex-row items-center justify-center text-dark dark:text-light">
       <div className="w-full md:w-1/2 flex flex-col text-left items-start justify-center px-5 xs:p-10 pb-10 lg:px-16">
@@ -53,4 +52,4 @@ const Description = () => {
   );
 };
 
-export default Description;
+export default Home;

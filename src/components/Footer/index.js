@@ -5,8 +5,6 @@ import {
   LinkedinIcon,
   SunIcon,
   MoonIcon,
-  TwitterIcon,
-  PinterestIcon,
   InstagramIcon,
 } from "../Header/Icons";
 import Link from "next/link";
@@ -54,15 +52,18 @@ const Footer = () => {
         >
           <GithubIcon className="fill-light dark:fill-dark  hover:scale-125 transition-all ease duration-200" />
         </a>
-        <a href={siteMetadata.twitter} className="inline-block w-6 h-6 mr-4">
-          <TwitterIcon className="hover:scale-125 transition-all ease duration-200" />
-        </a>
         <a href={siteMetadata.instagram} className="inline-block w-6 h-6 mr-4">
           <InstagramIcon className="hover:scale-125 transition-all ease duration-200" />
         </a>
-        <a href={siteMetadata.pinterest} className="inline-block w-6 h-6 mr-4">
-          <PinterestIcon className="fill-light dark:fill-dark hover:scale-125 transition-all ease duration-200" />
-        </a>
+      </div>
+      <div className="flex items-center mt-8">
+        <Link
+          href="mailto:brihoumlina@gmail.com"
+          className="ml-4 text-lg font-medium capitalize  underline 
+                  md:text-base"
+        >
+          Click here to email me for any inquires!
+        </Link>
       </div>
 
       <div className="w-full  mt-16 md:mt-24 relative font-medium border-t border-solid border-light py-6 px-8 flex  flex-col md:flex-row items-center justify-between">
