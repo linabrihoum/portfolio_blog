@@ -1,51 +1,63 @@
+"use client";
 import React from "react";
-import { sortBlogs } from "@/src/utils";
-import Image from "next/image";
+import TransitionEffect from "./TransitionEffect";
+import AnimatedText from "./AnimatedText";
 import Link from "next/link";
-import Tag from "../Elements/Tag";
-import { slug } from "github-slugger";
+import { LinkArrow } from "../Header/Icons";
 
-const HomeCoverSection = ({ blogs }) => {
-  const sortedBlogs = sortBlogs(blogs);
-  const blog = sortedBlogs[0];
-
+const HomeCoverSection = () => {
   return (
-    <div className="w-full inline-block">
-      <article className="flex flex-col items-start justify-end mx-5 sm:mx-10 relative h-[60vh] sm:h-[85vh]">
-        <div
-          className="absolute top-0 left-0 bottom-0 right-0 h-full
-            bg-gradient-to-b from-transparent from-0% to-dark/90 rounded-3xl z-0
-            "
-        />
-        <Image
-          src={blog.image.filePath.replace("../public", "")}
-          placeholder="blur"
-          blurDataURL={blog.image.blurhashDataUrl}
-          alt={blog.title}
-          fill
-          className="w-full h-full object-center object-cover rounded-3xl -z-10"
-          sizes="100vw"
-          priority
-        />
-        <div className="w-full lg:w-3/4 p-6 sm:p-8 md:p-12  lg:p-16 flex flex-col items-start justify-center z-0 text-light">
-          <Tag link={`/categories/${slug(blog.tags[0])}`} name={blog.tags[0]} />
-          <Link href={blog.url} className="mt-6">
-            <h1 className="font-bold capitalize text-lg sm:text-xl md:text-3xl lg:text-4xl">
-              <span
-                className="bg-gradient-to-r from-accent to-accent dark:from-accentDark/50 
-                dark:to-accentDark/50 bg-[length:0px_6px]
-                hover:bg-[length:100%_6px] bg-left-bottom bg-no-repeat transition-[background-size] duration-500 "
+    <>
+      <TransitionEffect />
+      <div
+        className={`z-0 inline-block h-full w-full bg-light p-32 dark:bg-dark xl:p-24 lg:p-16 md:p-12 sm:p-8`}
+      >
+        <div className="flex w-full items-start justify-between md:flex-col">
+          <div
+            className="flex-col"
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              height: "100vh",
+            }}
+          >
+            <AnimatedText
+              text="Develop. Innovate. Create."
+              className="!text-left !text-6xl xl:!text-5xl lg:!text-center lg:!text-6xl md:!text-5xl sm:!text-3xl"
+            />
+            <p className="my-4 !text-3xl font-medium text-dark dark:text-light md:text-sm sm:!text-xs">
+              As a skilled full-stack developer, I am dedicated to turning ideas
+              into innovative web applications. Explore my latest projects and
+              articles, showcasing my expertise in React.js and web development.
+            </p>
+            <div className="mt-2 flex items-center self-start lg:self-center">
+              <Link
+                href="/dummy.pdf"
+                target={"_blank"}
+                className={`flex items-center rounded-lg border-2 border-solid bg-dark p-2.5 px-6 text-lg font-semibold
+            capitalize text-light hover:border-dark hover:bg-transparent hover:text-dark 
+            dark:bg-light dark:text-dark dark:hover:border-light dark:hover:bg-dark dark:hover:text-light
+            md:p-2 md:px-4 md:text-base
+             `}
+                download
               >
-                {blog.title}
-              </span>
-            </h1>
-          </Link>
-          <p className="hidden  sm:inline-block mt-4 md:text-lg lg:text-xl font-in">
-            {blog.description}
-          </p>
+                Resume <LinkArrow className="ml-1 !w-6 md:!w-4" />
+              </Link>
+
+              <Link
+                href="mailto:codebucks27@gmail.com"
+                className="ml-4 text-lg font-medium capitalize text-dark underline 
+                  dark:text-light md:text-base"
+              >
+                Contact
+              </Link>
+            </div>
+          </div>
         </div>
-      </article>
-    </div>
+      </div>
+
+    </>
   );
 };
 

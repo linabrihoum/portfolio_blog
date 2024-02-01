@@ -3,9 +3,7 @@ import Link from "next/link";
 import {
   GithubIcon,
   LinkedinIcon,
-  TwitterIcon,
   InstagramIcon,
-  PinterestIcon,
 } from "./Icons.js";
 import siteMetadata from "@/src/utils/siteMetaData";
 import { useThemeSwitch } from "../Hooks/useThemeSwitch";
@@ -74,9 +72,6 @@ const Header = () => {
         <Link href="/categories/all" className="mr-2">
           Blogs
         </Link>
-        <Link href="/about" className="mx-2">
-          About
-        </Link>
         <Link href="/contact" className="mx-2">
           Contact
         </Link>
@@ -89,9 +84,6 @@ const Header = () => {
           </Link>
           <Link href="/categories/all" className="mr-2">
             Blogs
-          </Link>
-          <Link href="/about" className="mx-2">
-            About
           </Link>
           <Link href="/contact" className="mx-2">
             Contact
@@ -110,28 +102,12 @@ const Header = () => {
             <LinkedinIcon className="hover:scale-125 transition-all ease duration-200" />
           </a>
           <a
-            href={siteMetadata.twitter}
-            className="inline-block w-6 h-6 mr-4"
-            aria-label="Reach out to me via Twitter"
-            target="_blank"
-          >
-            <TwitterIcon className="hover:scale-125 transition-all ease duration-200" />
-          </a>
-          <a
             href={siteMetadata.github}
             className="inline-block w-6 h-6 mr-4"
             aria-label="Check my profile on Github"
             target="_blank"
           >
             <GithubIcon className="  hover:scale-125 transition-all ease duration-200 dark:fill-light" />
-          </a>
-          <a
-            href={siteMetadata.pinterest}
-            className="inline-block w-6 h-6 mr-4"
-            aria-label="Check my profile on Dribbble"
-            target="_blank"
-          >
-            <PinterestIcon className="hover:scale-125 transition-all ease duration-200" />
           </a>
           <a
             href={siteMetadata.instagram}
