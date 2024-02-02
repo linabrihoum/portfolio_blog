@@ -4,12 +4,15 @@ import {
   GithubIcon,
   LinkedinIcon,
   InstagramIcon,
+  MoonIcon,
+  SunIcon
 } from "./Icons.js";
 import siteMetadata from "@/src/utils/siteMetaData";
-import { useThemeSwitch } from "../Hooks/useThemeSwitch";
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
+import { cx } from "@/src/utils";
+import { useThemeSwitch } from "../Hooks/useThemeSwitch";
 
 const CustomLink = ({ href, title, className = "" }) => {
   const router = useRouter();
@@ -71,6 +74,7 @@ const Header = () => {
   const toggle = () => {
     setClick(!click);
   };
+
   return (
     <header className="w-full p-4  px-5 sm:px-10 flex items-center justify-between">
       <button
@@ -113,36 +117,81 @@ const Header = () => {
       </button>
 
       <motion.div>
-        <nav
-          className=" w-max py-3 px-6 sm:px-8 border border-solid border-dark rounded-full font-medium capitalize  items-center flex  sm:hidden
-                      fixed top-6 right-1/2 translate-x-1/2 bg-light/80 backdrop-blur-sm z-50 
-                      transition-all ease duration-300
-                      "
-          initial={{ scale: 0, x: "-50%", y: "-50%", opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          style={{
-            top: click ? "1rem" : "-5rem",
-          }}
-        >
-          <CustomMobileLink
-            toggle={toggle}
-            className="mr-4 lg:m-0 lg:my-2"
-            href="/"
-            title="Home"
-          />
-          <CustomMobileLink
-            toggle={toggle}
-            className="mx-4 lg:m-0 lg:my-2"
-            href="/categories/all"
-            title="Blogs"
-          />
-          <CustomMobileLink
-            toggle={toggle}
-            className="mx-4 lg:m-0 lg:my-2"
-            href="/contact"
-            title="Contact"
-          />
-        </nav>
+        {click ? (
+          <motion.div
+            className="min-w-[70vw] sm:min-w-[90vw] flex justify-between items-center flex-col fixed top-1/2 left-1/2 -translate-x-1/2
+              -translate-y-1/2 py-32 bg-dark/90 dark:bg-light/75 rounded-lg z-50 backdrop-blur-md text-light dark:text-dark"
+            initial={{ scale: 0, x: "-50%", y: "-50%", opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+          >
+            <nav className="flex items-center justify-center flex-col">
+              <CustomMobileLink
+                toggle={toggle}
+                className="pb-6"
+                href="/"
+                title="Home"
+              />
+              <CustomMobileLink
+                toggle={toggle}
+                className="pb-6"
+                href="/categories/all"
+                title="Blogs"
+              />
+              <CustomMobileLink
+                toggle={toggle}
+                className="pb-6"
+                href="/contact"
+                title="Contact"
+              />
+            </nav>
+            <nav className="flex items-center justify-center  mt-2 ">
+              <motion.a
+                target={"_blank"}
+                className="w-6 m-1 mx-3 bg-light rounded-full dark:bg-dark sm:mx-1"
+                href="#"
+                whileHover={{ y: -2 }}
+                whileTap={{ scale: 0.9 }}
+                aria-label="Checkout my github profile"
+              >
+                <GithubIcon />
+              </motion.a>
+              <motion.a
+                target={"_blank"}
+                className="w-6 m-1 mx-3 sm:mx-1"
+                href="#"
+                whileHover={{ y: -2 }}
+                whileTap={{ scale: 0.9 }}
+                aria-label="Checkout my linkedin profile"
+              >
+                <LinkedinIcon />
+              </motion.a>
+              <motion.a
+                target={"_blank"}
+                className="w-6 m-1 mx-3 sm:mx-1"
+                href="#"
+                whileHover={{ y: -2 }}
+                whileTap={{ scale: 0.9 }}
+                aria-label="Checkout my dribbble profile"
+              >
+                <InstagramIcon />
+              </motion.a>
+
+              <button
+                onClick={() => setMode(mode === "light" ? "dark" : "light")}
+                className={`w-6 h-6 ease m-1 ml-3 sm:mx-1 flex items-center justify-center rounded-full p-1  
+            ${mode === "light" ? "bg-dark  text-light" : "bg-light  text-dark"}
+            `}
+                aria-label="theme-switcher"
+              >
+                {mode === "light" ? (
+                  <SunIcon className={"fill-dark"} />
+                ) : (
+                  <MoonIcon className={"fill-dark"} />
+                )}
+              </button>
+            </nav>
+          </motion.div>
+        ) : null}
       </motion.div>
 
       <div className="w-full justify-between items-center hidden sm:flex text-dark dark:text-light">
@@ -163,7 +212,12 @@ const Header = () => {
         </nav>
 
         <a className="semi-bold dark:text-light">
-          <CustomLink toggle={toggle} className="mr-4 " href="/" title="Lina Brihoum" />
+          <CustomLink
+            toggle={toggle}
+            className="mr-4 "
+            href="/"
+            title="Lina Brihoum"
+          />
         </a>
 
         <nav className=" sm:flex ">
