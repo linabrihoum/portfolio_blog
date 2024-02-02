@@ -1,10 +1,12 @@
-import AboutCoverSection from '../components/About/AboutCoverSection';
-import HomeCoverSection from '../components/Home/HomeCoverSection';
+import { allBlogs } from "contentlayer/generated";
+import HomeCoverSection from "../components/Home/HomeCoverSection";
+import RecentPosts from "../components/Home/RecentPosts";
 
 export default function Home() {
   return (
     <main className="flex flex-col items-center justify-center">
-      <AboutCoverSection  />
+      <HomeCoverSection  />
+      <RecentPosts blogs={allBlogs} />
     </main>
-  )
+  );
 }

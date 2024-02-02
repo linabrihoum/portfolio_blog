@@ -3,7 +3,7 @@ import Description from "./Description";
 import Experience from "./Experience";
 import Education from "./Education";
 import Certifications from "./Certifications";
-import Skills from "./Skills";
+import Skills from "../Home/Skills";
 import TransitionEffect from "../Home/TransitionEffect";
 
 

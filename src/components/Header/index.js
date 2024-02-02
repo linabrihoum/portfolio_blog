@@ -134,6 +134,12 @@ const Header = () => {
               <CustomMobileLink
                 toggle={toggle}
                 className="pb-6"
+                href="/about"
+                title="About"
+              />
+              <CustomMobileLink
+                toggle={toggle}
+                className="pb-6"
                 href="/categories/all"
                 title="Blogs"
               />
@@ -202,6 +208,12 @@ const Header = () => {
             className="mx-4"
             href="/categories/all"
             title="Blogs"
+          />
+          <CustomLink
+            toggle={toggle}
+            className="mx-4 "
+            href="/about"
+            title="About"
           />
           <CustomLink
             toggle={toggle}
