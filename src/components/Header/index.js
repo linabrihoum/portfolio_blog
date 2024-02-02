@@ -8,6 +8,61 @@ import {
 import siteMetadata from "@/src/utils/siteMetaData";
 import { useThemeSwitch } from "../Hooks/useThemeSwitch";
 import { useState } from "react";
+import { motion } from "framer-motion";
+import { useRouter } from "next/navigation";
+
+const CustomLink = ({ href, title, className = "" }) => {
+  const router = useRouter();
+
+  return (
+    <Link
+      href={href}
+      className={`${className}  rounded relative group `}
+    >
+      {title}
+      <span
+        className={`
+              inline-block h-[1px]  bg-dark absolute left-0 -bottom-0.5 
+              group-hover:w-full transition-[width] ease duration-300 dark:bg-light
+              ${
+                router.asPath === href ? "w-full" : " w-0"
+              } bg-dark dark:bg-light
+              `}
+      >
+        &nbsp;
+      </span>
+    </Link>
+  );
+};
+
+const CustomMobileLink = ({ href, title, className = "", toggle }) => {
+  const router = useRouter();
+
+  const handleClick = () => {
+    toggle();
+    router.push(href);
+  };
+
+  return (
+    <button
+      className={`${className}  rounded relative group lg:text-light lg:dark:text-dark`}
+      onClick={handleClick}
+    >
+      {title}
+      <span
+        className={`
+              inline-block h-[1px]  bg-dark absolute left-0 -bottom-0.5 
+              group-hover:w-full transition-[width] ease duration-300 dark:bg-light
+              ${
+                router.asPath === href ? "w-full" : " w-0"
+              } lg:bg-light lg:dark:bg-dark
+              `}
+      >
+        &nbsp;
+      </span>
+    </button>
+  );
+};
 
 const Header = () => {
   const [mode, setMode] = useThemeSwitch();
@@ -57,40 +112,59 @@ const Header = () => {
         </div>
       </button>
 
-      <nav
-        className=" w-max py-3 px-6 sm:px-8 border border-solid border-dark rounded-full font-medium capitalize  items-center flex  sm:hidden
-        fixed top-6 right-1/2 translate-x-1/2 bg-light/80 backdrop-blur-sm z-50 
-        transition-all ease duration-300
-        "
-        style={{
-          top: click ? "1rem" : "-5rem",
-        }}
-      >
-        <Link href="/" className="mr-2">
-          Home
-        </Link>
-        <Link href="/categories/all" className="mr-2">
-          Blogs
-        </Link>
-        <Link href="/contact" className="mx-2">
-          Contact
-        </Link>
-      </nav>
+      <motion.div>
+        <nav
+          className=" w-max py-3 px-6 sm:px-8 border border-solid border-dark rounded-full font-medium capitalize  items-center flex  sm:hidden
+                      fixed top-6 right-1/2 translate-x-1/2 bg-light/80 backdrop-blur-sm z-50 
+                      transition-all ease duration-300
+                      "
+          initial={{ scale: 0, x: "-50%", y: "-50%", opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          style={{
+            top: click ? "1rem" : "-5rem",
+          }}
+        >
+          <CustomMobileLink
+            toggle={toggle}
+            className="mr-4 lg:m-0 lg:my-2"
+            href="/"
+            title="Home"
+          />
+          <CustomMobileLink
+            toggle={toggle}
+            className="mx-4 lg:m-0 lg:my-2"
+            href="/categories/all"
+            title="Blogs"
+          />
+          <CustomMobileLink
+            toggle={toggle}
+            className="mx-4 lg:m-0 lg:my-2"
+            href="/contact"
+            title="Contact"
+          />
+        </nav>
+      </motion.div>
 
-      <div className="w-full justify-between items-center hidden sm:flex dark:text-light">
+      <div className="w-full justify-between items-center hidden sm:flex text-dark dark:text-light">
         <nav className=" sm:flex ">
-          <Link href="/" className="mr-2">
-            Home
-          </Link>
-          <Link href="/categories/all" className="mr-2">
-            Blogs
-          </Link>
-          <Link href="/contact" className="mx-2">
-            Contact
-          </Link>
+          <CustomLink toggle={toggle} className="mr-4 " href="/" title="Home" />
+          <CustomLink
+            toggle={toggle}
+            className="mx-4"
+            href="/categories/all"
+            title="Blogs"
+          />
+          <CustomLink
+            toggle={toggle}
+            className="mx-4 "
+            href="/contact"
+            title="Contact"
+          />
         </nav>
 
-        <h2 className="semi-bold dark:text-light">Lina Brihoum</h2>
+        <a className="semi-bold dark:text-light">
+          <CustomLink toggle={toggle} className="mr-4 " href="/" title="Lina Brihoum" />
+        </a>
 
         <nav className=" sm:flex ">
           <a
