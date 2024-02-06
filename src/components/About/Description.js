@@ -15,12 +15,14 @@ const Description = () => {
           <span className="text-bold"> </span>
         </h2>
         <p className="font-medium mt-4 text-base">
-          I'm a Cloud Architect that specializes in Site Reliability, DevSecOps,
-          and Artificial Intelligence. <br />I have a total of 10 years of
-          experience in technology ranging from game development, networking,
-          full stack development and cloud architecture. <br />
+          <br />
+          I'm a Cloud Architect that specializes in Site Reliability, Cyber
+          Security, and Artificial Intelligence. <br /> <br /> I have a total of
+          10 years of experience in technology ranging from game development,
+          networking, full stack development, cyber security and cloud
+          architecture. <br /> <br />
           My hobbies include weight lifting, reading, cooking, crocheting, and
-          playing video games. <br />
+          playing video games. <br /> <br />
           I created this to share my knowledge and experience regarding
           different sectors of technology, I hope you enjoy! <br />
         </p>

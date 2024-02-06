@@ -153,7 +153,7 @@ const Header = () => {
             <nav className="flex items-center justify-center  mt-2 ">
               <motion.a
                 target={"_blank"}
-                className="w-6 m-1 mx-3 bg-light rounded-full dark:bg-dark sm:mx-1"
+                className="w-6 m-1 mx-3 bg-light rounded-full dark:bg-dark sm:mx-1 dark:fill-light"
                 href="#"
                 whileHover={{ y: -2 }}
                 whileTap={{ scale: 0.9 }}
@@ -223,14 +223,12 @@ const Header = () => {
           />
         </nav>
 
-        <a className="semi-bold dark:text-light">
-          <CustomLink
-            toggle={toggle}
-            className="mr-4 "
-            href="/"
-            title="Lina Brihoum"
-          />
-        </a>
+        <CustomLink
+          toggle={toggle}
+          className="mr-4 semi-bold dark:text-light"
+          href="/"
+          title="Lina Brihoum"
+        />
 
         <nav className=" sm:flex ">
           <a
@@ -241,6 +239,7 @@ const Header = () => {
           >
             <LinkedinIcon className="hover:scale-125 transition-all ease duration-200" />
           </a>
+
           <a
             href={siteMetadata.github}
             className="inline-block w-6 h-6 mr-4"
@@ -249,6 +248,7 @@ const Header = () => {
           >
             <GithubIcon className="  hover:scale-125 transition-all ease duration-200 dark:fill-light" />
           </a>
+
           <a
             href={siteMetadata.instagram}
             className="inline-block w-6 h-6 mr-4"

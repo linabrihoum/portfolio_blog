@@ -24,7 +24,7 @@ const Footer = () => {
   return (
     <footer className="mt-16 md:px-6 rounded-2xl bg-dark dark:bg-accentDark/90 m-2 sm:m-10 flex flex-col items-center text-light dark:text-dark">
       <h3 className="mt-16 font-medium dark:font-bold text-center capitalize text-2xl sm:text-3xl lg:text-4xl px-4">
-        Cloud Technology, DevSecOps, Artifical Intelligence
+        Cloud Technology, Cyber Security, Artifical Intelligence
       </h3>
 
       <div className="flex items-center mt-8">
