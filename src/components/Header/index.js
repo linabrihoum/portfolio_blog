@@ -73,7 +73,7 @@ const Header = () => {
   return (
     <header className="w-full p-4  px-5 sm:px-10 flex items-center justify-between">
       {/* LINKS */}
-      <div className="hidden md:flex gap-4 w-1/3">
+      <div className="hidden md:flex gap-4">
         {links.map((link) => (
           <NavLink link={link} key={link.title} />
         ))}
@@ -85,7 +85,7 @@ const Header = () => {
       </Link>
 
       {/* SOCIAL */}
-      <div className="hidden md:flex gap-4 w-1/3">
+      <div className="hidden md:flex gap-4">
         <motion.a
           target={"_blank"}
           className="w-6 m-1 mx-3 bg-light rounded-full dark:bg-dark sm:mx-1 dark:fill-light"
