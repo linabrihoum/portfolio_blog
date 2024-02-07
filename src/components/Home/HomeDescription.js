@@ -1,7 +1,6 @@
 "use client";
 import React  from "react";
 import { DotLottiePlayer } from "@dotlottie/react-player";
-import Skills from "./Skills";
 import { motion } from "framer-motion";
 
 const HomeDescription = () => {

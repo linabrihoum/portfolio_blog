@@ -26,9 +26,6 @@ const TechGallery = () => {
     "Python",
     "Java",
     "Bash",
-    "JIRA",
-    "Scrum/Sprint",
-    "Kanban",
     "Git/Github/Gitlab",
     "MySQL/PostgreSQL",
     "MongoDB",
@@ -42,7 +39,10 @@ const TechGallery = () => {
     "Javascript/Typescript",
     "Linux",
     "MacOS",
-    "Windows"
+    "Windows",
+    "JIRA",
+    "Scrum/Sprint",
+    "Kanban",
   ];
 
   return (

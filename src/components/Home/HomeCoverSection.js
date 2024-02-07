@@ -9,7 +9,6 @@ const HomeCoverSection = () => {
       <TransitionEffect />
         <div className="justify-center dark:text-white text-dark ">
           <HomeDescription />
-          <Skills />
         </div>
     </>
   );
