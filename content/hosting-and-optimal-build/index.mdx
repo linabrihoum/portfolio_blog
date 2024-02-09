@@ -1,9 +1,9 @@
 ---
-title: "Hosting a website and automating it"
+title: "Hosting and automating a website"
 description: "Different methods of hosting a website and how to automate everything around it."
 image: "../../public/blogs/hosting-and-optimal-build.jpg"
-publishedAt: "2024-01-06"
-updatedAt: "2024-01-06"
+publishedAt: "2023-11-06"
+updatedAt: "2023-11-06"
 author: "Lina Brihoum"
 isPublished: true
 tags: 
@@ -12,56 +12,101 @@ tags:
 # Exploring Website Hosting Methods and Automation in Backend, Hosting, and CI/CD
 
 ## Introduction
-- Brief overview of website hosting and its importance.
-- Introduction to automation in backend, hosting, and CI/CD.
+In the fast-paced world of web development, efficiency and reliability are paramount. For teams using Git and GitHub as their version control system and collaboration platform, 
+GitHub Actions offers a seamless way to enhance these qualities through automation. This guide will explore the significance of integrating Continuous Integration (CI) and Continuous Deployment (CD) 
+into your development workflow using GitHub Actions, particularly for deploying static sites built with Next.js.
 
-## Understanding Website Hosting
-### Types of Website Hosting
-- Shared Hosting.
-- Virtual Private Server (VPS) Hosting.
-- Dedicated Server Hosting.
-- Cloud Hosting.
-- Managed Hosting.
+## Why Github Actions?
 
-### Choosing the Right Hosting Method
-- Factors to consider (traffic, resource needs, budget, etc.).
+### Integrated Ecosystem 
+GitHub Actions is deeply integrated with GitHub, providing a significant advantage for projects hosted on the platform. 
+It eliminates the need for external services to manage your CI/CD pipeline, allowing for a more streamlined and cohesive workflow. 
+Developers can commit code, review pull requests, and see the results of automated builds and deployments all in one place, enhancing collaboration and efficiency.
 
-## Automation in Website Hosting
-### Benefits of Automation
-- Efficiency, reliability, cost-effectiveness.
+### Customizable Workflows 
+GitHub Actions is highly customizable, enabling developers to create workflows that match their project's needs precisely. Whether it's building a Next.js application, running tests, or deploying to a hosting provider, Actions can be configured to handle a wide range of tasks. 
+This flexibility ensures that teams can automate nearly every aspect of their development and deployment process, from simple to complex scenarios.
 
-### Tools and Technologies
-- Overview of popular automation tools (e.g., Ansible, Terraform).
+### Reduced Overhead
+Automating the build and deployment process reduces the risk of human error and frees developers from manual tasks, allowing us to focus on what they do best: coding. 
+With GitHub Actions, the moment code is pushed to a repository, automated workflows can lint, test, build, and deploy the application, ensuring that every change is immediately and thoroughly vetted. This continuous feedback loop enhances code quality and accelerates development cycles.
 
-## Backend Automation
-### Introduction to Backend Automation
-- Importance in modern web development.
+## The importance of Automating the Deployment Process 
 
-### Strategies for Automating the Backend
-- Database management.
-- Server management.
-- Automated backups and recovery.
+Automating the deployment process with CI/CD pipelines like GitHub Actions is not just a matter of convenience; it's a strategic advantage. It ensures consistent deployments and a stable release process, critical for maintaining high-quality web applications. Automation also facilitates DevOps practices, encouraging more frequent releases and faster feedback loops, which are essential for agile development.
 
-## CI/CD in Web Development
-### Understanding CI/CD
-- Definition and benefits.
+<br /> 
+For static sites built with frameworks like Next.js, automating the deployment process means that updates can be pushed live quickly and efficiently, keeping content fresh and ensuring that users always have access to the latest features and fixes. In a landscape where speed and reliability can set you apart from the competition, leveraging GitHub Actions for CI/CD is a game-changer.
 
-### Implementing CI/CD Pipelines
-- Tools and services for CI/CD (e.g., Jenkins, CircleCI, GitHub Actions).
-- Steps to set up a basic CI/CD pipeline.
+## Starting Deployment
+### Step 1: Prepare your Next.JS application
+Ensure your Next.js application is configured to generate a static site. You can achieve this by adding the following script to your package.json:
 
-## Case Studies
-- Real-world examples of automated web hosting and backend management.
+```json title="package.json"
+"scripts": {
+  "build": "next build && next export"
+}
+```
 
-## Best Practices
-- Tips for successful implementation of automation in web hosting and backend.
+The next export command generates a static version of your site in the out directory.
 
-## Challenges and Solutions
-- Common challenges and how to overcome them.
+### Step 2: Setting up Github Actions
+Navigate to your GitHub repository and create a new directory called .github/workflows at the root. Inside this directory, create a YAML file for your workflow (e.g., deploy.yml).
+
+#### Step 2.1: Define the workflow
+Start by defining the name of your workflow and specifying when it should run. Typically, you'd want it to trigger on push events to your main branch:
+
+```YAML title="deploy.yml"
+name: Deploy Next.js Site
+on:
+  push:
+    branches:
+      - main
+```
+
+#### Step 2.2: Job Configuration
+Define the job that will run the build and deployment process. Here's a simple configuration that sets up the job:
+
+```YAML title="deploy.yml"
+jobs:
+  build_and_deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup Node.js
+      uses: actions/setup-node@v1
+      with:
+        node-version: '14'
+    - name: Install Dependencies
+      run: npm install
+    - name: Build and Export Next.js Site
+      run: npm run build
+```
+
+#### Step 2.3: Deploy to your hosting provider
+The final step in the workflow is to deploy the out directory to your hosting provider. This step varies depending on where you're deploying your site. 
+For instance, if you're deploying to GitHub Pages, you might use peaceiris/actions-gh-pages@v3 to automate the deployment:
+
+```YAML title="deploy.yml"
+- name: Deploy
+    uses: peaceiris/actions-gh-pages@v3
+    with:
+    github_token: ${{ secrets.GITHUB_TOKEN }}
+    publish_dir: ./out
+```
+
+Make sure to consult the documentation for specific actions or commands required for deployment.
+
+
+### Step 3: Commit and Push 
+After setting up your workflow, commit the changes and push them to your repository:
+
+```bash title="deploy.yml"
+git add .github/workflows/deploy.yml
+git commit -m "Add GitHub Actions CI/CD pipeline"
+git push origin main
+```
 
 ## Conclusion
-- Recap of the importance of automation in website hosting and backend.
-- Encouraging readers to embrace automation for efficiency and productivity.
-
-## Further Resources
-- Links to tutorials, guides, and tools for deeper learning.
+You've successfully automated the deployment of your Next.js static site using GitHub Actions. Now, every push to your main branch will trigger the build and deployment process, ensuring your site is always up-to-date with the latest changes.
+Remember, the specifics of your CI/CD pipeline might vary based on your project's requirements and your hosting provider's capabilities. Adjust the workflow as needed to fit your setup.
