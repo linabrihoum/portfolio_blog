@@ -15,7 +15,6 @@ const Regards = () => {
         <p className="font-medium mt-4 text-base">
           Please contact me regarding any inquires or acknowledgements you may
           have. <br />
-          My email is <a className="underline"> brihoumlina@gmail.com </a>
         </p>
       </div>
 

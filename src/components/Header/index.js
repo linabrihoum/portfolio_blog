@@ -11,7 +11,7 @@ const links = [
   { url: "/", title: "Home" },
   { url: "/about", title: "About" },
   { url: "/categories/all", title: "Blogs" },
-  { url: "/contact", title: "Contact" },
+  //{ url: "/contact", title: "Contact" },
 ];
 
 const Header = () => {
@@ -71,7 +71,9 @@ const Header = () => {
   };
 
   return (
-    <header className="w-full p-4  px-5 sm:px-10 flex items-center justify-between">
+    <header className="w-full p-4 px-5 sm:px-10 flex items-center justify-between sticky top-0 z-50 bg-light dark:bg-dark">
+      {/* Rest of the component remains the same */}
+      
       {/* LINKS */}
       <div className="hidden md:flex gap-4">
         {links.map((link) => (
