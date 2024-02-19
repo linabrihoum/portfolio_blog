@@ -1,6 +1,6 @@
 // please update required information
 const siteMetadata = {
-  title: "TechWithLina Blog",
+  title: "Lina Brihoum Blog",
   author: "Lina Brihoum",
   headerTitle:
     "Site Relability, Cloud Architecture, and Artifical Intelligence",
