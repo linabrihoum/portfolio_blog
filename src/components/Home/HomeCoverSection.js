@@ -1,6 +1,5 @@
 import React from "react";
 import TransitionEffect from "../Home/TransitionEffect";
-import Skills from "./Skills";
 import HomeDescription from "./HomeDescription";
 
 const HomeCoverSection = () => {

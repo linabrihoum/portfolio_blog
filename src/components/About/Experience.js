@@ -82,9 +82,17 @@ const Experience = () => {
           <Details
             position="Computer Science Teaching Assistant"
             company="Florida Polytechnic University"
-            time="August 2015 - May 2016"
+            time="August 2018 - May 2019"
             work="
             I assist in teaching a range of computer science-focused classes, including Algorithm Analysis & Design, Programming Languages, Data Structures, and Mobile Device Application Development. In collaboration with designated professors, I am involved in planning course material and grading academic papers. Additionally, I offer personalized support to students through one-on-one meetings, helping them understand and master the course material.
+            "
+          />
+          <Details
+            position="Game Design and Development Intern"
+            company="Cubic Corporation"
+            time="July 2014 - June 2015"
+            work="
+            As a Game Tester & Developer intern for the Navy Department of Defense, I had the unique opportunity to work at the intersection of cutting-edge technology and national security. My role primarily involved leveraging Unreal Engine to create realistic simulation environments, which were pivotal for strategic training and planning purposes. Alongside this, I honed my programming skills in Java, focusing on backend development to ensure the seamless operation and integration of these simulations. This position allowed me to contribute significantly to the advancement of military training tools, while also expanding my technical expertise in both game development and software engineering within a high-stakes environment.
             "
           />
         </ul>

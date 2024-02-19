@@ -58,7 +58,7 @@ const Footer = () => {
       </div>
       <div className="flex items-center mt-8">
         <Link
-          href="mailto:brihoumlina@gmail.com"
+          href="mailto:codingwithlina@gmail.com"
           className="ml-4 text-lg font-medium capitalize  underline 
                   md:text-base"
         >

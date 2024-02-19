@@ -3,6 +3,7 @@ import React from "react";
 import { useRouter } from "next/navigation";
 import Regards from "./Regards";
 import TransitionEffect from "../Home/TransitionEffect";
+import EmailForm from "./EmailForm";
 
 export default function ContactForm() {
   const router = useRouter();
