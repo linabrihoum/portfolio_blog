@@ -3,7 +3,7 @@
 const { withContentlayer } = require("next-contentlayer");
 
 const nextConfig = {
-  output:  "export",
+  //output:  "export",
 };
 
 const MAILCHIMP_API_KEY = process.env.MAILCHIMP_API_KEY;
