@@ -1,0 +1,42 @@
+---
+title: "The CAP Theorem"
+description: "CAP"
+image: "../../public/blogs/cap-theorem.jpg"
+publishedAt: "2024-03-17"
+updatedAt: "2024-03-17"
+author: "Lina Brihoum"
+isPublished: true
+tags: 
+- Cloud Engineering
+---
+
+The CAP theorem says that a distributed system can deliver only two of three desired characteristics: consistency, availability and partition tolerance (the ‘C,’ ‘A’ and ‘P’ in CAP).
+
+
+<Image
+  src="/blogs/cap-diagram.png"
+  width="400"
+  height="400"
+  alt="Image"
+  sizes="100vw"
+/>
+
+The CAP theorem is a fundamental concept in the realm of distributed systems, crucial for anyone designing cloud applications, as these applications inherently operate across distributed networks. Here's a more cohesive explanation that integrates the various components of the CAP theorem:
+
+In distributed systems, data is stored across multiple nodes, which may be virtual or physical machines. This setup ensures that cloud applications maintain high performance and reliability. The CAP theorem offers a framework to understand the trade-offs between three key characteristics: Consistency, Availability, and Partition Tolerance, often simply referred to as CAP.
+
+Consistency in the CAP theorem means that all clients see the same data at the same time, regardless of the node they connect to. For data to be consistent, a write operation performed on one node must be immediately replicated across all other nodes in the network.
+
+Availability, another pillar of the CAP theorem, ensures that any client making a data request receives a response, regardless of whether some nodes are down. This means that every request receives a valid response from the remaining operational nodes, without exceptions.
+
+Partition Tolerance refers to the system's ability to continue functioning despite any number of communication breakdowns between nodes in the system. A partition in this context means a loss or delay in connection between nodes, yet a partition-tolerant system maintains operations across the remaining nodes.
+
+Interestingly, while NoSQL databases are closely tied to the CAP theorem, they vary in which two of the three CAP characteristics they prioritize, since it's impossible to simultaneously guarantee all three fully. This leads to three categories of systems:
+
+- CP (Consistency and Partition Tolerance) databases like MongoDB and Redis prioritize consistency and partition tolerance. However, this means that availability can be compromised; in the event of a partition, the system might make the inconsistent node unavailable until the partition is resolved.
+- AP (Availability and Partition Tolerance) databases, including CouchDB, Cassandra, and ScyllaDB, maintain availability and partition tolerance but may not always be consistent. During a partition, these databases ensure all nodes are still available, but some might return an older version of the data.
+- CA (Consistency and Availability) systems are an ideal but not feasible in a true distributed system, as they cannot tolerate partitions. No existing NoSQL database offers both full consistency and availability while also being fault-tolerant to network partitions.
+
+Some NoSQL databases, such as ScyllaDB, employ a model of tunable eventual consistency to provide multi-datacenter high availability and efficient read/write operations. This model allows each node equal status—any can handle any request without a single coordination point, continuing to operate cooperatively even when some nodes are unavailable. Eventual consistency is particularly suited to modern workloads that rely more on availability than on strict consistency.
+
+Through understanding the CAP theorem, system designers can make informed decisions, optimizing the balance between consistency and availability based on the specific needs of their applications. This understanding is crucial as it directly influences the architecture and capabilities of the systems they build.

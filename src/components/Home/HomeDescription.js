@@ -31,7 +31,7 @@ const HomeDescription = () => {
           transition={{ delay: 2 }}
           className="font-medium mt-4 text-base"
         >
-          I'm a Cloud Architect that specializes in Site Reliability, Cyber Security,
+          I'm a Cloud Architect that specializes in Site Reliability, DevSecOps,
           and Artificial Intelligence. <br />
         </motion.p>
       </div>

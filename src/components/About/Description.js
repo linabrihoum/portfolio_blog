@@ -16,8 +16,8 @@ const Description = () => {
         </h2>
         <p className="font-medium mt-4 text-base">
           <br />
-          I'm a Cloud Architect that specializes in Site Reliability, Cyber
-          Security, and Artificial Intelligence. <br /> <br /> I have a total of
+          I'm a Cloud Architect that specializes in Site Reliability, DevSecOps, and Artificial Intelligence. <br /> 
+          <br /> I have a total of
           10 years of experience in technology ranging from game development,
           networking, full stack development, cyber security and cloud
           architecture. <br /> <br />
