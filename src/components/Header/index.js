@@ -6,6 +6,7 @@ import NavLink from "./NavLink";
 import { motion } from "framer-motion";
 import { GithubIcon, LinkedinIcon, InstagramIcon } from "./Icons.js";
 import { useRouter } from "next/navigation";
+import siteMetadata from "@/src/utils/siteMetaData";
 
 const links = [
   { url: "/", title: "Home" },
@@ -73,7 +74,7 @@ const Header = () => {
   return (
     <header className="w-full p-4 px-5 sm:px-10 flex items-center justify-between sticky top-0 z-50 bg-light dark:bg-dark">
       {/* Rest of the component remains the same */}
-      
+
       {/* LINKS */}
       <div className="hidden md:flex gap-4">
         {links.map((link) => (
@@ -91,7 +92,7 @@ const Header = () => {
         <motion.a
           target={"_blank"}
           className="w-6 m-1 mx-3 bg-light rounded-full dark:bg-dark sm:mx-1 dark:fill-light"
-          href="#"
+          href={siteMetadata.github}
           whileHover={{ y: -2 }}
           whileTap={{ scale: 0.9 }}
           aria-label="Checkout my github profile"
@@ -101,7 +102,7 @@ const Header = () => {
         <motion.a
           target={"_blank"}
           className="w-6 m-1 mx-3 sm:mx-1"
-          href="#"
+          href={siteMetadata.linkedin}
           whileHover={{ y: -2 }}
           whileTap={{ scale: 0.9 }}
           aria-label="Checkout my linkedin profile"
@@ -111,7 +112,7 @@ const Header = () => {
         <motion.a
           target={"_blank"}
           className="w-6 m-1 mx-3 sm:mx-1"
-          href="#"
+          href={siteMetadata.instagram}
           whileHover={{ y: -2 }}
           whileTap={{ scale: 0.9 }}
           aria-label="Checkout my dribbble profile"
@@ -160,7 +161,6 @@ const Header = () => {
                 <button
                   className=""
                   onClick={() => {
-                    
                     setOpen((prev) => !prev);
                     router.push(link.url);
                   }}

@@ -16,8 +16,8 @@ const siteMetadata = {
   github: "https://github.com/lbrihoum",
   twitter: "https://twitter.com/techwithlina",
   youtube: "https://www.youtube.com/@techwithlina",
-  instagram: "https://www.instagram.com/techwithlina/",
-  linkedin: "https://www.linkedin.com/in/lina-yara-brihoum/",
+  instagram: "https://www.instagram.com/codinglina/",
+  linkedin: "https://www.linkedin.com/in/lina-brihoum/",
   pinterest: "https://www.pinterest.com/techwithlina",
   locale: "en-US",
 };
