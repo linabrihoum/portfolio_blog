@@ -55,28 +55,34 @@ const Experience = () => {
             company="IBM"
             time="November 2021 - present"
             work="  
-            As a DevSecOps team leader, I am dedicated to delivering efficient and scalable software products by integrating Agile and DevOps methodologies. My role extends beyond management to being a strategic consultant in generative AI, where I leverage advanced artificial intelligence to enhance client business processes and operational efficiency. Collaborating with diverse teams, I focus on understanding client needs, developing customized AI strategies, and deploying impactful, data-driven solutions.
-            
-            In my technical capacity, I oversee continuous integration and delivery pipelines using tools like Azure DevOps, Jenkins, and CircleCI, and manage containerization with Docker, Kubernetes, and Openshift. My expertise also covers designing AWS cloud infrastructure and maintaining system performance with tools like the ELK Stack and Prometheus. I ensure seamless software deployment in collaboration with development and QA teams, emphasizing data integrity and availability in database management. This approach reflects my commitment to delivering intelligent and user-centric solutions in a friendly and confident manner.
-            "
+            As a Cloud Architect, I actively lead a team of engineers in adopting Agile methodologies, fostering an environment of collaboration and ensuring the timely delivery of high-quality software products through daily stand-ups, sprint planning, and retrospectives. I maintain and enhance cloud infrastructure using AWS and Azure, achieving a 15% reduction in costs through strategic optimization of services like EC2, S3, RDS, and Lambda. My role involves orchestrating and managing CI/CD pipelines using Azure DevOps and Jenkins, focusing on continuous integration and delivery, which has accelerated project timelines and improved code quality, decreasing runtime by 20%.
+
+            I utilize Terraform and Bicep for robust infrastructure as code (IaC) management, streamlining provisioning and configuration across various environments. My collaborative efforts extend across development, QA, and operations teams to assess client needs, set project goals, develop AI strategies, and implement data-driven solutions, resulting in significant performance enhancements. I regularly present on cloud computing and AI innovations at tech conferences and contribute to bootcamps, furthering knowledge sharing and expertise in these fields.
+
+            Additionally, I implement and oversee containerization solutions using Docker, Kubernetes, and Openshift, ensuring scalable and efficient deployment processes. I am responsible for creating and maintaining comprehensive technical documentation for infrastructure and applications. My commitment to security is demonstrated through regular audits and the implementation of measures with tools like Black Duck, Checkmarx, and Veracode to safeguard our infrastructure. I also stay vigilant on new developments that could impact our technological environment, ensuring we remain at the forefront of industry advancements."
           />
           <Details
             position="DevSecOps Lead Engineer"
             company="FIS"
             time="March 2020 - November 2021"
-            work="As an lead DevSecOps engineer, I play a pivotal role in designing applications and projects, working closely with teams across the company. My responsibilities include guiding teams through solution delivery, focusing on automating manual processes, and maintaining seamless collaboration. Creating and maintaining CI/CD pipelines using Azure DevOps and Jenkins is a key part of my role, alongside writing automation scripts in Python, PowerShell, and Bash.
+            work="As a DevSecOps Lead, I managed four teams tasked with delivering high-quality software products and automating manual efforts, which resulted in significant cost savings—over $800,000 in 2020 and more than $1 million in 2021. I orchestrated and managed CI/CD pipelines using Azure DevOps and Jenkins, focusing on continuous integration and delivery to accelerate project timelines and enhance efficiency.
 
-                  In managing cloud infrastructure, I actively monitor, manage, and enhance AWS environments, including EC2, RDS, and S3, ensuring effective backups, patches, and scaling. I specialize in building and deploying Docker & Kubernetes containers, breaking up microservices to streamline workflows. My weekly duties encompass providing status reports and accounting for time, as well as mentoring and supporting team members, both onshore and offshore, to help them complete tasks and achieve objectives. Additionally, I keep an eye on new development activities to anticipate and mitigate any potential impacts on the overall environment.
-                  "
+                In this role, I actively managed, monitored, and improved our cloud infrastructure across AWS and Azure environments, overseeing backups, patches, and scaling activities. I developed automation scripts using Python, PowerShell, and Bash to streamline processes and boost system efficiency. My efforts in building and deploying Docker and Kubernetes/OpenShift containers modularized microservices, significantly enhancing workflow efficiency and system scalability.
+
+                I maintained our infrastructure as code using Terraform, which streamlined the provisioning and configuration of cloud infrastructure across various environments. I also created and maintained detailed technical documentation for our infrastructure and applications, including network diagrams, system architectures, deployment processes, and troubleshooting procedures.
+
+                Regular security audits were a critical part of my responsibilities, where I implemented necessary measures using Black Duck and Veracode to ensure the security of our infrastructure. These efforts were fundamental in maintaining robust and secure operations within our technological environment."
           />
           <Details
             position="Full Stack Engineer"
             company="Voidstar Solutions"
             time="June 2016 - March 2020"
             work="
-            I specialize in developing, designing, and deploying mobile applications, utilizing a diverse set of technologies including Flutter (Dart), Xcode/SwiftUI (Swift), and Android Studio (Java/Kotlin). My expertise extends to working on various computer programs using multiple programming languages, with a particular focus on object-oriented programming. Additionally, I design and develop website applications using HTML/CSS, JavaScript, and Angular.
+                In my role as a Full Stack Software Developer, I collaborated with cross-functional teams to develop mobile applications, utilizing Flutter (Dart), Xcode (Swift), and Android Studio (Java/Kotlin). I adhered to best practices and coding standards to ensure robust app functionality and performance. I designed and maintained responsive, interactive user interfaces using Angular, HTML5, CSS3, and JavaScript libraries, guaranteeing a seamless user experience across various devices.
 
-            My role also involves working with and maintaining server code, as well as conducting unit testing, primarily using C# and .NET Core. Beyond technical development, I contribute to project management and business operations, offering support and insights to ensure the smooth progression and successful completion of projects.
+                Throughout the software development life cycle, I participated in requirement analysis, design, coding, testing, and deployment, contributing to all facets of project development. I developed back-end functionalities including RESTful APIs, database operations, and the integration of third-party APIs, which significantly enhanced application capabilities and improved user experiences.
+
+                I stayed abreast of the latest trends and technologies in mobile application development, actively contributing to our team’s technical knowledge base. I explored further contract option extensions by training for leadership roles, progressively acting in an increasingly independent manner in all the above responsibilities, demonstrating both technical proficiency and potential for managerial duties.
             "
           />
           <Details
@@ -84,7 +90,9 @@ const Experience = () => {
             company="Florida Polytechnic University"
             time="August 2018 - May 2019"
             work="
-            I assist in teaching a range of computer science-focused classes, including Algorithm Analysis & Design, Programming Languages, Data Structures, and Mobile Device Application Development. In collaboration with designated professors, I am involved in planning course material and grading academic papers. Additionally, I offer personalized support to students through one-on-one meetings, helping them understand and master the course material.
+            I assisted in teaching a range of computer science-focused classes, including Algorithm Analysis & Design, Programming Languages, Data Structures, and Mobile Device Application Development. 
+            In collaboration with designated professors, I was involved in planning course material and grading academic papers. 
+            Additionally, I offered personalized support to students through one-on-one meetings, helping them understand and master the course material.
             "
           />
           <Details
@@ -92,7 +100,8 @@ const Experience = () => {
             company="Cubic Corporation"
             time="July 2014 - June 2015"
             work="
-            As a Game Tester & Developer intern for the Navy Department of Defense, I had the unique opportunity to work at the intersection of cutting-edge technology and national security. My role primarily involved leveraging Unreal Engine to create realistic simulation environments, which were pivotal for strategic training and planning purposes. Alongside this, I honed my programming skills in Java, focusing on backend development to ensure the seamless operation and integration of these simulations. This position allowed me to contribute significantly to the advancement of military training tools, while also expanding my technical expertise in both game development and software engineering within a high-stakes environment.
+            As a Game Tester & Developer intern for the Navy Department of Defense, I had the unique opportunity to work at the intersection of cutting-edge technology and national security. 
+            My role primarily involved leveraging Unreal Engine to create realistic simulation environments, which were pivotal for strategic training and planning purposes. Alongside this, I honed my programming skills in Java, focusing on backend development to ensure the seamless operation and integration of these simulations. This position allowed me to contribute significantly to the advancement of military training tools, while also expanding my technical expertise in both game development and software engineering within a high-stakes environment.
             "
           />
         </ul>
