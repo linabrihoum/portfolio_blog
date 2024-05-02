@@ -9,3 +9,125 @@ isPublished: true
 tags: 
 - Starting out
 ---
+
+## Introduction
+
+I have always been fascinated by how many incredible open-source projects are available - especially for cloud computing and artifical intelligence. 
+These projects have helped me in my career and have fundamentally shaped my career path. 
+
+From how much I've gained from the community, I wanted to start contributing back. It's my way of saying thank you to this incredible community that has offered me so much support for the last decade.
+
+Interestingly enough, I am the only one of my friends that utilizes LaTeX for creating resumes - it's been a total game changer for me. 
+LaTeX eliminates the usual hassle of tweaking every line and margin, allowing me to craft my resumes through straightforward coding. And yes, it works wonders for research papers too!
+
+To encourage my circle to embrace LaTeX, I've developed multiple resume templates tailored for various tech disciplines. This reduces the initial resistance and makes the transition smoother. 
+My goal is simple: to make LaTeX as accessible and user-friendly as possible, so more can benefit from its efficiency.
+
+## Why LaTeX?
+In simple terms, LaTeX offers distinct advantages over traditional word processors like Microsoft Word and Google Docs. 
+While Word and Docs are user-friendly and widely accessible, it often requires painstaking manual adjustments to achieve a clean, professional layout. 
+LaTeX, on the other hand, uses predefined templates that handle all formatting automatically, allowing you to focus solely on content.
+
+Moreover, LaTeX's programming nature means that once you set your document's structure, the formatting is universally consistent—no more unexpected shifts or spacing issues after making edits. This consistency is crucial for maintaining the professional appearance of your resume, especially when dealing with multiple pages or sections.
+
+### LaTeX is more aesethically pleasing
+One of the most compelling reasons to use LaTeX for your resume is the professional and elegant appearance of the end product. LaTeX templates often employ sophisticated typography and layout designs that are difficult to replicate in standard word processors. This results in a document that stands out in a pile, not just for its content but for its polished and meticulous presentation.
+
+Furthermore, for fields that value precision and detail, such as academia, science, and engineering, the typographic cleanliness of a LaTeX resume can subtly communicate your professionalism and attention to detail. This aesthetic advantage can make a significant difference in how your application is perceived by potential employers.
+
+### Customization and Flexibility
+While LaTeX might seem rigid at first glance, it offers incredible flexibility for customization compared to drag-and-drop resume builders. With LaTeX, you can easily modify document classes or create entirely new layouts that perfectly match your personal brand or the specific requirements of your industry.
+
+Additionally, LaTeX’s ability to seamlessly integrate with other types of documents, such as academic publications or technical reports, means that you can maintain a cohesive set of professional documents. This uniformity is particularly beneficial for creating a professional portfolio that consistently reflects your skills and experiences.
+
+## LaTeX for Tech Professionals
+For tech professionals, the process of writing a resume in LaTeX can also be a good indicator to their coding skills. 
+This aspect is particularly appealing to employers in tech-centric fields like software development, data science, and engineering, where familiarity with programming is a valuable asset.
+
+Moreover, the skills required to create a resume in LaTeX—attention to detail, logical thinking, and coding proficiency—are directly transferable to many technical roles. Thus, crafting your resume with LaTeX not only results in a better document but also showcases your technical abilities right off the bat.
+
+## Getting started using LaTeX
+Getting started with LaTeX might seem daunting, but all you need are a few simple steps to get going. Here's how to install LaTeX and understand some basic commands to get started.
+
+#### Installation 
+1. Choose a LaTeX distribution:
+- For Windows: MiKTeX is a popular choice. It's easy to install and includes a package manager that automatically installs missing components. You can download it from [MiKTeX's official website](https://miktex.org/).
+- For Mac: MacTeX is a comprehensive distribution that includes everything you need. It's available for free on the [MacTeX website](https://tug.org/mactex/).
+- For Linux: TeX Live is highly recommended. Most Linux distributions have TeX Live in their repositories, and it can be installed via package manager commands like sudo apt-get install texlive-full for Ubuntu.
+2. Install a LaTeX editor 
+- For simplicity, you can use Visual Studio Code and install the LaTeX extension (which is what I personally do), however, you can use the following as well: 
+- TeXworks is included with both MiKTeX and MacTeX and offers a straightforward, easy-to-use interface.
+- TeXstudio and Overleaf (an online LaTeX editor) are other great options that provide more advanced features and are also platform-independent.
+
+#### Basic commands and Functions:
+
+1. Document Structure
+
+Every LaTeX document has a document structure:
+```main.tex
+\documentclass{article}
+\begin{document}
+Hello, world!
+\end{document}
+```
+This simple example shows how to start and end a document. `\documentclass{article}` defines the type of document. Replace `article` with `report`, `book`, or `letter` as needed.
+
+2. Sections and Subsections
+
+```main.tex
+\section{Introduction}
+This is the introduction.
+\subsection{Background}
+This is the background.
+```
+These commands help organize your document into sections and subsections, making it easier to navigate and manage.
+
+3. Adding text bold, italics, and underline 
+```main.tex
+\textbf{Bold text}, \textit{italic text}, and \underline{underlined text}.
+```
+
+4. Lists 
+```main.tex
+\begin{itemize} % for bullet points
+  \item First item
+  \item Second item
+\end{itemize}
+
+\begin{enumerate} % for numbered lists
+  \item First item
+  \item Second item
+\end{enumerate}
+```
+
+5. Images and Tables
+
+- Images: To include images, use the graphicx package. Place the image file in the same directory as your LaTeX file or provide the relative path.
+```main.tex
+\usepackage{graphicx}
+\includegraphics{filename.jpg}
+```
+
+- Tables:  Tables can be created with the `tabular` environment.
+```main.tex
+\begin{tabular}{|c|c|c|} % "c" for centered column, "|" for vertical lines
+\hline
+Header1 & Header2 & Header3 \\
+\hline
+Row1 & Data & Data \\
+Row2 & Data & Data \\
+\hline
+\end{tabular}
+```
+
+## Resources and Getting Started with LaTeX
+To create resumes with LaTeX, I've prepared a host of resources to smooth your learning curve. [On my GitHub](https://github.com/lbrihoum/latex-resume-templates), you'll find a variety of templates designed for different roles in the tech industry. These templates are easy to customize and provide a solid starting point for both newcomers and seasoned professionals.
+
+In addition to my resources, there are numerous online platforms and communities where you can find LaTeX resume templates, such as:
+- [Resumake](https://latexresu.me/generator/templates) allows you to create a professional-looking resume without the need for design skills. It offers a variety of templates that are both elegant and easy to navigate.
+- [Overleaf](https://www.overleaf.com/gallery/tagged/cv) produces beautiful LaTeX documents and templates for journals, conferences, theses, reports, CVs and more.
+
+These communities are incredibly supportive and are a great place to learn new tips and tricks to refine your resume!
+
+## Conclusion
+Opting for LaTeX to create your resume is more than a practical choice; it's a strategic one. The benefits of using LaTeX extend beyond aesthetics, offering consistency, professionalism, and customization. Whether you're a seasoned coder or a curious novice, embracing LaTeX can elevate your resume and help you stand out in a competitive job market. As you embark on this journey, remember that the initial effort you put into mastering LaTeX pays off with a resume that truly represents your qualifications and professionalism.
