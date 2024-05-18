@@ -25,7 +25,7 @@ export function useThemeSwitch() {
       }
       return window.matchMedia(preferDarkQuery).matches ? "dark" : "light";
     }
-    return "light"; // Default value if `window` is not defined
+    return "dark"; // Default value if `window` is not defined
   };
 
   const [mode, setMode] = useState(getUserPreference());
