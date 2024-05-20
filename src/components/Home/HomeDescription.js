@@ -6,8 +6,7 @@ import { motion } from "framer-motion";
 const HomeDescription = () => {
 
   return (
-    <section className="w-full h-full md:h-[60vh] flex flex-col md:flex-row items-center justify-center text-dark dark:text-light mt-16 md:mt-24">
-
+    <section className="relative w-full lg:h-[70vh] md:h-[60vh] sm:h-[80vh] h-[90vh] flex flex-col md:flex-row items-center justify-center text-dark dark:text-light mt-10 md:mt-24 sm:mt-10 overflow-hidden">
       <div className="w-full md:w-1/2 flex flex-col text-left items-start justify-center px-5 xs:p-10 pb-10 lg:px-16">
         <motion.h2
           initial={{ opacity: 0 }}
@@ -35,8 +34,8 @@ const HomeDescription = () => {
           and Artificial Intelligence. <br />
         </motion.p>
       </div>
-      
-      <div className="w-full md:w-1/2 items-start justify-center px-5 xs:p-10 lg:px-16">
+
+      <div className="w-full md:w-1/2 items-start justify-center px-2 xs:p-10 md:p-4 lg:px-16">
         <DotLottiePlayer
           src="https://lottie.host/c09d0c47-6720-44f8-b5b1-716ee091da61/tAX7GLIRcm.lottie"
           className="w-full h-full"
@@ -45,7 +44,6 @@ const HomeDescription = () => {
           loop
         ></DotLottiePlayer>
       </div>
-
     </section>
   );
 };
