@@ -1,26 +1,22 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import profileCharacter from "../../../public/profile_pic.jpg";
 import Image from "next/image";
-import Link from "next/link";
-import { LinkArrow } from "../Header/Icons";
 
 const Description = () => {
-
   return (
-    <section className="w-full md:h-[70vh] sm:h-[100vh] h-[100vh] flex flex-col md:flex-row items-center justify-center text-dark dark:text-light p-8">
-      <div className="w-full md:w-1/2 flex flex-col text-left items-start justify-center px-5 xs:p-10 pb-10 lg:px-16">
-        <h2 className="font-bold text-4xl xs:text-5xl sxl:text-6xl  text-center lg:text-left">
-          {`Hey there! I'm Lina Brihoum :)`}{" "}
-          <span className="text-bold"> </span>
+    <section className="w-full min-h-screen flex flex-col md:flex-row items-center justify-center text-dark dark:text-light p-4 md:p-8">
+      <div className="w-full md:w-1/2 flex flex-col text-center md:text-left items-center md:items-start justify-center px-5 xs:px-10 pb-10 lg:px-16">
+        <h2 className="font-bold text-4xl xs:text-5xl lg:text-6xl">
+          {`Hey there! I'm Lina Brihoum :)`}
         </h2>
         <p className="font-medium mt-4 text-base">
           <br />
-          I'm a Cloud Architect that specializes in Site Reliability, DevSecOps, and Artificial Intelligence. <br /> 
-          <br /> I have a total of
-          10 years of experience in technology ranging from game development,
-          networking, full stack development, cyber security and cloud
-          architecture. <br /> <br />
+          I'm a Cloud Architect that specializes in Site Reliability, DevSecOps,
+          and Artificial Intelligence. <br />
+          <br /> I have a total of 10 years of experience in technology ranging
+          from game development, networking, full stack development, cyber
+          security and cloud architecture. <br /> <br />
           My hobbies include weight lifting, reading, cooking, crocheting, and
           playing video games. <br /> <br />
           I created this to share my knowledge and experience regarding
@@ -28,15 +24,17 @@ const Description = () => {
         </p>
       </div>
 
-      <div className="w-full h-full pt-10  dark:border-light flex justify-center ">
-        <Image
-          src={profileCharacter}
-          alt="LinaBrihoum"
-          className="w-4/5 xs:w-3/4 md:w-full h-full object-contain object-center"
-          style={{ borderRadius: "60px" }}
-          priority
-          sizes="(max-width: 768px) 100vw,(max-width: 1180px) 50vw, 50vw"
-        />
+      <div className="w-full md:w-1/2 flex justify-center items-center pt-10 md:pt-0">
+        <div className="w-3/4 md:w-3/5 lg:w-1/2">
+          <Image
+            src={profileCharacter}
+            alt="Lina Brihoum"
+            className="w-full h-auto object-contain object-center"
+            style={{ borderRadius: "60px" }}
+            priority
+            sizes="(max-width: 768px) 100vw, (max-width: 1180px) 50vw, 50vw"
+          />
+        </div>
       </div>
     </section>
   );
