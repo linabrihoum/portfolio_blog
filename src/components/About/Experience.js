@@ -86,16 +86,6 @@ const Experience = () => {
             "
           />
           <Details
-            position="Computer Science Teaching Assistant"
-            company="Florida Polytechnic University"
-            time="August 2018 - May 2019"
-            work="
-            I assisted in teaching a range of computer science-focused classes, including Algorithm Analysis & Design, Programming Languages, Data Structures, and Mobile Device Application Development. 
-            In collaboration with designated professors, I was involved in planning course material and grading academic papers. 
-            Additionally, I offered personalized support to students through one-on-one meetings, helping them understand and master the course material.
-            "
-          />
-          <Details
             position="Game Design and Development Intern"
             company="Cubic Corporation"
             time="July 2014 - June 2015"

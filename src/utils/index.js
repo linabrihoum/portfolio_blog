@@ -1,5 +1,6 @@
 import { compareDesc, parseISO } from "date-fns";
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import { clsx } from "clsx";
+import { twMerge } from "tailwind-merge";
 
 export const cx = (...classNames) => classNames.filter(Boolean).join(" ");
 
@@ -11,17 +12,6 @@ export const sortBlogs = (blogs) => {
     );
 };
 
-const supabase = createClientComponentClient();
-
-export const popularBlogs = async (blogs) => {
-  // Views is database namne
-  // Count is the amount of views per blog
-  let { data: views, error } = await supabase.from("views").select("count");
-
-  return blogs
-    .slice()
-    .sort((a) =>
-      compareDesc(parseISO(a.views))
-    );
-    
-};
+export function cn(...inputs) {
+  return twMerge(clsx(inputs));
+}

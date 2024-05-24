@@ -12,7 +12,7 @@ const links = [
   { url: "/", title: "Home" },
   { url: "/about", title: "About" },
   { url: "/categories/all", title: "Blogs" },
-  //{ url: "/contact", title: "Contact" },
+  { url: "/contact", title: "Contact" },
 ];
 
 const Header = () => {
