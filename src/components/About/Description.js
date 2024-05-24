@@ -8,7 +8,7 @@ import { LinkArrow } from "../Header/Icons";
 const Description = () => {
 
   return (
-    <section className="w-full h-screen md:h-[60vh] flex flex-col md:flex-row items-center justify-center text-dark dark:text-light p-8">
+    <section className="w-full md:h-[70vh] sm:h-[100vh] h-[100vh] flex flex-col md:flex-row items-center justify-center text-dark dark:text-light p-8">
       <div className="w-full md:w-1/2 flex flex-col text-left items-start justify-center px-5 xs:p-10 pb-10 lg:px-16">
         <h2 className="font-bold text-4xl xs:text-5xl sxl:text-6xl  text-center lg:text-left">
           {`Hey there! I'm Lina Brihoum :)`}{" "}
