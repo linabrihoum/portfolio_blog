@@ -7,14 +7,12 @@ import Certifications from "./Certifications";
 
 const AboutCoverSection = () => {
   return (
-    <section className="justify-center">
       <div className="dark:text-white text-dark ">
         <Description />
         <Experience />
         <Education />
         <Certifications />
       </div>
-    </section>
   );
 };
 
