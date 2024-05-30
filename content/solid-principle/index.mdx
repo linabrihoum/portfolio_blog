@@ -40,7 +40,6 @@ A class should have only one reason to change, meaning it should have only one j
 Imagine you are building a simple application that manages books in a library. You might be tempted to create a single Book class that handles everything related to a book, including its data and how it is saved to a database. This violates SRP.
 
 ```python
-# Violates SRP
 class Book:
     def __init__(self, title, author):
         self.title = title
@@ -57,7 +56,6 @@ class Book:
 Instead, you should separate these responsibilities into different classes:
 
 ```python
-# Follows SRP
 class Book:
     def __init__(self, title, author):
         self.title = title
@@ -88,7 +86,6 @@ Software entities (such as classes, modules, and functions) should be open for e
 ### Example
 Let's say you are building a notification system that currently supports sending notifications via email. Initially, you might have a simple Notification class that handles email notifications:
 ```python
-# Violates OCP
 class Notification:
     def send_email(self, message):
         print(f"Sending email with message: {message}")
@@ -96,7 +93,6 @@ class Notification:
 
 Now, if you want to add SMS notifications, you would have to modify the Notification class. 
 ```python 
-# Violates OCP by modifying existing code
 class Notification:
     def send_email(self, message):
         print(f"Sending email with message: {message}")
@@ -110,7 +106,6 @@ Instead, you should design the system so that you can extend it without modifyin
 ```python 
 from abc import ABC, abstractmethod
 
-# Follows OCP
 class Notifier(ABC):
     @abstractmethod
     def send(self, message):
@@ -146,7 +141,6 @@ Objects of a superclass should be replaceable with objects of a subclass without
 ### Example
 Imagine you have a base class Bird and a subclass Penguin. If the Bird class has a method fly, the Penguin class, which cannot fly, would violate the Liskov Substitution Principle if it inherits from Bird.
 ```python 
-# Violates LSP
 class Bird:
     def fly(self):
         print("Flying")
@@ -162,7 +156,6 @@ class Penguin(Bird):
 To adhere to LSP, you can refactor the design so that not all birds are expected to fly. One way to do this is by using composition instead of inheritance:
 
 ```python 
-# Follows LSP
 class Bird:
     pass
 
@@ -190,7 +183,6 @@ A class should not be forced to implement interfaces it does not use. Instead of
 ### Example
 Imagine you are designing a system for different types of printers. You might start with a single interface Printer that includes methods for printing, scanning, and faxing:
 ```python 
-# Violates ISP
 class Printer:
     def print(self, document):
         pass
@@ -215,7 +207,6 @@ class SimplePrinter(Printer):
 In this example, SimplePrinter is forced to implement scan and fax methods even though it does not support these functionalities, which violates ISP.
 
 ```python 
-# Follows ISP
 class Printer:
     def print(self, document):
         pass
@@ -258,7 +249,6 @@ High-level modules should not depend on low-level modules. Both should depend on
 Imagine you are designing a system where a Database class is used by a UserService class to retrieve user data. Initially, you might have a direct dependency:
 
 ```python 
-# Violates DIP
 class Database:
     def get_user(self, user_id):
         # Code to retrieve user from database
@@ -275,7 +265,6 @@ class UserService:
 In this example, UserService directly depends on the Database class, which violates DIP. To adhere to DIP, you should depend on abstractions instead of concrete implementations:
 
 ```python 
-# Follows DIP
 from abc import ABC, abstractmethod
 
 class UserRepository(ABC):
