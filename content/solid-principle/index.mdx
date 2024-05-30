@@ -1,0 +1,297 @@
+---
+title: "Software Architecture Principle SOLID"
+description: "Mastering SOLID Principles in Software Design"
+image: "../../public/blogs/solid.jpg"
+publishedAt: "2023-05-30"
+updatedAt: "2023-05-30"
+author: "Lina Brihoum"
+isPublished: false
+tags: 
+- software development
+---
+
+# Mastering SOLID Principles in Software Design
+
+In software development - maintaining clean, manageable, and scalable code is paramount. The SOLID principles, introduced by Robert C. Martin, offer a robust framework to achieve these goals. 
+
+## What are SOLID Principles?
+
+SOLID is an acronym that stands for:
+
+1. **S**ingle Responsibility Principle (SRP)
+2. **O**pen/Closed Principle (OCP)
+3. **L**iskov Substitution Principle (LSP)
+4. **I**nterface Segregation Principle (ISP)
+5. **D**ependency Inversion Principle (DIP)
+
+These principles are designed to make software designs more understandable, flexible, and maintainable. Let's break down each principle.
+
+## S: Single Responsibility Principle (SRP)
+
+### What it is
+A class should have only one reason to change, meaning it should have only one job or responsibility.
+
+### Why it is important
+- **Ease of maintenance:** Changes in requirements will only affect the specific class responsible for that functionality.
+- **Reduced risk of bugs:** Modifying one responsibility won't inadvertently affect other functionalities.
+- **Improved readability:** Classes with a single responsibility are easier to understand and manage.
+
+### Example
+Imagine a `Book` class that handles data and database operations:
+
+```python
+# Violates SRP
+class Book:
+    def __init__(self, title, author):
+        self.title = title
+        self.author = author
+    
+    def save_to_database(self):
+        # Code to save the book to a database
+        pass
+
+    def print_details(self):
+        # Code to print book details
+        print(f"{self.title} by {self.author}")
+```
+Refactor to separate responsibilities:
+
+```python
+# Follows SRP
+class Book:
+    def __init__(self, title, author):
+        self.title = title
+        self.author = author
+
+class BookDatabase:
+    def save_to_database(self, book):
+        # Code to save the book to a database
+        pass
+
+class BookPrinter:
+    def print_details(self, book):
+        # Code to print book details
+        print(f"{book.title} by {book.author}")
+```
+
+## O: Open/Closed Principle (OCP)
+
+### What it is
+Software entities should be open for extension but closed for modification.
+
+### Why it is important
+- **Enhances flexibility:** New functionality can be added without modifying existing code.
+- **Improves maintainability:** Reduces the risk of introducing bugs when adding new features.
+
+### Example
+A Notification class that supports email notifications:
+```python
+# Violates OCP
+class Notification:
+    def send_email(self, message):
+        print(f"Sending email with message: {message}")
+
+# Adding SMS notification requires modifying the class
+class Notification:
+    def send_email(self, message):
+        print(f"Sending email with message: {message}")
+
+    def send_sms(self, message):
+        print(f"Sending SMS with message: {message}")
+```
+
+Refactor to adhere to OCP:
+```python 
+# Follows OCP
+from abc import ABC, abstractmethod
+
+class Notifier(ABC):
+    @abstractmethod
+    def send(self, message):
+        pass
+
+class EmailNotifier(Notifier):
+    def send(self, message):
+        print(f"Sending email with message: {message}")
+
+class SMSNotifier(Notifier):
+    def send(self, message):
+        print(f"Sending SMS with message: {message}")
+```
+
+
+## L: Liskov Substitution Principle (LSP)
+
+### What it is
+Objects of a superclass should be replaceable with objects of a subclass without affecting the correctness of the program.
+
+### Why it is important
+- **Promotes reliable polymorphism:** Subclasses can stand in for their parent classes without causing errors.
+- **Enhances flexibility:** Makes code more reusable and extendable.
+
+### Example
+A Bird class with a fly method:
+```python 
+# Violates LSP
+class Bird:
+    def fly(self):
+        print("Flying")
+
+class Sparrow(Bird):
+    pass
+
+class Penguin(Bird):
+    def fly(self):
+        raise NotImplementedError("Penguins cannot fly")
+```
+
+Refactor to adhere to LSP:
+
+```python 
+# Follows LSP
+class Bird:
+    pass
+
+class FlyableBird(Bird):
+    def fly(self):
+        print("Flying")
+
+class Sparrow(FlyableBird):
+    pass
+
+class Penguin(Bird):
+    pass
+```
+
+## I: Interface Segregation Principle (ISP)
+
+### What it is
+A class should not be forced to implement interfaces it does not use. Prefer many specific interfaces over one general-purpose interface.
+
+### Why it is important
+- **Reduces complexity:** Classes only implement methods relevant to them.
+- **Enhances modularity:** Interfaces are more cohesive and easier to understand.
+
+### Example
+A Printer interface with methods for printing, scanning, and faxing:
+```python 
+# Violates ISP
+class Printer:
+    def print(self, document):
+        pass
+
+    def scan(self, document):
+        pass
+
+    def fax(self, document):
+        pass
+
+class SimplePrinter(Printer):
+    def print(self, document):
+        print(f"Printing: {document}")
+
+    def scan(self, document):
+        raise NotImplementedError("SimplePrinter cannot scan")
+
+    def fax(self, document):
+        raise NotImplementedError("SimplePrinter cannot fax")
+```
+
+Refactor to adhere to ISP:
+
+```python 
+# Follows ISP
+class Printer:
+    def print(self, document):
+        pass
+
+class Scanner:
+    def scan(self, document):
+        pass
+
+class Fax:
+    def fax(self, document):
+        pass
+
+class SimplePrinter(Printer):
+    def print(self, document):
+        print(f"Printing: {document}")
+
+class MultiFunctionPrinter(Printer, Scanner, Fax):
+    def print(self, document):
+        print(f"Printing: {document}")
+
+    def scan(self, document):
+        print(f"Scanning: {document}")
+
+    def fax(self, document):
+        print(f"Faxing: {document}")
+```
+
+## D:Dependency Inversion Principle (DIP)
+
+### What it is
+High-level modules should not depend on low-level modules. Both should depend on abstractions.
+
+### Why it is important
+- **Enhances modularity:** High-level modules remain independent of low-level module changes.
+- **Improves testability:** Dependencies can be easily mocked or replaced.
+
+### Example
+A UserService class that depends directly on a Database class:
+
+```python 
+# Violates DIP
+class Database:
+    def get_user(self, user_id):
+        # Code to retrieve user from database
+        pass
+
+class UserService:
+    def __init__(self):
+        self.database = Database()
+    
+    def get_user(self, user_id):
+        return self.database.get_user(user_id)
+```
+
+Refactor to adhere to DIP:
+
+```python 
+# Follows DIP
+from abc import ABC, abstractmethod
+
+class UserRepository(ABC):
+    @abstractmethod
+    def get_user(self, user_id):
+        pass
+
+class Database(UserRepository):
+    def get_user(self, user_id):
+        # Code to retrieve user from database
+        pass
+
+class UserService:
+    def __init__(self, user_repository: UserRepository):
+        self.user_repository = user_repository
+    
+    def get_user(self, user_id):
+        return self.user_repository.get_user(user_id)
+```
+
+
+### Similarities and Differences
+
+## Similarities
+- All SOLID principles aim to create more maintainable, understandable, and flexible code.
+- They promote separation of concerns, modularity, and loose coupling.
+
+
+## Differences
+- SRP focuses on the responsibility of a single class.
+- OCP emphasizes extending functionality without modifying existing code.
+- LSP ensures subclasses can substitute their base classes without altering the program's behavior.
+- ISP advocates for creating specific interfaces rather than general ones to avoid forcing classes to implement unused methods.
+- DIP promotes dependency on abstractions rather than concrete implementations, enhancing modularity and testability.
+
+By adhering to SOLID principles, developers can create systems that are easier to manage, extend, and scale. These principles provide a solid foundation for high-quality software design, making your codebase robust and adaptable to change.
