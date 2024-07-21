@@ -13,7 +13,7 @@ const siteMetadata = {
   socialBanner: "/social-banner.png", // add social banner in the public folder
   // TO DO: Screenshot of the website
   email: "brihoumlina@gmail.com",
-  github: "https://github.com/lbrihoum",
+  github: "https://github.com/linabrihoum",
   twitter: "https://twitter.com/techwithlina",
   youtube: "https://www.youtube.com/@techwithlina",
   instagram: "https://www.instagram.com/codinglina/",
