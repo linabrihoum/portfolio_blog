@@ -1,28 +1,131 @@
 ---
 title: "Creating custom Terraform templates"
-description: "Creating custom Terraform IaC templates for AWS and Azure"
+description: "Creating custom Terraform IaC templates for AWS"
 image: "../../public/blogs/templates.jpg"
 publishedAt: "2024-06-20"
 updatedAt: "2024-06-20"
 author: "Lina Brihoum"
-isPublished: false
+isPublished: true
 tags: 
 - DevSecOps
 ---
 
-# Creating custom Terraform templates
+# Automating AWS with Custom Terraform Scripts
+Terraform is an open-source infrastructure as code (IaC) software tool that enables you to safely and predictably create, change, and improve infrastructure. Using Terraform, you can define both cloud and on-prem resources in human-readable configuration files that you can version, reuse, and share.
 
-```python 
-class Bird:
-    pass
+I'll guide you through creating custom Terraform scripts to automate the provisioning of certain AWS services. We’ll cover:
 
-class FlyableBird(Bird):
-    def fly(self):
-        print("Flying")
+- Setting up Terraform
+- Writing Terraform configurations
+- Provisioning an AWS EC2 instance
+- Creating an S3 bucket
+- Setting up an RDS instance
 
-class Sparrow(FlyableBird):
-    pass
+## Prerequisites
+Before we begin, make sure you have the following:
 
-class Penguin(Bird):
-    pass
+1. An AWS account
+2. AWS CLI configured with your credentials
+3. Terraform installed on your machine
+
+### Setting Up Terraform
+First, ensure that Terraform is installed. You can download it from the Terraform website.
+
+Initialize a new Terraform project by creating a directory and navigating into it:
+
+```main.tf
+mkdir terraform-aws
+cd terraform-aws
 ```
+
+Create a `main.tf` file where we will define our infrastructure.
+
+## Writing Terraform Configurations
+
+### Provisioning an AWS EC2 Instance
+To create an EC2 instance, you need to define the AWS provider and the resource type in your main.tf file:
+
+```main.tf
+# main.tf
+
+provider "aws" {
+  region = "us-east-1"
+}
+
+resource "aws_instance" "example" {
+  ami           = "ami-0c55b159cbfafe1f0" # Amazon Linux 2 AMI
+  instance_type = "t2.micro"
+
+  tags = {
+    Name = "ExampleInstance"
+  }
+}
+```
+
+This script specifies that we want to use the AWS provider and creates an EC2 instance with the specified AMI and instance type.
+
+### Creating an S3 Bucket
+To create an S3 bucket, add the following resource block to your main.tf file:
+
+```main.tf
+resource "aws_s3_bucket" "example" {
+  bucket = "my-unique-bucket-name-123"
+  acl    = "private"
+
+  tags = {
+    Name        = "ExampleBucket"
+    Environment = "Dev"
+  }
+}
+
+This script will create an S3 bucket with a unique name and private access.
+
+### Setting Up an RDS Instance
+To set up an RDS instance, include the following configuration:
+
+```main.tf
+resource "aws_db_instance" "example" {
+  allocated_storage    = 20
+  engine               = "mysql"
+  engine_version       = "5.7"
+  instance_class       = "db.t2.micro"
+  name                 = "mydb"
+  username             = "admin"
+  password             = "password"
+  parameter_group_name = "default.mysql5.7"
+  skip_final_snapshot  = true
+
+  tags = {
+    Name = "ExampleDBInstance"
+  }
+}
+```
+This script provisions a MySQL database instance with the specified parameters.
+
+### Applying the Configuration
+Once you have defined your infrastructure in the main.tf file, you can apply the configuration using the following commands:
+
+1. Initialize the Terraform configuration:
+
+```main.tf
+terraform init
+```
+
+2. Validate the configuration:
+
+```main.tf
+terraform validate
+```
+
+Apply the configuration:
+
+```main.tf
+terraform apply
+```
+
+You'll be prompted to confirm the action. Type `yes` to proceed.
+
+## Conclusion
+In this post, we covered how to create custom Terraform scripts to automate the provisioning of AWS services like EC2 instances, S3 buckets, and RDS instances. Terraform provides a powerful way to manage your infrastructure as code, making it easy to version control and share configurations.
+
+Feel free to expand these scripts to include more complex resources and configurations based on your needs. Happy automating!
