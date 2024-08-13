@@ -12,7 +12,7 @@ tags:
 # Comparing Microsoft Bicep and HashiCorp Terraform: A Deep Dive
 
 ## Introduction
-In the ever-evolving landscape of cloud computing, the ability to deploy and manage infrastructure efficiently and reliably has never been more crucial. This is where Infrastructure as Code (IaC) steps in as a game-changer, allowing teams to automate the setup of their cloud environments using simple code files. Among the leading tools that make this possible are Microsoft Bicep and HashiCorp Terraform—two powerhouses in the IaC arena.
+The ability to deploy and manage infrastructure efficiently and reliably has never been more crucial. This is where Infrastructure as Code (IaC) steps in as a game-changer, allowing teams to automate the setup of their cloud environments using simple code files. Among the leading tools that make this possible are Microsoft Bicep and HashiCorp Terraform—two powerhouses in the IaC arena.
 
 While both tools aim to simplify infrastructure management, they do so in uniquely different ways that cater to varying needs and preferences. Microsoft Bicep is a newcomer, specifically designed to enhance the experience of deploying resources in Azure with a cleaner, more intuitive syntax. On the other hand, HashiCorp Terraform has established itself as a versatile veteran, capable of handling multiple providers and offering flexibility across various platforms.
 
@@ -22,7 +22,8 @@ We will dive deeper into the nuances of Bicep and Terraform, comparing their app
 Imagine you're an architect crafting the blueprint for a modern skyscraper—your tools need to be as precise and straightforward as possible. Enter Microsoft Bicep, a tool designed to refine and simplify the blueprinting process, but for cloud environments specifically within Microsoft Azure. As a domain-specific language (DSL), Bicep makes it easier to deploy resources in Azure, transforming the notoriously verbose Azure Resource Manager (ARM) templates into a more digestible format.
 
 ### Simplifying Azure Deployments
-Bicep acts like a friendly translator for ARM's complex JSON syntax, turning it into a cleaner, more readable language that mirrors the way you think about infrastructure. This streamlined syntax not only reduces the risk of errors but also makes your code easier to maintain and share with others. By focusing on readability and simplicity, Bicep allows developers and IT professionals to define what they need without getting bogged down by how every detail of the configuration needs to be scripted.
+Bicep acts like a friendly translator for ARM's complex JSON syntax, turning it into a cleaner, more readable language that mirrors the way you think about infrastructure. 
+This streamlined syntax not only reduces the risk of errors but also makes your code easier to maintain and share with others. By focusing on readability and simplicity, Bicep allows developers and IT professionals to define what they need without getting bogged down by how every detail of the configuration needs to be scripted.
 
 ```hcl title="main.bicep"
 resource appService 'Microsoft.Web/sites@2024-06-01' = {
