@@ -49,6 +49,8 @@ Here are some reasons why Q-Learning is a good choice for building a stock tradi
 - Simplicity: Q-Learning is relatively simple to implement and understand compared to other complex reinforcement learning algorithms.
 - Scalability: It can be scaled to handle large state and action spaces, making it suitable for complex trading environments.
 
+However, Q-learning takes a large amount of data and time to train to converge to an optimal strategy.
+
 ### Alternative Models to Consider
 I learned this method in class and was the most comfortable with it which is why I decided to use it in my example. 
 However, it is not the only algorithm suitable for stock trading. Here are some alternative models to consider:
@@ -78,7 +80,12 @@ However, it is not the only algorithm suitable for stock trading. Here are some 
 
 1. Data Collection
 
-First, we need to collect historical stock prices and options data. I used the Alpaca API to fetch this data.
+The first step is to gather historical stock data and options data, which serves as the foundation for training your model. The data will allow the Q-Learner to understand the environment it will operate in, including price movements and volatility.
+
+We can use an API like Alpaca to fetch historical stock prices and additional sources for options data.
+
+- `stock_data` contains daily historical prices for an example stock like Apple('AAPL'). This is critical for making predictions and understanding market trends.
+- Options data, when available, provides insights into market sentiment and potential price movements.
 
 ```python title="trade.py"
 import alpaca_trade_api as tradeapi
@@ -94,7 +101,12 @@ options_data = fetch_options_data('AAPL')
 
 2. Preprocessing Data
 
-Next, we preprocess the data to make it suitable for our Q-Learning model. There are other models that could be used.
+Raw data often needs to be cleaned and structured before it can be fed into the Q-Learner. This includes normalizing prices and creating features that help the model make decisions.
+
+We can normalize the data and create technical indicators (e.g., Simple Moving Average, Bollinger Bands).
+
+- Normalization is scaling prices to help the model learn without being biased by the magnitude of raw prices.
+- SMA & Bollinger Bands indicators help the model identify trends and volatility, informing buying/selling decisions.
 
 ```python title="trade.py"
 import pandas as pd
@@ -109,7 +121,13 @@ stock_data['SMA_ratio'] = stock_data['normalized_close'] / stock_data['SMA']
 
 3. Implementing Q-Learning
 
-We implement a Q-Learning agent to decide on trading actions based on the state of the stock market.
+The Q-Learner is the core of your trading bot. It uses a Q-table to learn the best actions (buy, sell, hold) based on the state of the market.
+
+We can define the Q-Learner class with essential parameters like the learning rate (alpha), discount factor (gamma), and exploration rate (rar).
+
+- Learning Rate (alpha) controls how much new information overrides old information. A higher alpha makes the model learn faster but might make it unstable.
+- Discount Factor (gamma) balances immediate and future rewards. A higher gamma makes the model consider long-term gains.
+- Exploration Rate (rar) lets the the model explore more; as training progresses, it exploits learned knowledge by choosing the best-known action.
 
 ```python title="trade.py"
 import numpy as np
@@ -145,7 +163,12 @@ learner = QLearner(num_states, num_actions, alpha=0.1, gamma=0.9, epsilon=0.2, d
 
 4. Strategy Implementation
 
-We then train our Q-Learning agent using historical data.
+The Q-Learner needs to experience different states and actions to learn the optimal strategy. Training involves simulating trades and updating the Q-table based on the rewards received.
+
+We can iterate through the stock data, simulate trades, and update the Q-table based on the reward of each action.
+
+- The reward function is key to the Q-Learner's success. In this case, a simple difference in price is used, but more complex rewards (e.g., considering transaction costs, risk) could be implemented.
+- The loop allows the Q-Learner to experience different market conditions, reinforcing good decisions (e.g., buying low, selling high).
 
 ```python title="trade.py"
  # Example of training loop
@@ -160,7 +183,12 @@ for epoch in range(100):  # Number of epochs
 
 5. Testing
 
-Finally, we test our trained model to see how well it performs.
+After training, it's important to evaluate the strategy to see how well it performs in historical scenarios. Backtesting simulates how the strategy would have behaved in the past.
+
+We can run the trained Q-Learner on the historical data and compare the performance to benchmarks like buy-and-hold.
+
+- The Q-Learner's actions directly influence the portfolio's value. This method allows you to see if the strategy would have made money or not.
+- Tracking the portfolio value (port_vals) over time gives insight into the strategy's effectiveness.
 
 ```python title="trade.py"
  # Test the trained Q-Learner
