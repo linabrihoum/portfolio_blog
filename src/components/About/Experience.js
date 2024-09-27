@@ -51,11 +51,11 @@ const Experience = () => {
         />
         <ul className="w-full flex flex-col items-start justify-between ml-4">
           <Details
-            position="Senior Developer Relations Engineer | Site Relability, DevSecOps, Artifical Intelligence"
+            position="Technical Product Manager - DevSecOps Consultant"
             company="IBM"
             time="November 2021 - present"
-            work="Delivered high-quality technical content on cloud architecture, AI, and cybersecurity through various channels, increasing engagement year-over-year, 
-            while facilitating community feedback, mentoring engineers, and collaborating on developer relations to enhance product development and knowledge sharing"
+            work="Led a team to deliver AI and cloud software products, optimizing operations, and collaborated with senior stake holders to improve various platforms. 
+            Designed scalable cloud infrastructure on AWS/Azure, developed AI systems, and drove $50M in revenue through customer-centric strategies."
           />
           <Details
             position="DevSecOps Lead Engineer"
