@@ -66,7 +66,7 @@ const Experience = () => {
           />
           <Details
             position="Full Stack Engineer"
-            company="Voidstar Solutions"
+            company="Solar Havoc"
             time="June 2016 - March 2020"
             work="Independently developed and managed DoD software programs and mobile applications, handled full-stack development, created responsive user interfaces, developed back-end functionalities, 
             and maintained CI/CD pipelines and cloud infrastructure, achieving 99.99% uptime for customer-facing applications."
