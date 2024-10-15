@@ -1,12 +1,14 @@
 import React from "react";
-import Grid from "./GrideSection";
+import Info from "./Info";
+import { AnimatedPinDemo } from "./ProjectCard";
 
 
 const ProjectSection = () => {
   return (
-      <div className="dark:text-white text-dark ">
-        <Grid />
-      </div>
+    <div className="dark:text-white text-dark ">
+      <Info />
+      <AnimatedPinDemo />
+    </div>
   );
 };
 

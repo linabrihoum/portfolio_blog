@@ -2,17 +2,20 @@
 
 const { withContentlayer } = require("next-contentlayer");
 
+/** @type {import('next').NextConfig} */
 const nextConfig = {
-  //output:  "export",
-};
+  // Other Next.js configurations can go here
+  // output: "export", // Uncomment if needed
 
-const MAILCHIMP_API_KEY = process.env.MAILCHIMP_API_KEY;
-
-module.exports = {
-  nextConfig,
-  env: {
-    MAILCHIMP_API_KEY: process.env.MAILCHIMP_API_KEY,
+  images: {
+    domains: ["assets.aceternity.com"],
   },
+
+  // Uncomment and set your environment variables if needed
+  // env: {
+  //   MAILCHIMP_API_KEY: process.env.MAILCHIMP_API_KEY,
+  // },
 };
 
-module.exports = withContentlayer({ ...nextConfig });
+module.exports = withContentlayer(nextConfig);
+
