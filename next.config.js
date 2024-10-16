@@ -1,4 +1,4 @@
-/** @type {import('next').NextConfig} */
+// next.config.js
 
 const { withContentlayer } = require("next-contentlayer");
 
@@ -8,7 +8,7 @@ const nextConfig = {
   // output: "export", // Uncomment if needed
 
   images: {
-    domains: ["assets.aceternity.com"],
+    domains: ["assets.aceternity.com", "images.unsplash.com"],
   },
 
   // Uncomment and set your environment variables if needed
@@ -18,4 +18,3 @@ const nextConfig = {
 };
 
 module.exports = withContentlayer(nextConfig);
-
