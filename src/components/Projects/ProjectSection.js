@@ -1,9 +1,9 @@
 // ProjectSection.js
 
 import React from "react";
-import Info from "./Info";
 import { ProjectCard } from "./ProjectCard";
 import projects from "./projectsData";
+import SkillsMarquee from "./SkillsMarquee";
 
 const ProjectSection = () => {
   const row1Projects = projects.filter((project) => project.row === 1);
@@ -13,7 +13,7 @@ const ProjectSection = () => {
 
   return (
     <section className="dark:text-white text-dark px-4 md:px-8 lg:px-16">
-      <Info />
+      
 
       {/* First Row */}
       <div className="mt-8">
@@ -49,7 +49,7 @@ const ProjectSection = () => {
             {...project}
             layout="third"
             heightClass="h-18"
-            imagePosition="top" // Default layout
+            imagePosition="top"
           />
         ))}
       </div>
@@ -62,7 +62,7 @@ const ProjectSection = () => {
             {...project}
             layout="quarter"
             heightClass="h-18"
-            imagePosition="top" // Default layout
+            imagePosition="top"
           />
         ))}
       </div>

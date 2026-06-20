@@ -40,7 +40,7 @@ const Education = () => {
         <ul className="w-full flex flex-col items-start justify-between ml-4">
           <Details
             type="Masters of Science in Computer Science"
-            subtype="Specalization in Machine Learning"
+            subtype="Specalization in Artificial Intelligence"
             place="Georgia Institute of Technology"
             time=""
           />

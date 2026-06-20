@@ -51,7 +51,7 @@ const Experience = () => {
         />
         <ul className="w-full flex flex-col items-start justify-between ml-4">
           <Details
-            position="Technical Product Manager - DevSecOps Consultant"
+            position="Engineering Manager - Cloud & AI"
             company="IBM"
             time="November 2021 - present"
             work="Led a team to deliver AI and cloud software products, optimizing operations, and collaborated with senior stake holders to improve various platforms. 

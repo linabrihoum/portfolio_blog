@@ -3,9 +3,9 @@ const siteMetadata = {
   title: "Lina Brihoum Blog",
   author: "Lina Brihoum",
   headerTitle:
-    "Site Relability, Cloud Architecture, and Artifical Intelligence",
+    "Site Reliability, Cloud Architecture, and Artificial Intelligence",
   description:
-    "Exploring the intersection of Site Reliability Engineering, Cloud Architecture, and Artifical Intelligence.",
+    "Exploring the intersection of Site Reliability Engineering, Cloud Architecture, and Artificial Intelligence.",
   language: "en-us",
   theme: "system", // system, dark or light
   siteUrl: "https://linabrihoum.com",

@@ -14,10 +14,10 @@ const Description = () => {
           <br />
           I'm a DevSecOps Architect that specializes in Site Reliability, Cyber Security
           and Artificial Intelligence. <br />
-          <br /> I have a total of 10 years of experience in technology ranging
+          <br /> I have over 10 years of experience in technology ranging
           from game development, networking, full stack development, cyber
           security and cloud architecture. <br /> <br />
-          My hobbies include weight lifting, reading, cooking, crocheting, and
+          My hobbies include weight lifting, reading, cooking, drawing, and
           playing video games. <br /> <br />
           I created this to share my knowledge and experience regarding
           different sectors of technology, I hope you enjoy! <br />

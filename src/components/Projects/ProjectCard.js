@@ -50,17 +50,9 @@ export function ProjectCard({
                   translateZ={20}
                   as={Link}
                   href={link}
-                  className="px-4 py-2 rounded-md text-sm font-medium text-blue-600 dark:text-blue-400 hover:underline"
-                >
-                  Learn More →
-                </CardItem>
-                <CardItem
-                  translateZ={20}
-                  as={Link}
-                  href={link}
                   className="px-4 py-2 rounded-md bg-black dark:bg-white text-white dark:text-black text-sm font-bold hover:bg-gray-800 dark:hover:bg-gray-200"
                 >
-                  View Demo
+                  View Source Code Here!
                 </CardItem>
               </div>
             </div>
@@ -107,14 +99,6 @@ export function ProjectCard({
                 {description}
               </CardItem>
               <div className="flex space-x-4">
-                <CardItem
-                  translateZ={20}
-                  as={Link}
-                  href={link}
-                  className="px-4 py-2 rounded-md text-sm font-medium text-blue-600 dark:text-blue-400 hover:underline"
-                >
-                  Learn More →
-                </CardItem>
                 <CardItem
                   translateZ={20}
                   as={Link}

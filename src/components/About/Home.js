@@ -15,7 +15,7 @@ const Home = () => {
         </h2>
         <p className="font-medium mt-4 text-base">
           I'm a Cloud Architect that specializes in Site Reliability, DevSecOps,
-          and Artificial Intelligence. <br />I have a total of 10 years of
+          and Artificial Intelligence. <br />I have over 10 years of
           experience in technology ranging from game development, networking,
           full stack development and cloud architecture. <br />
           My hobbies include weight lifting, reading, cooking, crocheting, and
