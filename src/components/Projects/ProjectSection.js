@@ -1,71 +1,101 @@
 // ProjectSection.js
+"use client";
 
 import React from "react";
+import { motion } from "framer-motion";
 import { ProjectCard } from "./ProjectCard";
 import projects from "./projectsData";
-import SkillsMarquee from "./SkillsMarquee";
+
+const headerVariants = {
+  hidden: { opacity: 0, y: 30 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.6, ease: "easeOut" },
+  },
+};
+
+const featuredVariants = {
+  hidden: { opacity: 0, y: 60 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.7, ease: "easeOut" },
+  },
+};
+
+const gridContainerVariants = {
+  hidden: {},
+  visible: {
+    transition: { staggerChildren: 0.12 },
+  },
+};
+
+const gridItemVariants = {
+  hidden: { opacity: 0, y: 40, scale: 0.97 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    transition: { duration: 0.5, ease: "easeOut" },
+  },
+};
 
 const ProjectSection = () => {
-  const row1Projects = projects.filter((project) => project.row === 1);
-  const row2Projects = projects.filter((project) => project.row === 2);
-  const row3Projects = projects.filter((project) => project.row === 3);
-  const row4Projects = projects.filter((project) => project.row === 4);
+  const featuredProjects = projects.filter((project) => project.featured);
+  const gridProjects = projects.filter((project) => !project.featured);
 
   return (
-    <section className="dark:text-white text-dark px-4 md:px-8 lg:px-16">
-      
+    <section className="text-dark dark:text-light px-5 sm:px-10 md:px-24 sxl:px-32 pb-24">
+      {/* Page header */}
+      <motion.div
+        variants={headerVariants}
+        initial="hidden"
+        animate="visible"
+        className="mt-16 mb-12 text-center"
+      >
+        <h1 className="font-bold text-4xl md:text-5xl lg:text-6xl">
+          Projects
+        </h1>
+        <p className="mt-4 text-base md:text-lg text-dark/70 dark:text-light/70 max-w-2xl mx-auto">
+          Things I&apos;ve built across cloud, machine learning, and the web.
+          Every project links to its source code.
+        </p>
+        <span className="inline-block mt-6 w-24 h-1 rounded-full bg-accent dark:bg-accentDark" />
+      </motion.div>
 
-      {/* First Row */}
-      <div className="mt-8">
-        {row1Projects.map((project) => (
-          <ProjectCard
+      {/* Featured projects — large alternating spotlight cards */}
+      <div className="flex flex-col gap-10">
+        {featuredProjects.map((project, index) => (
+          <motion.div
             key={project.id}
-            {...project}
-            layout="full"
-            heightClass="h-28"
-            imagePosition="left" // Image on the left, text on the right
-          />
+            variants={featuredVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.25 }}
+          >
+            <ProjectCard
+              {...project}
+              imagePosition={index % 2 === 0 ? "left" : "right"}
+            />
+          </motion.div>
         ))}
       </div>
 
-      {/* Second Row */}
-      <div className="mt-4">
-        {row2Projects.map((project) => (
-          <ProjectCard
-            key={project.id}
-            {...project}
-            layout="full"
-            heightClass="h-20"
-            imagePosition="right" // Image on the right, text on the left
-          />
+      {/* Remaining projects — staggered reveal grid */}
+      <motion.div
+        variants={gridContainerVariants}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, amount: 0.1 }}
+        className="mt-16 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+      >
+        {gridProjects.map((project) => (
+          <motion.div key={project.id} variants={gridItemVariants} className="h-full">
+            <ProjectCard {...project} imagePosition="top" />
+          </motion.div>
         ))}
-      </div>
-
-      {/* Third Row */}
-      <div className="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4">
-        {row3Projects.map((project) => (
-          <ProjectCard
-            key={project.id}
-            {...project}
-            layout="third"
-            heightClass="h-18"
-            imagePosition="top"
-          />
-        ))}
-      </div>
-
-      {/* Fourth Row */}
-      <div className="mt-4 grid grid-cols-1 md:grid-cols-4 gap-4">
-        {row4Projects.map((project) => (
-          <ProjectCard
-            key={project.id}
-            {...project}
-            layout="quarter"
-            heightClass="h-18"
-            imagePosition="top"
-          />
-        ))}
-      </div>
+      </motion.div>
     </section>
   );
 };

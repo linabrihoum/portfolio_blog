@@ -1,9 +1,9 @@
 ---
 title: "Software Architecture Principle SOLID"
-description: "Mastering SOLID Principles in Software Design"
+description: "Mastering SOLID Principles in Software Design — what each principle actually claims, the misreadings that lead to over-engineered code, and how the same ideas show up in microservices and infrastructure design."
 image: "../../public/blogs/solid.jpg"
-publishedAt: "2024-05-30"
-updatedAt: "2024-05-30"
+publishedAt: "2024-08-30"
+updatedAt: "2024-08-30"
 author: "Lina Brihoum"
 isPublished: true
 tags: 
@@ -12,7 +12,7 @@ tags:
 
 # Mastering SOLID Principles in Software Design
 
-In software development - maintaining clean, manageable, and scalable code is paramount. The SOLID principles, introduced by Robert C. Martin, offer a robust framework to achieve these goals. 
+In software development, maintaining clean, manageable, and scalable code is paramount. The SOLID principles, popularized by Robert C. Martin, offer a robust framework for achieving it. They are also — and this is the part most write-ups skip — among the most misapplied ideas in software engineering, regularly invoked to justify layers of abstraction that make codebases *worse*. So this post does two jobs: explain each principle precisely, with examples, and mark the boundary where each one stops being good advice.
 
 ## What are SOLID Principles?
 
@@ -28,24 +28,27 @@ SOLID is an acronym that stands for:
   src="/blogs/solid.png"
   width="800"
   height="400"
-  alt="Image"
+  alt="SOLID principles"
   sizes="100vw"
 />
 
-These principles are designed to make software designs more understandable, flexible, and maintainable. Let's break down each principle.
+One framing before diving in: all five principles are managing the same underlying quantity — **coupling**, the degree to which changing one piece of code forces changes in another. Every principle below is a different strategy for making change *local*. Judge every application of them by that test: did this indirection make future change cheaper, or did it just add a file?
 
 ## S: Single Responsibility Principle (SRP)
 
 ### What it is
-A class should have only one reason to change, meaning it should have only one job or responsibility.
+
+A class should have only one reason to change. The popular paraphrase — "a class should do one thing" — is subtly wrong, and the difference matters. Martin's actual definition is about *sources of change*: a class should be answerable to only one stakeholder or concern. His later, sharper formulation: *gather together the things that change for the same reasons; separate things that change for different reasons.* A class can do several things and still satisfy SRP, so long as those things change together.
 
 ### Why it is important
-- **Ease of maintenance:** It makes the code easier to understand and maintain. When a class has only one responsibility, you know exactly where to look when you need to make changes related to that responsibility.
-- **Reduced risk of bugs:** It reduces the risk of bugs since changes in one part of the code won't affect other unrelated parts.
-- **Improved readability:** It enhances reusability because classes with a single responsibility are more likely to be useful in different contexts.
+
+- **Ease of maintenance:** when a class serves one concern, you know exactly where to look — and, just as importantly, what you *won't* break elsewhere when you touch it.
+- **Reduced merge friction:** classes serving multiple masters become merge-conflict magnets, because unrelated changes keep landing in the same file.
+- **Improved testability:** a single-concern class needs a fraction of the test scaffolding.
 
 ### Example
-Imagine you are building a simple application that manages books in a library. You might be tempted to create a single Book class that handles everything related to a book, including its data and how it is saved to a database. This violates SRP.
+
+Imagine a library application. It's tempting to create a single Book class that holds the data, persists itself, and formats itself for display:
 
 ```python
 class Book:
@@ -58,10 +61,10 @@ class Book:
         pass
 
     def print_details(self):
-        # Code to print book details
         print(f"{self.title} by {self.author}")
 ```
-Instead, you should separate these responsibilities into different classes:
+
+This class answers to three different concerns that change on three different schedules: the domain model (what a book *is*), the persistence strategy (a DBA concern), and presentation (a UI concern). Separate them:
 
 ```python
 class Book:
@@ -71,35 +74,40 @@ class Book:
 
 class BookDatabase:
     def save_to_database(self, book):
-        # Code to save the book to a database
         pass
 
 class BookPrinter:
     def print_details(self, book):
-        # Code to print book details
         print(f"{book.title} by {book.author}")
 ```
 
-Here, Book is only responsible for holding the book's data, BookDatabase handles saving the book to a database, and BookPrinter handles printing the book details. Each class has a single responsibility, making the code more modular and easier to manage.
+### Where it goes wrong
+
+Taken to its extreme, SRP produces the codebase where every class has one method and understanding a single user action requires opening eleven files. The corrective is the "changes together" test: if two behaviors have always changed in the same commit, separating them adds navigation cost and buys nothing. Cohesion is the goal; fragmentation is the failure mode wearing the goal's clothes.
 
 ## O: Open/Closed Principle (OCP)
 
 ### What it is
-Software entities (such as classes, modules, and functions) should be open for extension but closed for modification. This means you should be able to add new functionality without changing existing code.
+
+Software entities should be open for extension but closed for modification — you should be able to add new behavior without editing existing, tested code. The mechanism is always some form of abstraction: new behavior arrives as a new implementation of an existing interface, and the surrounding code doesn't change because it only ever spoke to the interface.
 
 ### Why it is important
-- **Enhances flexibility:** It promotes code reusability and maintainability. When you need to add new features, you can do so without risking breaking existing functionality.
-- **Improves maintainability:** It makes the code more robust and easier to test since existing code remains unchanged.
+
+- **Change without regression risk:** untouched code can't acquire new bugs. Every plugin system, middleware stack, and driver model in the software you use is OCP industrialized — VS Code doesn't get modified when you install an extension.
+- **Independent deployability:** in larger systems, extension-over-modification is what lets teams add behavior without coordinating a change to shared core code.
 
 ### Example
-Let's say you are building a notification system that currently supports sending notifications via email. Initially, you might have a simple Notification class that handles email notifications:
+
+A notification system that starts with email:
+
 ```python
 class Notification:
     def send_email(self, message):
         print(f"Sending email with message: {message}")
 ```
 
-Now, if you want to add SMS notifications, you would have to modify the Notification class. 
+Adding SMS by editing the class means retesting everything that touches it — and doing so again for every future channel:
+
 ```python 
 class Notification:
     def send_email(self, message):
@@ -109,8 +117,8 @@ class Notification:
         print(f"Sending SMS with message: {message}")
 ```
 
+Design it instead around an abstraction:
 
-Instead, you should design the system so that you can extend it without modifying the existing code. One way to achieve this is by using interfaces or abstract classes:
 ```python 
 from abc import ABC, abstractmethod
 
@@ -132,21 +140,27 @@ class PushNotifier(Notifier):
         print(f"Sending push notification with message: {message}")
 ```
 
-Here, Notifier is an abstract base class with a send method that different notifier types (like EmailNotifier, SMSNotifier, and PushNotifier) can implement. To add a new type of notification, you simply create a new class that inherits from Notifier and implements the send method, without changing any existing classes.
+New channels are new classes; existing code never reopens.
 
+### Where it goes wrong
 
+OCP has a prerequisite nobody states: **you have to guess the axis of change correctly.** The abstraction above pays off only if the thing that varies is *the channel*. If the actual future change is "notifications need batching and retry," the Notifier hierarchy doesn't help — you'll be modifying everything anyway. Speculative abstraction against changes that never come is how codebases fill with interfaces that have exactly one implementation. The practical discipline: extract the abstraction when the *second* concrete case arrives, not before. The first duplication is information; the abstraction should be built from evidence.
 
 ## L: Liskov Substitution Principle (LSP)
 
 ### What it is
-Objects of a superclass should be replaceable with objects of a subclass without affecting the correctness of the program. Essentially, if class B is a subclass of class A, you should be able to replace A with B without altering the desirable properties of the program.
+
+Objects of a superclass should be replaceable with objects of a subclass without affecting the correctness of the program. This is the most formally precise of the five — Barbara Liskov's actual formulation is about **behavioral contracts**, not method signatures: a subtype may not *strengthen preconditions* (demand more than the parent did), may not *weaken postconditions* (deliver less than the parent promised), and must preserve the parent's invariants. A subclass that compiles cleanly can still violate LSP — which is why type checkers won't save you, and why LSP violations surface as runtime surprises in code that "looks right."
 
 ### Why it is important
-- **Promotes reliable polymorphism:** It ensures that a subclass can stand in for its superclass without causing errors or unexpected behavior, making the code more flexible and robust.
-- **Enhances flexibility:** It promotes reliable polymorphism, allowing objects to be treated as instances of their parent class.
+
+- **Reliable polymorphism:** the entire point of an inheritance hierarchy is that callers can program against the base type. An LSP-violating subclass silently invalidates every such caller — the bug lives in the subclass but detonates in code that did nothing wrong.
+- **Honest hierarchies:** LSP is the test that reveals when "is-a" intuitions from the real world make bad type hierarchies. A square *is* a rectangle in geometry; a mutable Square that inherits Rectangle's independent `set_width`/`set_height` breaks every caller that assumed the two were independent. Real-world taxonomy and behavioral substitutability are different relations.
 
 ### Example
-Imagine you have a base class Bird and a subclass Penguin. If the Bird class has a method fly, the Penguin class, which cannot fly, would violate the Liskov Substitution Principle if it inherits from Bird.
+
+The classic bird problem:
+
 ```python 
 class Bird:
     def fly(self):
@@ -160,7 +174,7 @@ class Penguin(Bird):
         raise NotImplementedError("Penguins cannot fly")
 ```
 
-To adhere to LSP, you can refactor the design so that not all birds are expected to fly. One way to do this is by using composition instead of inheritance:
+`Penguin.fly` raising where `Bird.fly` succeeds is a strengthened precondition — callers holding a `Bird` now need to know which birds are safe to fly, which defeats the abstraction entirely. Restructure so the ability lives only where it's true:
 
 ```python 
 class Bird:
@@ -176,19 +190,22 @@ class Sparrow(FlyableBird):
 class Penguin(Bird):
     pass
 ```
-In this design, FlyableBird is a subclass of Bird that adds the ability to fly. Sparrow inherits from FlyableBird, so it can fly, while Penguin directly inherits from Bird, avoiding the fly method altogether.
+
+The heuristic version worth memorizing: **if a subclass overrides a method to throw, return a dummy value, or do nothing, the hierarchy is lying to you.** That's not a style problem — it's a signal that the abstraction boundary is drawn in the wrong place, and composition will usually serve better than inheritance there.
 
 ## I: Interface Segregation Principle (ISP)
 
 ### What it is
-A class should not be forced to implement interfaces it does not use. Instead of one large interface, many smaller, more specific interfaces are preferred.
+
+A class should not be forced to implement interfaces it does not use. Instead of one large interface, many smaller, role-specific interfaces are preferred — clients should depend only on the methods they actually call.
 
 ### Why it is important
-- **Reduces complexity:** It reduces the complexity of the code by ensuring that classes only implement methods that are relevant to them, making the code easier to understand and maintain.
-- **Enhances modularity:** It promotes the design of cohesive and modular interfaces, which leads to more flexible and scalable code.
+
+- **Coupling control:** a client that depends on a fat interface is coupled to every method on it — including changes to methods it never calls. Small interfaces shrink each client's exposure to exactly its real dependency.
+- **Honest capabilities:** segregated interfaces make capability explicit in the type system. `SimplePrinter implements Printer` tells the truth; a `SimplePrinter` with a `fax()` that throws is an LSP violation manufactured by an ISP violation — the two principles fail together more often than separately.
 
 ### Example
-Imagine you are designing a system for different types of printers. You might start with a single interface Printer that includes methods for printing, scanning, and faxing:
+
 ```python 
 class Printer:
     def print(self, document):
@@ -211,7 +228,7 @@ class SimplePrinter(Printer):
         raise NotImplementedError("SimplePrinter cannot fax")
 ```
 
-In this example, SimplePrinter is forced to implement scan and fax methods even though it does not support these functionalities, which violates ISP.
+Split by role:
 
 ```python 
 class Printer:
@@ -240,25 +257,27 @@ class MultiFunctionPrinter(Printer, Scanner, Fax):
     def fax(self, document):
         print(f"Faxing: {document}")
 ```
-In this design, SimplePrinter only implements the Printer interface, while MultiFunctionPrinter implements all three interfaces: Printer, Scanner, and Fax. This way, each class only implements the methods it needs, adhering to the Interface Segregation Principle.
 
-## D:Dependency Inversion Principle (DIP)
+A language note that shows the principle is bigger than class hierarchies: Python's `typing.Protocol` and Go's implicitly-satisfied interfaces are ISP built into the language — in Go, the *consumer* defines the small interface it needs (`io.Reader` is one method), and anything with that method satisfies it. The convention "accept interfaces, return structs" is ISP as idiom.
+
+## D: Dependency Inversion Principle (DIP)
 
 ### What it is
-High-level modules should not depend on low-level modules. Both should depend on abstractions (e.g., interfaces). Abstractions should not depend on details. Details (concrete implementations) should depend on abstractions.
+
+High-level modules should not depend on low-level modules; both should depend on abstractions. And the direction matters more than the summary suggests: the abstraction is *owned by the high-level policy*, and the low-level detail conforms to it. Your business logic defines the `UserRepository` interface it needs; the Postgres implementation answers to that interface — not the other way around. That inversion of ownership is what the "inversion" in the name refers to.
 
 ### Why it is important
-- **Enhances modularity:** It makes the system more modular and flexible. High-level components are less likely to be affected by changes in low-level components.
-- **Improves testability:** It enhances testability because dependencies can be easily mocked or replaced with stubs during testing.
-- **Enhances modularity:** It promotes loose coupling, which makes the code easier to maintain and extend.
+
+- **The core outlives the details:** databases, frameworks, and message brokers get swapped; business rules survive. DIP is what makes the survival cheap — this is the load-bearing idea inside hexagonal architecture ("ports and adapters") and clean architecture, both of which are DIP applied at system scale.
+- **Testability by construction:** when dependencies arrive through an abstraction, tests inject fakes without patching or monkeying — the seam is designed in, not carved out later.
 
 ### Example
-Imagine you are designing a system where a Database class is used by a UserService class to retrieve user data. Initially, you might have a direct dependency:
+
+The direct dependency:
 
 ```python 
 class Database:
     def get_user(self, user_id):
-        # Code to retrieve user from database
         pass
 
 class UserService:
@@ -269,7 +288,7 @@ class UserService:
         return self.database.get_user(user_id)
 ```
 
-In this example, UserService directly depends on the Database class, which violates DIP. To adhere to DIP, you should depend on abstractions instead of concrete implementations:
+Inverted — the service defines what it needs, the database conforms:
 
 ```python 
 from abc import ABC, abstractmethod
@@ -281,7 +300,6 @@ class UserRepository(ABC):
 
 class Database(UserRepository):
     def get_user(self, user_id):
-        # Code to retrieve user from database
         pass
 
 class UserService:
@@ -291,7 +309,8 @@ class UserService:
     def get_user(self, user_id):
         return self.user_repository.get_user(user_id)
 ```
-In this design, UserService depends on the UserRepository abstraction rather than the Database concrete implementation. This way, you can easily substitute the Database class with another implementation of UserRepository without changing the UserService class. For example, you can now create a mock repository for testing:
+
+And the testing payoff, with no mocking framework in sight:
 
 ```python 
 class MockRepository(UserRepository):
@@ -299,20 +318,17 @@ class MockRepository(UserRepository):
         return {"user_id": user_id, "name": "Mock User"}
 
 user_service = UserService(MockRepository())
-print(user_service.get_user(1))  # Output: {'user_id': 1, 'name': 'Mock User'}
+print(user_service.get_user(1))  # {'user_id': 1, 'name': 'Mock User'}
 ```
 
-By adhering to DIP, the system becomes more modular, testable, and maintainable.
+One practical addendum: something still has to construct the real object graph — decide that `UserService` gets the real `Database` in production. Do that wiring in one place at the application's entry point (the *composition root*), whether by hand or with a DI container. Scattered `Database()` constructions throughout the codebase are DIP violations wearing a trench coat.
+
+## SOLID Beyond Classes
+
+Here's the part that keeps these principles relevant long after class-heavy OOP stopped being the default style: they describe *module boundaries*, and everything is modules. A microservice that owns billing *and* notifications has an SRP problem, and it will manifest as two teams fighting over one deploy pipeline. A REST API that breaking-changes a response contract violates LSP against every client in the field — API versioning is LSP discipline at network scale. A Terraform module with forty required variables is a fat interface begging for ISP. And an application that speaks to "object storage" through an interface rather than importing the AWS SDK into its domain logic is doing DIP, which is why it can move clouds. The vocabulary was born in 1990s object orientation; the coupling problems it names moved into distributed systems and took the principles with them.
 
 ## Conclusion
 
-- All SOLID principles aim to create more maintainable, understandable, and flexible code.
-- They promote separation of concerns, modularity, and loose coupling.
+All five SOLID principles manage coupling — they are strategies for making change local, so that tomorrow's requirement costs a new file instead of a regression hunt. SRP separates things that change for different reasons; OCP lets behavior grow without reopening tested code; LSP keeps hierarchies honest enough that polymorphism can be trusted; ISP keeps clients coupled only to what they use; DIP points dependencies at abstractions owned by the policy, not the plumbing.
 
-- SRP focuses on the responsibility of a single class.
-- OCP emphasizes extending functionality without modifying existing code.
-- LSP ensures subclasses can substitute their base classes without altering the program's behavior.
-- ISP advocates for creating specific interfaces rather than general ones to avoid forcing classes to implement unused methods.
-- DIP promotes dependency on abstractions rather than concrete implementations, enhancing modularity and testability.
-
-By adhering to SOLID principles, developers can create systems that are easier to manage, extend, and scale. These principles provide a solid foundation for high-quality software design, making your codebase robust and adaptable to change.
+And all five share the same failure mode: applied speculatively, they generate indirection that costs more than the flexibility it buys. The principles are diagnostic tools, not commandments — reach for them when change is painful, extract abstractions when the second case arrives, and let every layer of indirection justify itself by a change it actually made cheaper. Used that way, SOLID delivers exactly what it promises: a codebase that bends where it needs to bend, and stays rigid everywhere else.

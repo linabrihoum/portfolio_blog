@@ -1,0 +1,130 @@
+---
+title: "GitOps: Running Infrastructure Like a Codebase"
+description: "An introduction to GitOps — what it is, why it matters, and how tools like ArgoCD and Flux turn a Git repository into the single source of truth for your infrastructure."
+image: "../../public/blogs/gitops.jpg"
+publishedAt: "2025-01-20"
+updatedAt: "2025-01-20"
+author: "Lina Brihoum"
+isPublished: true
+tags:
+- DevSecOps
+---
+
+# GitOps: Running Infrastructure Like a Codebase
+
+## Introduction
+
+Most teams already trust Git as the source of truth for their application code. Every change is reviewed, every version is recoverable, and the history tells you exactly who changed what and when. GitOps extends that same discipline to infrastructure and deployments: the desired state of your entire system lives in a Git repository, and automated software continuously works to make reality match it.
+
+The practical consequence is significant. When a Git repository defines what production should look like, deploying becomes a pull request, rolling back becomes a revert, and auditing becomes reading the commit history. There is no separate deployment tool with its own credentials and its own state to drift out of sync — the repository is the deployment tool. In this post, we'll cover the principles that make GitOps work, look at the two leading tools in the space, and walk through what a real GitOps workflow looks like in practice.
+
+<Image
+  src="/blogs/devops-lifecycle.jpeg"
+  width="800"
+  height="500"
+  alt="DevOps lifecycle"
+  sizes="100vw"
+/>
+
+## The Four Principles of GitOps
+
+GitOps is a specific set of practices rather than a general philosophy, and the [OpenGitOps project](https://opengitops.dev/) defines it through four principles.
+
+The first is **declarative configuration**. The desired state of the system is described as data — Kubernetes manifests, Terraform configurations, Helm values — rather than as a sequence of steps to execute. You declare what should exist, and the tooling figures out how to get there.
+
+The second is **versioned and immutable storage**. That declared state lives in a system that provides versioning and immutability, which in practice means Git. Every change to the desired state is a commit, which means every change is attributable, reviewable, and reversible.
+
+The third is **automatic pull**. Software agents running inside the target environment pull the desired state from the repository, rather than an external system pushing changes in. This is a subtle but important inversion: your CI system no longer needs production credentials, because nothing outside the cluster ever touches the cluster.
+
+The fourth is **continuous reconciliation**. The agents don't just apply changes when a commit lands — they continuously compare the actual state of the system against the desired state and correct any drift they find. If someone manually edits a deployment at 2am to work around an incident, the reconciler will notice the discrepancy and either revert it or flag it, depending on how you've configured it.
+
+## Why the Pull Model Matters
+
+Traditional CI/CD pipelines push changes to their targets: the pipeline builds an artifact, authenticates against the production environment, and applies the update. This works, but it concentrates risk in the pipeline. The CI system holds credentials for every environment it deploys to, which makes it one of the most valuable targets in your infrastructure, and its view of what is deployed can silently drift from what is actually running.
+
+The GitOps pull model inverts this relationship. An operator running inside the cluster — with access to nothing except its own cluster and a read-only view of the Git repository — watches for changes and applies them locally. Credentials never leave the environment they belong to. And because the operator continuously reconciles rather than deploying once, the environment converges back to the declared state even after manual changes, failed nodes, or partial outages. Drift, which is one of the most persistent operational problems in infrastructure management, effectively stops being possible without being visible.
+
+## ArgoCD and Flux
+
+Two CNCF-graduated projects dominate the GitOps space, and both are excellent — the choice between them is more about workflow preferences than capability gaps.
+
+[ArgoCD](https://argo-cd.readthedocs.io/) is the more widely adopted of the two, and its defining feature is a first-class web UI that visualizes every application, its sync status, and the live resource tree in the cluster. For teams onboarding to GitOps, that visibility matters — being able to see exactly which resources are out of sync, and diff the live state against Git before syncing, flattens the learning curve considerably. An ArgoCD application is itself a declarative resource:
+
+```yaml title="application.yaml"
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: my-app
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/myorg/my-app-config
+    targetRevision: main
+    path: overlays/production
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: my-app
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+```
+
+The `syncPolicy` block is where the reconciliation behavior is defined: `automated` means changes in Git are applied without manual approval, `prune` removes resources that have been deleted from the repository, and `selfHeal` reverts manual changes made directly to the cluster.
+
+[Flux](https://fluxcd.io/) takes a more composable, toolkit-style approach. Rather than a single application with a UI, Flux is a set of controllers — one that watches Git sources, one that applies Kustomize overlays, one that manages Helm releases — that you combine to build the workflow you need. It integrates tightly with Kubernetes-native tooling and tends to appeal to teams that want GitOps as invisible plumbing rather than a destination they log into:
+
+```yaml title="kustomization.yaml"
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: my-app
+  namespace: flux-system
+spec:
+  interval: 5m
+  sourceRef:
+    kind: GitRepository
+    name: my-app-config
+  path: ./overlays/production
+  prune: true
+  wait: true
+```
+
+| | ArgoCD | Flux |
+|---|---|---|
+| Interface | Full web UI, CLI | CLI-first, optional UI (Weave GitOps) |
+| Architecture | Single application | Composable controllers |
+| Multi-cluster | Built-in, centralized | Per-cluster agents |
+| Helm support | Rendered as manifests | Native Helm releases |
+| Best fit | Teams that want visibility | Teams that want minimal footprint |
+
+## A GitOps Workflow in Practice
+
+A typical setup separates code and configuration into two repositories. The application repository holds source code, and its CI pipeline does what CI does best: build, test, and push a container image to a registry. The configuration repository holds the manifests that describe what should be running — and it is the only thing the GitOps operator watches.
+
+The connection between the two is a commit. When CI publishes a new image, the final pipeline step updates the image tag in the configuration repository, either directly or through an automated pull request:
+
+```yaml title=".github/workflows/release.yml"
+- name: Update image tag in config repo
+  run: |
+    git clone https://github.com/myorg/my-app-config
+    cd my-app-config
+    kustomize edit set image my-app=registry.io/my-app:${{ github.sha }}
+    git commit -am "release: my-app ${{ github.sha }}"
+    git push
+```
+
+From that point, the GitOps operator takes over. It notices the new commit, diffs the desired state against the cluster, and applies the change. If the new version fails its health checks, rolling back is a `git revert` — no special tooling, no snowflake rollback procedure, just the same review-and-merge workflow the team already uses for everything else.
+
+This separation also produces a clean audit story. The configuration repository's history is a complete, ordered record of every change that reached the environment, in a format that both auditors and new team members can read without access to any deployment system.
+
+## Where Teams Struggle
+
+GitOps is not free of trade-offs, and it's worth knowing the common friction points before adopting it. Secrets management is the first one almost every team hits — you cannot commit secrets to a Git repository, so you need a strategy like [Sealed Secrets](https://github.com/bitnami-labs/sealed-secrets), [External Secrets Operator](https://external-secrets.io/), or SOPS encryption before going all-in. Environment promotion is another: promoting a release from staging to production means modeling your environments in the repository structure, and there are several reasonable patterns (directories, branches, separate repositories) with genuinely different trade-offs. And the reconciliation loop itself can surprise teams during incidents, when a manual hotfix applied directly to the cluster is silently reverted by an operator doing exactly what it was told to do.
+
+None of these are reasons to avoid GitOps — but they are reasons to adopt it deliberately, starting with one application and one environment rather than migrating everything at once.
+
+## Conclusion
+
+GitOps takes the version control discipline that already works for application code and applies it to the harder problem of infrastructure state. Declarative configuration in Git gives you review, history, and rollback for free; the pull-based reconciliation model eliminates configuration drift and keeps production credentials out of your CI system entirely. ArgoCD and Flux are both mature, well-supported paths into this model — pick ArgoCD if your team benefits from a visual control plane, Flux if you prefer composable building blocks. Either way, start small: one application, one cluster, one repository as the source of truth. The workflow tends to sell itself from there.

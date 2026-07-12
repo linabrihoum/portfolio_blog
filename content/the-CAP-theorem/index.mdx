@@ -1,6 +1,6 @@
 ---
 title: "The CAP Theorem"
-description: "CAP"
+description: "What the CAP theorem actually proves, why 'pick two of three' is a misleading summary, and how real systems — from Cassandra to Spanner — navigate the consistency/availability trade-off in practice."
 image: "../../public/blogs/cap-theorem.jpg"
 publishedAt: "2024-03-17"
 updatedAt: "2024-03-17"
@@ -10,33 +10,66 @@ tags:
 - DevSecOps
 ---
 
-The CAP theorem says that a distributed system can deliver only two of three desired characteristics: consistency, availability and partition tolerance (the ‘C,’ ‘A’ and ‘P’ in CAP).
+# The CAP Theorem
 
+## Introduction
+
+The CAP theorem says that a distributed system can deliver only two of three desired characteristics: consistency, availability, and partition tolerance — the 'C,' 'A,' and 'P' in CAP. That's the version that fits on a slide, and it's also the version that has caused twenty years of confused architecture discussions. The theorem is real — Eric Brewer conjectured it in 2000, and Seth Gilbert and Nancy Lynch proved it formally in 2002 — but what it actually proves is narrower, and more useful, than the slogan suggests.
 
 <Image
   src="/blogs/cap-diagram.png"
   width="400"
   height="400"
-  alt="Image"
+  alt="CAP theorem diagram"
   sizes="100vw"
 />
 
-The CAP theorem is a fundamental concept in the realm of distributed systems, crucial for anyone designing cloud applications, as these applications inherently operate across distributed networks. Here's a more cohesive explanation that integrates the various components of the CAP theorem:
+## What the Theorem Actually Says
 
-In distributed systems, data is stored across multiple nodes, which may be virtual or physical machines. This setup ensures that cloud applications maintain high performance and reliability. The CAP theorem offers a framework to understand the trade-offs between three key characteristics: Consistency, Availability, and Partition Tolerance, often simply referred to as CAP.
+Start with precise definitions, because the informal ones are where the confusion begins.
 
-Consistency in the CAP theorem means that all clients see the same data at the same time, regardless of the node they connect to. For data to be consistent, a write operation performed on one node must be immediately replicated across all other nodes in the network.
+**Consistency**, in the CAP proof, means *linearizability*: every read returns the most recent completed write, as if all operations executed one at a time against a single copy of the data. This is a much stronger property than what most people mean when they casually say "consistent," and it is *not* the C in ACID — that C refers to integrity constraints within a database, an entirely different concept that shares nothing but the letter.
 
-Availability, another pillar of the CAP theorem, ensures that any client making a data request receives a response, regardless of whether some nodes are down. This means that every request receives a valid response from the remaining operational nodes, without exceptions.
+**Availability** means every request received by a non-failed node produces a response — not an error, not a timeout, a real answer. Note what this doesn't say: nothing about latency. A system that answers every request in ten minutes is CAP-available, which is your first hint that CAP-availability and what your users call availability are different things.
 
-Partition Tolerance refers to the system's ability to continue functioning despite any number of communication breakdowns between nodes in the system. A partition in this context means a loss or delay in connection between nodes, yet a partition-tolerant system maintains operations across the remaining nodes.
+**Partition tolerance** means the system continues operating when the network loses or arbitrarily delays messages between nodes. And here is the key point that the "pick two" framing obscures: *partition tolerance is not optional*. Networks partition. Switches fail, cables get cut, a garbage collection pause makes a node unresponsive long enough to be indistinguishable from a network failure — from the perspective of the rest of the system, a long GC pause **is** a partition. You cannot choose "CA" in any system that runs on more than one machine, because you cannot choose for the network to be reliable.
 
-Interestingly, while NoSQL databases are closely tied to the CAP theorem, they vary in which two of the three CAP characteristics they prioritize, since it's impossible to simultaneously guarantee all three fully. This leads to three categories of systems:
+So the theorem, correctly stated, is this: **when a partition happens, you must choose between consistency and availability.** That is the entire content of the proof, and the proof itself is almost embarrassingly simple: if the network splits into two halves and a write lands on one side, the other side can either answer reads (staying available, but serving stale data — sacrificing linearizability) or refuse to answer until it can confirm it has the latest data (staying consistent, but sacrificing availability). There is no third option, because information cannot cross a partition.
 
-- CP (Consistency and Partition Tolerance) databases like MongoDB and Redis prioritize consistency and partition tolerance. However, this means that availability can be compromised; in the event of a partition, the system might make the inconsistent node unavailable until the partition is resolved.
-- AP (Availability and Partition Tolerance) databases, including CouchDB, Cassandra, and ScyllaDB, maintain availability and partition tolerance but may not always be consistent. During a partition, these databases ensure all nodes are still available, but some might return an older version of the data.
-- CA (Consistency and Availability) systems are an ideal but not feasible in a true distributed system, as they cannot tolerate partitions. No existing NoSQL database offers both full consistency and availability while also being fault-tolerant to network partitions.
+## CP and AP in the Real World
 
-Some NoSQL databases, such as ScyllaDB, employ a model of tunable eventual consistency to provide multi-datacenter high availability and efficient read/write operations. This model allows each node equal status—any can handle any request without a single coordination point, continuing to operate cooperatively even when some nodes are unavailable. Eventual consistency is particularly suited to modern workloads that rely more on availability than on strict consistency.
+The classification of databases as "CP" or "AP" describes their default behavior during a partition.
 
-Through understanding the CAP theorem, system designers can make informed decisions, optimizing the balance between consistency and availability based on the specific needs of their applications. This understanding is crucial as it directly influences the architecture and capabilities of the systems they build.
+**CP systems** sacrifice availability to preserve consistency. The coordination systems that infrastructure depends on — etcd (which backs Kubernetes), ZooKeeper, Consul — are the clearest examples. They run consensus protocols (Raft, ZAB) that require a majority quorum to make progress: in a five-node cluster split three-and-two, the three-node side continues operating and the two-node side refuses writes entirely. That refusal *is* the sacrifice of availability, and it is exactly what you want from the system holding your cluster's source of truth — a split-brain etcd would be catastrophically worse than a briefly unavailable one.
+
+**AP systems** sacrifice linearizability to preserve availability. Cassandra, DynamoDB (in its default mode), and CouchDB descend from the design in Amazon's Dynamo paper: any replica can accept a write, partitioned replicas keep serving whatever they have, and when the partition heals, the system reconciles divergent histories using mechanisms like vector clocks, last-writer-wins timestamps, or application-level merge logic. The canonical use case is a shopping cart: it is strictly better to accept an item into a possibly-stale cart than to show an error page, because the failure mode — reconciling two cart versions later — is cheap, while the failure mode of unavailability is a lost sale.
+
+Be skeptical of tidy classifications, though. Many systems don't sit cleanly in either box: MongoDB is conventionally labeled CP, but its actual consistency behavior depends on write concern, read concern, and read preference settings — and historical versions failed linearizability under partition in ways that [Jepsen](https://jepsen.io/) testing documented extensively. Jepsen's body of work is worth knowing about in general: it is the industry's independent audit of what databases *actually* guarantee under partition, and its findings routinely contradict the marketing page.
+
+## Tunable Consistency: Choosing Per Operation
+
+The most practically important development in this space is that the C/A choice stopped being a property of the database and became a property of *each request*. Dynamo-style systems expose this as quorum arithmetic: with **N** replicas, a write acknowledged by **W** of them, and a read consulting **R** of them, the condition **R + W > N** guarantees that every read quorum overlaps every write quorum — so reads see the latest write, at the cost of higher latency and reduced tolerance for down replicas. Set R + W ≤ N and you've bought availability and speed at the price of possibly-stale reads.
+
+In Cassandra this is a per-query consistency level: `QUORUM` reads and writes give you the overlap guarantee; `ONE` gives you speed and maximal availability; `LOCAL_QUORUM` scopes the quorum to one datacenter so that cross-region latency stays out of the hot path. The design consequence is worth internalizing: **consistency is not an architectural decision you make once — it is a budget you spend differently on different operations.** The account balance read before a withdrawal gets `QUORUM`; the product-view counter gets `ONE`; nobody has to pick a single answer for the whole system.
+
+## PACELC: The Part CAP Leaves Out
+
+CAP only constrains behavior *during* a partition, and partitions — while inevitable — are rare. What about the other 99.9% of the time? Daniel Abadi's **PACELC** formulation completes the picture: if there is a **P**artition, choose **A**vailability or **C**onsistency; **E**lse, choose **L**atency or **C**onsistency.
+
+The else-clause is the trade-off you live with every day. Synchronous replication to a replica 80 milliseconds away adds 80 milliseconds to every write, partition or not. That is why AP-leaning systems tend to replicate asynchronously (PA/EL — favor availability and latency), and why strongly consistent systems pay a latency tax continuously, not just during failures. When someone asks why the eventually-consistent configuration is faster *when nothing is failing*, PACELC is the answer: the latency cost of coordination exists at all times; CAP just describes its most dramatic moment.
+
+Google's Spanner is the instructive extreme case. It offers linearizable transactions across datacenters worldwide — a PC/EC system — and achieves the availability numbers of an AP system not by evading the theorem but by making partitions extraordinarily rare: private global fiber, redundant paths, and the TrueTime API, which uses GPS receivers and atomic clocks in every datacenter to bound clock uncertainty so tightly that transactions can be ordered globally with bounded waiting. Spanner doesn't break CAP; it demonstrates that the theorem constrains what you promise *when the network fails*, and that with enough engineering (and money) you can make the network fail very, very rarely. When a partition does occur, Spanner chooses C — the minority side blocks.
+
+## The Consistency Spectrum
+
+Framing everything as "strongly consistent or eventually consistent" flattens a spectrum that practitioners actually navigate at several intermediate points. Below linearizability sit progressively weaker — and progressively cheaper — models: **sequential consistency** (all clients see operations in the same order, though not necessarily in real-time order), **causal consistency** (operations that could have influenced each other stay ordered; concurrent ones may be seen differently by different clients), and the **session guarantees** that quietly do the most work in application code — *read-your-own-writes* (a user who just posted a comment sees it on refresh) and *monotonic reads* (a user never sees data go backwards in time between requests). Many systems that are eventually consistent globally offer these session guarantees per-client, which is frequently all the consistency a user-facing feature actually needs. Knowing this spectrum is what lets you avoid paying the full coordination tax for the weaker property you actually require.
+
+## Using CAP Well
+
+Stripped of misconceptions, the theorem yields a short list of genuinely useful design questions. What happens to *this operation* during a partition — does it degrade to stale reads, queue writes for later reconciliation, or refuse service? Which of those failure modes is cheapest for *this feature*? Where merge-on-heal is the answer, who writes the merge logic — the database (last-writer-wins, with its silent data loss) or the application (explicit, but real work)? And for the data where refusing service is correct — inventory decrements, financial balances, coordination state — is the quorum machinery actually configured to refuse, or merely assumed to?
+
+Teams that reason this way stop arguing about whether their database "is CP or AP" — a question that rarely has a clean answer — and start specifying per-operation behavior under partition, which is a question that always does.
+
+## Conclusion
+
+The CAP theorem's popular form — pick two of three — is wrong enough to be harmful: partition tolerance is not a menu option, "CA" is not a real category for distributed systems, and the theorem says nothing at all about normal operation. Its correct form is modest and permanently relevant: when the network fails, each operation must choose between answering with possibly-stale data and not answering. Modern systems have turned that binary into a dial — quorum arithmetic, per-query consistency levels, session guarantees — and PACELC extends the reasoning to the latency trade-offs of everyday operation. Understanding this precisely is one of the clearest markers of distributed systems maturity: not because the theorem is complicated, but because using it well means asking, for every piece of state you own, exactly what should happen when the network — inevitably — lets you down.

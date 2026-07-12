@@ -1,7 +1,14 @@
 // projectsData.js
+//
+// To add a new project, add an object to this array:
+//   title       — project name
+//   description — one or two sentences about what it does
+//   image       — a URL or a path under /public (e.g. "/image/my-project.png")
+//   link        — GitHub repo or live site URL
+//   tech        — list of technologies shown as chips on the card
+//   featured    — true = large spotlight card at the top, false = grid card
 
 const projects = [
-  // First Row
   {
     id: 1,
     title: "Cloud Job Boards",
@@ -9,18 +16,18 @@ const projects = [
       "A website featuring jobs with an emphasis on cloud, DevOps, and site reliability.",
     image: "https://images.unsplash.com/photo-1503023345310-bd7c1de61c7d",
     link: "https://github.com/linabrihoum/cloud-job-board",
-    row: 1,
+    tech: ["Next.js", "Supabase", "TailwindCSS"],
+    featured: true,
   },
-  // Second Row
   {
     id: 2,
     title: "Raydrin",
     description: "Automatic AI Resume Generator based on job descriptions.",
     image: "https://images.unsplash.com/photo-1498050108023-c5249f4df085",
     link: "https://github.com/linabrihoum/raydrin",
-    row: 2,
+    tech: ["React", "OpenAI API", "Node.js"],
+    featured: true,
   },
-  // Third Row (Three Projects)
   {
     id: 3,
     title: "Song Genre Predictor",
@@ -28,16 +35,18 @@ const projects = [
       "ML Algorithm that predicts a genre of a song based on certain elements of the music.",
     image: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f",
     link: "https://github.com/linabrihoum/song-genre-predictor",
-    row: 3,
+    tech: ["Python", "scikit-learn", "Pandas"],
+    featured: false,
   },
   {
     id: 4,
-    title: "This website :)",
+    title: "This Website :)",
     description:
-      "My personal portfolio using Next.JS, TailwindCSS, Typescript, and SupaBase.",
+      "My personal portfolio using Next.JS, TailwindCSS, and Supabase.",
     image: "https://images.unsplash.com/photo-1498050108023-c5249f4df085",
     link: "https://github.com/linabrihoum/portfolio_blog",
-    row: 3,
+    tech: ["Next.js", "TailwindCSS", "Supabase"],
+    featured: false,
   },
   {
     id: 5,
@@ -45,25 +54,27 @@ const projects = [
     description: "Resume templates made for multiple disciplines using LaTeX!",
     image: "https://images.unsplash.com/photo-1518770660439-4636190af475",
     link: "https://github.com/linabrihoum/latex-resume-templates",
-    row: 3,
+    tech: ["LaTeX"],
+    featured: false,
   },
-  // Fourth Row (Four Projects)
   {
     id: 6,
     title: "File Sharing Platform",
     description: "Web app to help a company share large files locally.",
     image: "https://images.unsplash.com/photo-1534081333815-ae5019106622",
     link: "https://github.com/linabrihoum/file-sharing-platform",
-    row: 4,
+    tech: ["JavaScript", "Express", "MongoDB"],
+    featured: false,
   },
   {
     id: 7,
     title: "xv6",
     description:
-      "Implementing various function to the xv6 unix operating system.",
+      "Implementing various functions to the xv6 unix operating system.",
     image: "https://images.unsplash.com/photo-1504384308090-c894fdcc538d",
     link: "https://github.com/linabrihoum/xv6",
-    row: 4,
+    tech: ["C", "Operating Systems"],
+    featured: false,
   },
   {
     id: 8,
@@ -72,7 +83,8 @@ const projects = [
       "Mobile app to improve mental health with cute pictures of animals.",
     image: "https://images.unsplash.com/photo-1481277542470-605612bd2d61",
     link: "https://github.com/linabrihoum/FluffyFeelings",
-    row: 4,
+    tech: ["React Native", "Firebase"],
+    featured: false,
   },
   {
     id: 9,
@@ -81,7 +93,8 @@ const projects = [
       "Algebraic algorithm to record and describe hurricane movements.",
     image: "https://images.unsplash.com/photo-1515378791036-0648a3ef77b2",
     link: "https://github.com/linabrihoum/Irma_Moves",
-    row: 4,
+    tech: ["Python", "NumPy"],
+    featured: false,
   },
 ];
 

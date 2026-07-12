@@ -1,0 +1,147 @@
+---
+title: "Networking Essentials in the Cloud"
+description: "A cloud-agnostic deep dive into the networking layer every production system stands on — address planning, routing mechanics, stateful firewalls, load balancing, private connectivity, and the operational details that only surface at scale."
+image: "../../public/blogs/net-ess.jpg"
+publishedAt: "2025-11-20"
+updatedAt: "2025-11-20"
+author: "Lina Brihoum"
+isPublished: true
+tags:
+- Cloud
+---
+
+# Networking Essentials in the Cloud
+
+## Introduction
+
+Networking is the layer of cloud engineering that most people learn last and need first. You can get surprisingly far by clicking through a console and accepting defaults — right up until something can't reach something else, and suddenly you're staring at route tables and security group rules with no mental model for how they fit together. Most production incidents that get filed as "the app is down" turn out, on inspection, to be networking.
+
+The good news is that cloud networking is built from a small number of concepts, and they are essentially the same across AWS, Azure, and Google Cloud — the providers use different names for the same ideas. This post walks through those building blocks in a provider-agnostic way, but it goes past the definitions into the mechanics: how routing decisions are actually evaluated, why NAT gateways fall over under load, where the surprising costs hide, and how to reason systematically when two things that should talk to each other don't.
+
+<Image
+  src="/blogs/cloud_compute.jpeg"
+  width="800"
+  height="500"
+  alt="Cloud computing infrastructure"
+  sizes="100vw"
+/>
+
+## The Virtual Network: Your Slice of the Cloud
+
+Everything starts with the virtual network — a VPC (Virtual Private Cloud) on AWS and Google Cloud, a VNet on Azure. A virtual network is a logically isolated section of the provider's infrastructure where your resources live. Nothing inside it can be reached from the internet, or from anyone else's cloud environment, unless you explicitly allow it. Under the hood this isolation is not a physical property — your packets share the same wires as everyone else's — but an encapsulation layer: the provider wraps your traffic in an overlay network so that two customers can both use `10.0.0.0/16` without ever seeing each other's traffic.
+
+When you create a virtual network, you assign it a private IP range in CIDR notation from the RFC 1918 space: `10.0.0.0/8`, `172.16.0.0/12`, or `192.168.0.0/16`. This is one of the few decisions in the cloud that is genuinely hard to change later, so it rewards actual planning:
+
+- **Size for the network you'll have in five years, not the one you have now.** A `/16` per environment costs nothing extra and prevents painful re-addressing. Kubernetes deserves special mention here — CNI plugins that assign a routable IP per pod (like the AWS VPC CNI) can burn through a `/16` faster than any fleet of VMs.
+- **Never overlap with anything you might one day connect to.** VPNs to the office, peering to another team's network, an acquisition's infrastructure — overlapping CIDRs make direct routing between environments impossible, and the workarounds (double NAT, private NAT gateways) are miserable to operate.
+- **Avoid `172.17.0.0/16` specifically.** Docker's default bridge network claims it, and the collision produces containers that mysteriously cannot reach anything in your network on that range. This one bites teams constantly.
+- **Keep an allocation ledger.** Whether it's a proper IPAM tool or a spreadsheet, there should be one source of truth for which team owns which range. Providers now offer managed IPAM services, and past a handful of networks they pay for themselves.
+
+If you do run out of space, providers let you attach secondary CIDR blocks to an existing network — a useful escape hatch, but one that complicates route tables and firewall rules enough that it's better treated as a last resort than a plan.
+
+## Subnets: Dividing the Network by Purpose
+
+A virtual network is divided into subnets, each taking a slice of the parent range. Subnets exist for two reasons: they anchor resources to a physical location, and they define security boundaries.
+
+The location aspect comes from availability zones. Each subnet lives in exactly one zone — one physically separate datacenter within the region — so deploying an application across multiple subnets in multiple zones is what protects it from a datacenter-level failure. Every provider's high-availability story is built on this foundation, which leads to the standard layout: for each *tier* of your architecture, one subnet *per zone*. Three tiers across three zones is nine subnets, and that regularity is a feature — it makes route table and firewall design mechanical instead of bespoke.
+
+Be aware that a subnet's usable capacity is smaller than the CIDR math suggests: providers reserve addresses in every subnet (AWS reserves five — the network address, VPC router, DNS, one spare, and broadcast; Azure reserves a similar set). A `/28` that should hold 16 addresses actually holds 11. This matters more than it appears, because some managed services demand generously sized or dedicated subnets — Azure requires delegated subnets for certain services, and container workloads consume addresses at a pace that undersized subnets can't absorb. Like the parent network, a subnet cannot be resized in place.
+
+The security aspect comes from the public/private distinction, which is the single most load-bearing pattern in cloud networking. A **public subnet** has a route to the internet and hosts the small number of things that must be reachable from outside: load balancers, NAT gateways, bastion hosts. A **private subnet** has no inbound path from the internet at all, and it is where everything else belongs — application servers, databases, caches, internal services. A database in a private subnet cannot be attacked from the internet even if its credentials leak and its own firewall is misconfigured, because there is simply no route to it. Defense in depth starts with topology, not rules.
+
+## Routing: How Traffic Actually Finds Its Way
+
+What makes a subnet public or private is not a checkbox — it is the route table attached to it. A route table is a list of rules mapping destination CIDR ranges to targets, and every subnet has exactly one (though one table can serve many subnets).
+
+Routes are evaluated by **longest prefix match**: the most specific route that covers the destination wins, regardless of the order routes appear in. A route for `10.1.0.0/16` beats `0.0.0.0/0`; a route for `10.1.2.0/24` beats both. Every route table also contains an implicit *local route* for the virtual network's own CIDR that keeps intra-network traffic inside the network — AWS restricts overriding it, while Azure permits more aggressive interception with user-defined routes, which is exactly how firewall appliances get inserted into traffic paths. Longest prefix match is not trivia; it is the mechanism behind most deliberate traffic engineering ("send everything through the inspection appliance except the monitoring subnet, which goes direct") and most accidental outages ("someone added a more specific route and half our traffic silently changed paths").
+
+A public subnet's route table sends `0.0.0.0/0` to an **internet gateway**, the managed component that connects a virtual network to the public internet. A private subnet has no such route — but its workloads usually still need outbound access to pull packages and call external APIs. That is the job of the **NAT gateway**: placed in a public subnet, it lets private resources initiate outbound connections while remaining unreachable for inbound ones.
+
+NAT gateways deserve more respect than they usually get, because they have two failure modes that only appear in production:
+
+- **SNAT port exhaustion.** A NAT gateway multiplexes many private sources onto a small set of public IPs, and each concurrent connection to the same destination consumes one source port from a finite pool — roughly 64,000 per public IP per destination. A fleet of services hammering a single external API can exhaust that pool, at which point new connections fail with timeouts that look exactly like the remote service being down. The fixes are more public IPs on the NAT, connection pooling and keep-alive in the clients, or private endpoints that bypass NAT entirely for provider services.
+- **Zone coupling.** A NAT gateway lives in one availability zone. If private subnets in zone B route through a NAT in zone A, then a zone A outage takes down zone B's outbound connectivity too — quietly defeating the multi-AZ design everywhere else in the stack. The resilient (and, given cross-AZ data charges, usually cheaper) pattern is one NAT gateway per zone, with each zone's route table pointing at its own.
+
+## Firewalls: Security Groups and Network ACLs
+
+Cloud providers give you two layers of traffic filtering, and the distinction between them is really a distinction about **state**.
+
+**Security groups** (network security groups on Azure) attach to individual resources and are *stateful*: the firewall maintains a connection-tracking table, so when an inbound connection is allowed, its return traffic is automatically allowed too, matched by the 5-tuple of protocol, source and destination address, and ports. Rules are allow-only — everything not explicitly permitted is denied. Statefulness has operational edges worth knowing: tracked connections have idle timeouts (roughly 350 seconds for established TCP flows on AWS), which is why long-lived, quiet connections — database sessions, message-queue consumers — mysteriously die unless TCP keep-alives are tuned below the timeout. And because rule changes apply to *new* connections, an already-established flow can survive the removal of the rule that permitted it, which routinely confuses incident timelines.
+
+The highest-leverage practice with security groups is to write rules that reference **other security groups rather than IP ranges**: "the database tier accepts 5432 from members of the app tier's group" remains correct through every scaling event, instance replacement, and IP change. Hard-coded addresses are how firewall rules rot.
+
+**Network ACLs** operate at the subnet boundary and are *stateless*: there is no connection table, so return traffic must be explicitly allowed — which means understanding **ephemeral ports**. A client connecting out to port 443 receives its response on a randomly chosen high port (typically 1024–65535, with modern Linux using 32768–60999), so a stateless ACL must allow that entire return range, at which point much of its apparent strictness evaporates. Unlike security groups, NACL rules are numbered and evaluated in order, with both allow and deny available. The sane division of labor: security groups carry the real security policy; NACLs stay near their permissive defaults and serve as coarse guardrails — blocking a hostile IP range across an entire subnet, or hard-enforcing "the database tier never talks to the internet, no matter what any security group says."
+
+## Load Balancers and DNS: The Front Door
+
+Traffic from users needs a stable entry point, and that is the load balancer's job: a managed, highly available component that accepts connections on a public address and distributes them across healthy backends in your private subnets. Layer 7 (application) load balancers understand HTTP — they route by path or hostname, terminate TLS, and integrate with managed certificates. Layer 4 (network) load balancers forward TCP/UDP with minimal processing and preserve source addresses, which makes them the choice for non-HTTP protocols and extreme throughput.
+
+Production load balancing is mostly about details that don't appear in the quickstart:
+
+- **Health checks fail open on most platforms.** If *every* backend fails its health check, the load balancer typically routes to all of them anyway, on the theory that guaranteed failure is worse than probable failure. Knowing this changes how you interpret an "all unhealthy" dashboard during an incident.
+- **Idle timeout mismatches cause intermittent 502s.** If the load balancer's idle timeout (often 60 seconds) is *longer* than the backend's HTTP keep-alive timeout, the backend will occasionally close a connection at the exact moment the load balancer reuses it. The rule: backend keep-alive timeout strictly greater than load balancer idle timeout. This single setting explains a remarkable fraction of "rare, unreproducible 502" tickets.
+- **Deregistration needs draining.** Removing a backend without connection draining (deregistration delay) severs in-flight requests. Deployment tooling should wait out the drain window before terminating instances.
+- **Cross-zone behavior differs by platform and costs money.** With cross-zone load balancing off, traffic is split evenly per *zone* rather than per *target*, so unbalanced zones receive unbalanced load; with it on, some providers bill the cross-AZ traffic. Neither default is wrong, but you should know which one you're running.
+
+In front of the load balancer sits DNS, and every provider's managed DNS service (Route 53, Azure DNS, Cloud DNS) does more than translate names: health-checked failover records, weighted routing for canary releases, latency-based routing toward the nearest region. DNS is frequently the top layer of a multi-region availability strategy — with the caveat that DNS failover is bounded by TTL, and by the sizeable population of resolvers and applications that ignore TTLs entirely. Sixty-second TTLs on failover records are the convention, and connection-level retries in clients remain necessary because some traffic will keep arriving at the dead endpoint long after the record flipped.
+
+Providers also run **split-horizon DNS**: private zones attached to your virtual networks answer differently inside than the public internet does, so `db.internal.example.com` can resolve to a private IP for your workloads and not exist at all externally. This mechanism becomes load-bearing in the next section.
+
+## Private Connectivity: Peering, Endpoints, and Hybrid Links
+
+Real environments are rarely one network, and connecting them without touching the public internet is its own family of building blocks.
+
+**Peering** joins two virtual networks so resources in each reach the other over private addresses. It is non-transitive by design — if A peers with B and B peers with C, A still cannot reach C — which keeps the blast radius of each connection explicit, but means full connectivity between *n* networks requires n(n−1)/2 peerings. Ten networks is 45 peering connections, each with route table entries on both sides; the arithmetic is why organizations past a certain size converge on **hub-and-spoke** built on a transit gateway (Virtual WAN on Azure): every network attaches once to a central hub that handles transitive routing, centralized inspection, and the hybrid links. The trade-offs are per-attachment and per-GB processing costs, plus a new single point of coordination that someone must own.
+
+**Private endpoints** solve a subtler problem: managed services — object storage, cloud databases, queues — natively expose public endpoints, so your "private" application traffic to them egresses through NAT toward public address space. A private endpoint projects the service into your own network as a private IP. Beyond the security posture, this has an economic effect people miss: traffic to private endpoints bypasses the NAT gateway, and at data-pipeline volumes the saved per-GB NAT processing charges routinely exceed the endpoint's own cost.
+
+The classic private endpoint failure is **DNS, not networking**. The service's public hostname must now resolve to the private IP from inside your network — which the provider handles with a private DNS zone (`privatelink.*` zones on Azure, private hosted zones on AWS) that overrides public resolution. When a team reports that their private endpoint "doesn't work," the first question is almost always *what does the hostname resolve to from inside the network?* — and the answer is almost always the public IP, because the private zone isn't linked to the network doing the resolving. Hybrid setups compound this: on-premises resolvers know nothing about cloud private zones, so their queries must be forwarded to the provider's inbound resolver endpoints to get private answers.
+
+**Hybrid connectivity** links cloud networks to on-premises infrastructure. Site-to-site VPN over the internet is quick to provision and fine for moderate, latency-tolerant traffic; dedicated circuits (Direct Connect, ExpressRoute, Cloud Interconnect) provide consistent latency and private bandwidth at meaningfully higher cost and weeks-to-months lead time. Both exchange routes via **BGP**, which quietly makes route advertisement discipline an enterprise concern: an on-premises router advertising `0.0.0.0/0` into the cloud — or a cloud side advertising summarized ranges back — can redirect traffic in ways nobody intended, and longest-prefix match will faithfully execute the mistake. The mature pattern is a dedicated circuit for steady-state traffic with a VPN as warm standby, and BGP route filters on both ends reviewed like the security controls they are.
+
+## The Costs Nobody Mentions
+
+Cloud networking pricing punishes the unaware, and three line items account for most of the surprise:
+
+- **Cross-AZ data transfer.** Traffic between availability zones in the same region is billed per GB — commonly around $0.01/GB in each direction on AWS. Chatty microservices spread across zones, database replicas, and Kafka clusters replicating between brokers all generate this constantly. Zone-aware routing in service meshes and clients exists specifically to keep traffic local where it's safe to do so.
+- **NAT gateway processing.** Every GB through a NAT gateway carries a processing charge (about $0.045/GB on AWS) on top of the hourly rate. A private workload pulling large datasets from object storage through NAT can generate a five-figure monthly line item that a gateway endpoint (free on AWS for S3 and DynamoDB) or a private endpoint would mostly eliminate. This is the single most common quick win in a cloud network cost review.
+- **Managed appliances have cost floors.** NAT gateways, load balancers, transit gateway attachments, and inspection firewalls each bill hourly whether or not they carry traffic. Architectures that scatter one of each across many small environments accumulate a fixed cost that consolidation — shared egress through a hub, fewer but larger environments — reduces dramatically.
+
+## Observability and Debugging: A Method, Not a Guess
+
+When two things can't talk, resist the urge to change rules until something works. The packet's path is deterministic; walk it.
+
+**Flow logs first.** Every provider can log network flows with an accept/reject verdict (VPC Flow Logs on AWS and GCP, NSG Flow Logs on Azure). One query usually splits the problem in half: if the flow shows *rejected*, it names the layer that rejected it; if the flow doesn't appear at all, the traffic never reached that boundary and the problem is upstream — routing or DNS.
+
+**Then walk the layers in order.** DNS: what does the name resolve to from *the source* — not from your laptop, because split-horizon means those answers differ? Routing: does the source subnet's route table actually have a path to that destination, and is a more specific route hijacking it? Security group on the source (is egress allowed?), NACL on both subnet boundaries (remember the ephemeral return ports), security group on the destination (is ingress allowed, from the right *group* rather than a stale IP?). Then the application itself: is it listening on the interface it thinks it is? Providers ship analyzers that automate exactly this walk — Reachability Analyzer on AWS, Connection Troubleshoot on Azure, Connectivity Tests on GCP — and they are dramatically underused relative to how much guesswork they eliminate.
+
+Two failure classes deserve their own entries in your mental catalog, because they don't announce themselves. **Asymmetric routing**: when the forward path and return path differ — common once firewall appliances or multiple exit points exist — stateful appliances that only see one direction of the flow start dropping traffic with symptoms that look random. **MTU and fragmentation**: overlays and VPN tunnels reduce the effective packet size, and when ICMP is blocked (as overzealous firewall rules often do), path MTU discovery breaks — producing the signature "small requests work, large transfers hang" pathology. If a connection establishes but stalls on real payloads, suspect MTU before suspecting the application.
+
+## One Concept, Three Names
+
+Nearly everything above maps one-to-one across providers, which means learning the concepts once pays off everywhere:
+
+| Concept | AWS | Azure | Google Cloud |
+|---|---|---|---|
+| Virtual network | VPC | Virtual Network (VNet) | VPC |
+| Resource firewall | Security Group | Network Security Group | Firewall Rules |
+| Outbound-only internet | NAT Gateway | NAT Gateway | Cloud NAT |
+| L7 load balancer | Application Load Balancer | Application Gateway | Application Load Balancer |
+| Managed DNS | Route 53 | Azure DNS | Cloud DNS |
+| Network hub | Transit Gateway | Virtual WAN | Network Connectivity Center |
+| Private service access | PrivateLink | Private Endpoint | Private Service Connect |
+| Dedicated circuit | Direct Connect | ExpressRoute | Cloud Interconnect |
+| Flow logging | VPC Flow Logs | NSG Flow Logs | VPC Flow Logs |
+| Path analysis | Reachability Analyzer | Connection Troubleshoot | Connectivity Tests |
+
+One honest caveat on the mapping: GCP's VPC is *global* — subnets are regional, but the network spans the world — while AWS and Azure networks are regional constructs. That architectural difference changes multi-region design more than any row in the table.
+
+## Putting It Together
+
+The canonical architecture that emerges from these pieces looks the same in every cloud: a virtual network spanning three availability zones, sized generously from a planned allocation; public subnets holding only the load balancer and one NAT gateway per zone; application servers in private subnets behind the load balancer; databases in a further-isolated tier whose security group accepts connections only from the application tier's group. Route tables are per-zone so no zone depends on another's NAT. Private endpoints carry traffic to object storage and managed databases, with their private DNS zones linked to the network. Flow logs are on from day one. DNS with health checks sits above everything as the multi-region seam.
+
+It is not the only valid design, but it is the baseline against which every variation is reasoned about — and once you can draw it from memory and explain *why* each piece is where it is, what it costs, and how it fails, most cloud networking decisions stop being mysterious.
+
+## Conclusion
+
+Cloud networking has a reputation for complexity that it only partially deserves. The surface area is large, but the underlying model is compact: isolate with virtual networks, segment with subnets, control paths with route tables and longest-prefix match, filter with stateful security groups, expose deliberately through load balancers, and keep private traffic private with endpoints and peering. What separates working knowledge from expertise is the second layer — knowing that NAT gateways exhaust SNAT ports, that idle timeout mismatches manufacture 502s, that private endpoints fail at DNS before they fail at networking, that cross-AZ bytes are billed, and that a packet's path can be walked layer by layer instead of guessed at. These concepts transfer almost unchanged between AWS, Azure, and Google Cloud, which makes them among the highest-leverage things a cloud engineer can deeply understand. Master the building blocks once, and every provider's console becomes the same architecture wearing a different interface.

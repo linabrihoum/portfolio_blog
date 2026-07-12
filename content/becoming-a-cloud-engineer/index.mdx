@@ -1,6 +1,6 @@
 ---
-title: "Becoming a DevOps Architect"
-description: "Becoming a DevOps Architect: A Comprehensive Guide to DevSecOps, Site Reliability, and Cloud Infrastructure"
+title: "Becoming a DevSecOps Architect"
+description: "Becoming a DevSecOps Architect: A Comprehensive Guide to DevSecOps, Site Reliability, and Cloud Infrastructure — the skills that actually matter, in the order they matter, from networking fundamentals to architecture judgment."
 image: "../../public/blogs/cloud-engineer.jpg"
 publishedAt: "2023-12-11"
 updatedAt: "2023-12-11"
@@ -9,108 +9,123 @@ isPublished: true
 tags: 
 - DevSecOps
 ---
-# Becoming a DevOps Architect: A Comprehensive Guide to DevSecOps, Site Reliability, and Cloud Infrastructure
+# Becoming a DevSecOps Architect: A Comprehensive Guide to DevSecOps, Site Reliability, and Cloud Infrastructure
 
 ## Introduction
-The cloud has become the backbone of modern IT infrastructure; offering scalable, reliable, and cost-efficient solutions for businesses of all sizes.  <br/> <br/> 
-As organizations continue to migrate their operations to the cloud, the demand for relevant skilled professionals will continue to skyrocket. Globally, the public cloud services market is [projected to reach $1.37 trillion by 2028](https://www.prnewswire.com/news-releases/public-cloud-services-market-size-is-set-to-grow-by-usd-1-37-bn-from-2024-2028--increasing-number-of-data-center-hyperscale-and-colocation-providers-to-boost-the-market-growth-technavio-302149655.html), with a compound annual growth rate (CAGR) of 22.7% between 2023 and 2028. Additionally, the cloud computing market is expected to grow from $615 billion in 2024 to $1.6 trillion by 2032. This rapid growth is driven by the increasing adoption of cloud-based solutions across all industries. 
-<br/><br/>In this post, we will explore what DevOps engineering is, what delineates an architect’s responsibilities, and how to take the necessary steps to become one - leveraging the growing demand in this incredible industry.​
 
+The cloud has become the backbone of modern IT infrastructure, offering scalable, reliable, and cost-efficient solutions for businesses of all sizes. As organizations continue to migrate their operations to the cloud, the demand for skilled professionals continues to grow with it — the public cloud services market is [projected to reach $1.37 trillion by 2028](https://www.prnewswire.com/news-releases/public-cloud-services-market-size-is-set-to-grow-by-usd-1-37-bn-from-2024-2028--increasing-number-of-data-center-hyperscale-and-colocation-providers-to-boost-the-market-growth-technavio-302149655.html), with a compound annual growth rate above 20%.
+
+But market-size numbers don't tell you what the job actually is, and most "how to become a DevOps architect" guides are lists of tool names with no ordering and no opinion. This post is my attempt at the guide I wish I'd had: what DevOps actually means, what separates an architect from a senior engineer (it is not more tools — it is a different unit of work), and a skills progression in the order the skills actually build on each other.
 
 ## What is DevOps? 
 
-DevOps is the integration of development (Dev) and operations (Ops) within an organization to improve collaboration and productivity by automating infrastructure, workflows, and continuously measuring application performance. <br/><br/>
-This approach involves the seamless collaboration of development and operations teams to design, implement, manage, and optimize cloud systems and solutions. The goal is to streamline and automate processes, enabling [continuous integration and continuous delivery (CI/CD)](https://www.redhat.com/en/topics/devops/what-is-ci-cd#:~:text=CI%2FCD%2C%20which%20stands%20for,a%20shared%20source%20code%20repository.) (more on that later), which results in faster, more reliable software releases.
+DevOps is the integration of development (Dev) and operations (Ops) within an organization to improve collaboration and productivity by automating infrastructure and workflows and continuously measuring application performance. The mechanical expression of it is [continuous integration and continuous delivery (CI/CD)](https://www.redhat.com/en/topics/devops/what-is-ci-cd) — but the underlying idea is about feedback loops: shortening the distance between writing code and knowing how it behaves in production, until deploying is boring and failures are small.
+
+It's worth knowing the sibling disciplines, because job postings blur them and interviews don't. **Site Reliability Engineering (SRE)** is Google's formulation of operations as a software problem — its signature contributions are the SLO (a numeric reliability target), the error budget (the amount of unreliability you're allowed to spend on shipping faster), and the systematic elimination of toil. **DevSecOps** pushes security into the same feedback loops — scanning in the pipeline instead of an audit before release. **Platform engineering** is the newest label: building the internal platform (pipelines, templates, golden paths) that product teams build on. An architect ends up conversant in all three, because at the design level they are the same conversation.
 
 <Image
   src="/blogs/devops-lifecycle.jpeg"
   width="800"
   height="800"
-  alt="Image"
+  alt="DevOps lifecycle"
   sizes="100vw"
 />
 
 ## The Role of a DevOps Architect
-The role of a DevOps Architect involves standardizing various components of development and operations to create a seamless, efficient, and innovative cloud environment. They design, implement, and manage cloud infrastructure; certifying systems are **scalable**, **reliable**, and **secure**.  <br/> <br/>
-DevOps Architects are tasked with selecting infrastructure and provisioning their hosting platforms; each piece of the puzzle must seamlessly integrate together. Managing costs is also a crucial part of the role, where optimizing resource utilization is just as important as maintaining peak performance. Security and compliance must be proactive design choices rather than reactive fixes; ensuring every part of the architecture adheres to industry standards and best practices, safeguarding the system against potential threats.  <br/> <br/>
-Beyond the technical aspects, Architects strategically align cloud initiatives with the organization’s overall goals and technology roadmap, securing that cloud strategy propels the business forward.
+
+A DevOps Architect designs, implements, and manages cloud infrastructure, certifying systems are **scalable**, **reliable**, and **secure** — selecting platforms, integrating the pieces, managing costs, and treating security and compliance as design inputs rather than post-launch fixes. Beyond the technical layer, architects align cloud initiatives with the organization's goals and technology roadmap.
+
+The clearest way I can describe the difference between a senior engineer and an architect: **the unit of work changes from the solution to the trade-off.** A senior engineer implements the Kubernetes cluster well. An architect decides whether Kubernetes is warranted at all — against the team's operational maturity, the hiring market, the compliance regime, and the three-year cost curve — and can defend that decision in writing to both engineers and executives. The deliverables shift accordingly: fewer pull requests, more architecture decision records, reference designs, and reviews of other people's plans. If the engineer's question is *how*, the architect's question is *whether, and at what cost*.
+
+That's also why the role is unforgiving about fundamentals. You cannot evaluate trade-offs in systems you only understand at the marketing-page level — which sets up everything below.
 
 ## How to Become a DevOps Architect
 
-To become an architect, you will need a solid foundation in Information Technology (IT) and networking. This foundation includes understanding how computers, servers, and networks interact and the principles of data management and security. 
+You need a solid foundation in IT and networking: how computers, servers, and networks interact, and the principles of data management and security. What follows is roughly ordered — each layer makes the next one learnable.
 
 ### Educational Background
-A degree in Computer Science, Information Technology, Data Science, or a related field is beneficial but not mandatory. Many successful DevOps professionals come from diverse educational backgrounds, ranging from no degree to PhDs. <br/> <br/>
-**Certifications** such as CompTIA Network+, CompTIA Security+, and Cisco Certified Network Associate (CCNA) can help solidify your networking knowledge. *Based on my personal experience, earning my Network+ and CCNA certifications greatly enhanced my understanding of networking concepts. However, these certifications are not essential to becoming an expert in the field. (If I had to choose one, I recommend the Network+ as it provides a good overall foundation in networking basics.)*
+
+A degree in Computer Science, Information Technology, or a related field is beneficial but not mandatory — successful DevOps professionals come from everywhere, from no degree to PhDs. **Certifications** such as CompTIA Network+, CompTIA Security+, and Cisco Certified Network Associate (CCNA) can solidify your networking knowledge. *Based on my personal experience, earning my Network+ and CCNA certifications greatly enhanced my understanding of networking concepts. However, these certifications are not essential to becoming an expert in the field. If I had to choose one, I recommend the Network+ as it provides a good overall foundation in networking basics.*
+
+One calibration note: certifications get interviews; they do not pass them. Every certification should be paired with something you *built* that exercises the material — the cert proves you studied, the project proves you understood.
 
 ### Essential Skills
 
-#### Networkiing
-- **IP Addressing and Subnetting:** Understand how to design and implement efficient IP addressing schemes. Master subnetting to optimize network performance and security.
-- **DNS (Domain Name System):** Learn how DNS works, including provisioning and managing DNS servers and records to establish reliable name resolution.
-- **VPNs (Virtual Private Networks):** Gain proficiency in configuring and managing VPNs to secure data transmission across public and private networks.
-- **Load Balancers:** Understand the role of load balancers in distributing network traffic across multiple servers to ensure high availability and reliability.
-- **Network Protocols:** Dive deep into essential protocols like TCP/IP for reliable data transmission, HTTP/S for web communications, and FTP for file transfers. Familiarize yourself with other protocols such as SSH for secure remote access and SNMP for network management.
+#### Networking
+
+Networking is first for a reason: it is the layer where the most production incidents actually live, and the layer where weak fundamentals are hardest to fake.
+
+- **IP addressing and subnetting:** design efficient addressing schemes and master subnetting. In the cloud era this shows up as VPC/VNet CIDR planning — one of the few decisions that is genuinely painful to change later, so architects are expected to get it right early.
+- **DNS:** learn how resolution actually works — record types, TTLs, delegation — because DNS is both the top layer of most high-availability designs (health-checked failover, weighted routing) and the true cause of a comic fraction of "the app is down" incidents.
+- **VPNs and private connectivity:** configuring and managing VPNs, and knowing when a dedicated circuit (Direct Connect, ExpressRoute) is warranted instead.
+- **Load balancers:** distributing traffic across servers for availability — and the production details that interviews probe, like health-check behavior and L4 versus L7 trade-offs.
+- **Network protocols:** TCP/IP deeply enough to reason about handshakes, timeouts, and retransmission; HTTP/S including TLS termination; SSH; and enough BGP awareness to understand how hybrid connectivity exchanges routes.
 
 #### Operating Systems
-- **Windows and Unix/Linux Systems** Develop expertise in both Windows and Unix/Linux environments. This includes installation, configuration, maintenance, and troubleshooting of these operating systems.
-- **Command-Line Interfaces (CLI):** Master the use of CLI tools to efficiently manage system tasks. Learn commands and scripting languages (e.g., Bash for Unix/Linux and PowerShell for Windows) to automate repetitive tasks and enhance productivity.
-- **Scripting:** Gain proficiency in scripting to automate system administration tasks, manage configurations, and deploy applications. Familiarize yourself with scripting languages like Bash, PowerShell, and Python to write effective scripts.
+
+- **Linux, seriously; Windows, competently.** The cloud runs overwhelmingly on Linux, so this is where depth pays: process management, permissions, systemd, filesystems, and reading `journalctl` under pressure. Windows expertise matters in enterprise environments — Active Directory and its cloud descendant (Entra ID) power most corporate identity.
+- **Command-line fluency:** the CLI is the job. Bash for Unix/Linux, PowerShell for Windows, and the muscle memory to chain tools (`grep`, `awk`, `jq`, `curl`) into answers during an incident.
+- **Scripting → programming:** start with automation scripts, but aim for real programming competence — Python is the lingua franca, and Go increasingly dominates infrastructure tooling. The distinction that matters at the architect level: scripts automate tasks; programs (with error handling, tests, and structure) automate *systems*.
 
 #### Security Principles
-- **Encryption** Study encryption methods and protocols to ensure data privacy and integrity. For instance, SSL/TLS protocols are used for secure web communications, while the Advanced Encryption Standard (AES) is widely adopted for data encryption. AES comes in different bit-levels, such as AES-128, AES-192, and AES-256, offering varying degrees of security.
-- **Firewalls:** Understand the types and configurations of firewalls to protect network boundaries. Learn to design and implement firewall rules and policies to control traffic and prevent unauthorized access.
-- **Secure Communication Practices:** Implement best practices for secure communications, such as using VPNs, SSH, and secure email protocols. Understand how to protect data in transit and at rest through encryption and secure key management.
-- **Compliance and Standards:** Familiarize yourself with industry standards and compliance requirements (e.g., GDPR, HIPAA) to certify that systems and processes adhere to necessary security and privacy regulations.
+
+- **Encryption:** methods and protocols for data privacy and integrity — SSL/TLS for transport, AES (128/192/256) at rest — plus the key-management layer (KMS, rotation, envelope encryption) where real designs succeed or fail.
+- **Identity before firewalls:** in the cloud, IAM *is* the perimeter. Least-privilege roles, short-lived credentials over static keys, and workload identity are the modern security backbone — most cloud breaches are credential and misconfiguration stories, not exotic exploits.
+- **Firewalls and network security:** security groups, NACLs, and the public/private subnet topology that makes a database unreachable by construction rather than by rule.
+- **Compliance and standards:** GDPR, HIPAA, SOC 2 — architects translate these from audit language into technical controls, and that translation skill is rarer and better paid than another tool on the résumé.
 
 ### Cloud Architecture Principles
-A cloud architect must design scalable, secure, and cost-effective cloud solutions that meet business objectives.
 
-#### Architecture Design
-- **Scalability and Performance:** Learn how to design systems that can scale horizontally and vertically. Understand load balancing, auto-scaling, and performance monitoring.
-- **Security and Compliance:** Study best practices for securing cloud environments, including identity and access management (IAM), encryption, and compliance standards like GDPR and HIPAA.
-- **Cost Management:** Learn how to optimize cloud costs using tools and strategies like AWS Cost Explorer, Azure Cost Management, and GCP’s Cost Management tools.
+A cloud architect designs scalable, secure, and cost-effective solutions that meet business objectives.
+
+- **Scalability and performance:** horizontal versus vertical scaling, load balancing, auto-scaling — and the underrated skill of knowing what *not* to scale (the boring monolith on three VMs is often the right design).
+- **Reliability as arithmetic:** availability zones, regions, and the honest math of nines — every dependency multiplies failure probability, and "multi-region" is a cost-and-complexity decision, not a default. Frameworks like the AWS Well-Architected Framework and Azure's equivalent give you the standard vocabulary here; learn them, because reviews are conducted in their terms.
+- **Cost management:** AWS Cost Explorer, Azure Cost Management, GCP's tooling — but the architect-level skill is designing cost *visibility* in from the start (tagging standards, showback) and knowing the classic traps: cross-AZ data transfer, NAT gateway processing, idle capacity bought "for safety."
 
 ## Cloud Computing Skills 
-To acquire cloud computing skills, start by familiarizing yourself with fundamental cloud concepts. Understanding the variety of services and tools platforms provide is crucial for building a solid foundation.
 
-### Key Cloud Platforms
-When starting your journey as an architect, it’s essential to understand what a cloud provider is, why they are so popular, and how companies use them. <br/> <br/>
-Cloud providers offer a range of services that allow businesses to scale, manage, and deploy applications and infrastructure without needing to invest heavily in physical hardware. They provide solutions such as virtual machines, virtual private clouds (VPCs), storage, and more, which are integral to modern IT operations. To get started, learning the basics of how virtual machines work, understanding the concept of virtual private clouds or virtual networks, storing large amounts of data, and familiarizing yourself with the multitude of services offered are crucial steps. These foundational elements enable companies to create flexible, scalable, and cost-efficient IT environments, driving the popularity and widespread adoption of cloud services. <br/> <br/>
-There are three major cloud providers dominating the market currently. Amazon Web Services (AWS), Microsoft Azure, and Google Cloud Platform (GCP). AWS leads the market with a 32% share, known for its extensive service offerings and market leadership. Microsoft Azure holds a 23% market share and is praised for its seamless integration with Microsoft products and robust hybrid cloud solutions. GCP, with a 10% market share, is renowned for its innovative data and machine learning services. While all three providers offer similar foundational services such as computing, storage, and networking, they each have unique tools and specialties. <br/> <br/>
-AWS is often considered the most comprehensive and market-leading option, making it a good starting point for beginners. Azure’s strong integration with enterprise solutions makes it ideal for businesses already using Microsoft products. GCP, though smaller in market share, excels in data analytics and machine learning. Understanding these similarities and differences helps in deciding which platform to learn first, but gaining proficiency in at least one and understanding the core principles of the others will provide a well-rounded skill set, making you versatile and valuable in the job market. <br/> <br/>
+Cloud providers offer services that let businesses scale, manage, and deploy applications without heavy investment in physical hardware — virtual machines, virtual private clouds, managed storage, and hundreds of higher-level services on top.
+
+Three providers dominate: **AWS** leads the market (roughly a third of it), with the broadest service catalog; **Microsoft Azure** holds the second position with unmatched enterprise integration — if a company runs on Microsoft products, it tends to run on Azure; **GCP** is smaller but strong in data and machine learning services. The foundational services rhyme across all three, which leads to my strongest practical advice: **learn one provider deeply rather than three shallowly.** Depth in one transfers in weeks; a survey of all three transfers nothing. Pick AWS for the broadest job market or Azure for enterprise environments, take it to the level where you can design and defend a real architecture on it, and let the second provider come with your second job.
 
 <Image
   src="/blogs/cloud_guide.png"
   width="800"
   height="800"
-  alt="Image"
+  alt="Cloud guide"
   sizes="100vw"
 />
 
 ## Learn DevOps Practices
-Understanding DevOps practices is essential for an architect. These practices focus on automating and streamlining the software development and deployment processes.
 
 ### Continuous Integration/Continuous Deployment (CI/CD)
-Continuous Integration (CI) is a development practice where developers integrate code into a shared repository frequently, ideally several times a day. Each integration is automatically verified by running automated tests and builds, allowing teams to detect and address issues early. Continuous Deployment (CD) extends CI by automatically deploying all code changes to a staging or production environment after passing the automated tests, ensuring quick and reliable software delivery.
 
-- **Git Integration:** Understand how to use Git for version control to manage and track changes in source code. Learn how to create branches, merge changes, and handle conflicts.
-- **Automation Tools:** Learn tools like GitHub Actions, Azure DevOps, GitLab CI/CD and Jenkins to automate the testing and deployment of code. These tools help integrate source code changes into a shared repository several times a day, followed by automated builds and tests to provide code quality.
-- **Deployment Pipelines:** Set up and manage deployment pipelines to automate the process of deploying code to various environments, ensuring consistent and reliable releases.
+Continuous Integration means developers integrate code into a shared repository frequently, with every integration verified by automated builds and tests. Continuous Deployment extends this by automatically promoting passing builds toward production.
+
+- **Git beyond the basics:** branching, merging, conflict resolution — and the workflow-design layer (trunk-based development versus long-lived branches) that architects are expected to have opinions about.
+- **Automation tools:** GitHub Actions, Azure DevOps, GitLab CI/CD, Jenkins. The tools are interchangeable enough that the durable skill is pipeline *design*: what runs at pre-commit versus PR versus merge, what gates a deploy, how a rollback works.
+- **Deployment strategies:** blue/green, canary releases, feature flags — the machinery that turns "we deploy on Fridays" from bravado into routine.
 
 ### Infrastructure as Code (IaC)
-Infrastructure as Code (IaC) is a practice where infrastructure is provisioned and managed using code and automation instead of manual processes. This approach allows for consistent and repeatable setups, reducing the risk of human error. IaC enables the use of version control systems, like Git, to track changes to infrastructure configurations, making it easier to manage and maintain infrastructure over time.
 
-- **Terraform:**  Terraform allows for the management of cloud resources across various providers using a consistent workflow without ever having to touch the cloud provider portal.
-- **AWS CloudFormation:** Learn AWS CloudFormation to model and set up Amazon Web Services resources using templates. This helps automate and simplify the management of AWS services.
-- **Azure Resource Manager/Bicep:** Gain proficiency in Azure Resource Manager (ARM) templates and Bicep to define and deploy infrastructure in Azure programmatically. Understand how to use these tools to automate and manage resources effectively.
+IaC provisions and manages infrastructure through version-controlled code instead of manual processes — consistent, repeatable, reviewable.
 
-### Configuration Management
-Configuration management is the practice of handling changes systematically to provide consistency in the performance and functionality of a system over time. It involves the use of tools and processes to automate the setup, management, and monitoring of configurations in software and hardware, ensuring that they remain consistent and reliable across different environments.
+- **Terraform:** the multi-provider standard, and the one I'd learn first. Go past the tutorial into what production demands: remote state with locking, modules, and the plan-as-code-review workflow.
+- **AWS CloudFormation** and **Azure Resource Manager/Bicep:** the native options, worth knowing in whichever ecosystem you work — Bicep especially has become the clean choice for Azure-only estates.
+- The architect-level insight: IaC's real payoff isn't automation, it's that **the pull request becomes the change-management process** — review, audit trail, and rollback come free with the workflow.
 
-- **Ansible:** Get familiar with Ansible to automate the configuration of systems and applications. Ansible uses simple YAML files to define tasks and playbooks, making it easy to manage and automate system configurations.
-- **Puppet:** Learn Puppet to manage system configurations using declarative language. Puppet allows for the automation of repetitive tasks and certifying that configurations are consistent across environments.
-- **Chef:** Understand how to use Chef to automate the management of infrastructure. Chef uses recipes and cookbooks to define configurations and policies, enabling automated deployment and management of applications.
+### Configuration Management and Observability
+
+- **Ansible** (and historically Puppet/Chef) automates system configuration — still relevant for VM estates, less central as containers make images the configuration unit.
+- **Containers and Kubernetes** deserve explicit mention in any modern list: Docker fundamentals are now assumed knowledge, and Kubernetes literacy — even if you decide *against* it in a given design — is table stakes for architecture conversations.
+- **Observability:** metrics, logs, and traces (Prometheus, Grafana, OpenTelemetry) — because the SRE half of the role runs on measurement. If you can't see it, you can't have an SLO on it.
+
+## The Skills Nobody Lists: Writing and On-Call
+
+Two final things separate people who plateau at senior engineer from those who grow into architecture. The first is **writing**. Architecture is a writing job — decision records, design docs, incident reviews — and the ability to lay out a trade-off in one clear page is worth more than any certification on this list. Start by writing up your own projects and decisions; a blog like the one you're reading doubles as practice and proof.
+
+The second is **production scar tissue**. Take the on-call rotation. Incidents are where systems teach you how they actually fail — where you learn that DNS TTLs are real, that retries can be a weapon pointed at yourself, that the monitoring gap is always where the outage is. Architects who have felt production break design differently, and better, than those who haven't. There is no course for this; there is only showing up for it.
 
 ## Conclusion
-Becoming a DevOps Architect offers a rewarding career path filled with opportunities for growth and innovation. By understanding the fundamentals of Cloud Engineering, honing your technical and soft skills, and staying engaged with the community, you can position yourself as a valuable asset in the cloud computing landscape. Whether you’re just starting out or looking to transition into this role, the journey to becoming an architect is a continuous learning process that promises exciting challenges and the chance to shape the future of technology.
+
+Becoming a DevOps Architect is a rewarding career path with real growth and real intellectual range — but it is a progression, not a checklist. The fundamentals (networking, operating systems, security) make the cloud learnable; one deep cloud provider makes the practices (CI/CD, IaC, observability) concrete; production experience and writing turn practiced skills into judgment, which is the actual product an architect sells. Whether you're starting out or transitioning in, the journey is a continuous learning process — and the industry's growth means the demand for people who've done that learning honestly isn't slowing down any time soon.

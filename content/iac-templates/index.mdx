@@ -1,6 +1,6 @@
 ---
 title: "Creating custom Terraform templates"
-description: "Creating custom Terraform IaC templates for AWS"
+description: "Building production-grade Terraform for AWS — remote state with locking, reusable modules, secrets handling, and the patterns that separate a demo main.tf from infrastructure you can actually operate."
 image: "../../public/blogs/templates.jpg"
 publishedAt: "2024-06-20"
 updatedAt: "2024-06-20"
@@ -10,122 +10,214 @@ tags:
 - DevSecOps
 ---
 
-# Automating AWS with Custom Terraform Scripts
-Terraform is an open-source infrastructure as code (IaC) software tool that enables you to safely and predictably create, change, and improve infrastructure. Using Terraform, you can define both cloud and on-prem resources in human-readable configuration files that you can version, reuse, and share.
+# Automating AWS with Custom Terraform Templates
 
-I'll guide you through creating custom Terraform scripts to automate the provisioning of certain AWS services. We’ll cover:
+Terraform is an open-source infrastructure as code (IaC) tool that lets you define cloud resources in version-controlled, human-readable configuration files, then create, change, and destroy them through a predictable plan/apply workflow. Every tutorial shows you the ten-line `main.tf` that boots an EC2 instance. This post goes further: we'll build the same core resources — an EC2 instance, an S3 bucket, an RDS database — the way you'd actually want them in a real environment, and cover the scaffolding around them (remote state, modules, secrets, workflow) that turns Terraform from a demo into an operating practice.
 
-- Setting up Terraform
-- Writing Terraform configurations
-- Provisioning an AWS EC2 instance
-- Creating an S3 bucket
-- Setting up an RDS instance
+We'll cover:
+
+- Project structure and remote state (the part demos skip, and the part that matters most)
+- Provisioning an EC2 instance with data sources instead of hard-coded values
+- An S3 bucket with the security posture you actually want
+- An RDS instance without the classic mistakes (plaintext passwords, accidental data loss)
+- The plan/apply workflow and how it fits into code review
 
 ## Prerequisites
-Before we begin, make sure you have the following:
 
 1. An AWS account
 2. AWS CLI configured with your credentials
-3. Terraform installed on your machine
+3. Terraform installed (`terraform version` to confirm)
 
-### Setting Up Terraform
-First, ensure that Terraform is installed. You can download it from the Terraform website.
+## Setting Up: State First, Resources Second
 
-Initialize a new Terraform project by creating a directory and navigating into it:
+Create and enter a project directory:
 
-```main.tf
+```bash
 mkdir terraform-aws
 cd terraform-aws
 ```
 
-Create a `main.tf` file where we will define our infrastructure.
+Before writing any resources, decide where **state** lives. Terraform records every resource it manages in a state file, and the default — a local `terraform.tfstate` on your laptop — is fine for exactly one person experimenting. The moment a second person (or a CI pipeline) runs Terraform, local state becomes a liability: no locking means concurrent applies can corrupt it, and state contains sensitive values in plaintext, so it doesn't belong in Git either.
 
-## Writing Terraform Configurations
+The standard AWS answer is an S3 backend with locking:
 
-### Provisioning an AWS EC2 Instance
-To create an EC2 instance, you need to define the AWS provider and the resource type in your main.tf file:
+```hcl title="backend.tf"
+terraform {
+  required_version = ">= 1.6"
 
-```main.tf
-# main.tf
+  backend "s3" {
+    bucket       = "myorg-terraform-state"
+    key          = "core/terraform.tfstate"
+    region       = "us-east-1"
+    encrypt      = true
+    use_lockfile = true # S3-native locking (Terraform 1.10+); earlier versions use a DynamoDB table
+  }
+
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 5.0"
+    }
+  }
+}
 
 provider "aws" {
   region = "us-east-1"
+
+  default_tags {
+    tags = {
+      ManagedBy   = "terraform"
+      Environment = "dev"
+      Project     = "terraform-aws-demo"
+    }
+  }
+}
+```
+
+Three deliberate choices here. **Version pinning** (`required_version`, provider `~> 5.0`) makes runs reproducible — an unpinned provider means this month's CI run can behave differently than last month's. **`default_tags`** applies your tagging standard to every resource automatically, which is the difference between a cost report you can read and one you can't. And **encrypted, locked remote state** means two engineers can work without stepping on each other.
+
+## Provisioning an EC2 Instance
+
+The tutorial version hard-codes an AMI ID. Don't — AMI IDs differ per region and go stale as images are patched. Use a data source to look up the current one:
+
+```hcl title="ec2.tf"
+data "aws_ami" "amazon_linux" {
+  most_recent = true
+  owners      = ["amazon"]
+
+  filter {
+    name   = "name"
+    values = ["al2023-ami-*-x86_64"]
+  }
 }
 
 resource "aws_instance" "example" {
-  ami           = "ami-0c55b159cbfafe1f0" # Amazon Linux 2 AMI
-  instance_type = "t2.micro"
+  ami           = data.aws_ami.amazon_linux.id
+  instance_type = "t3.micro"
+
+  vpc_security_group_ids = [aws_security_group.instance.id]
+
+  metadata_options {
+    http_tokens = "required" # enforce IMDSv2
+  }
+
+  root_block_device {
+    encrypted = true
+  }
 
   tags = {
     Name = "ExampleInstance"
   }
 }
+
+resource "aws_security_group" "instance" {
+  name_prefix = "example-instance-"
+  description = "Example instance SG - egress only"
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
 ```
 
-This script specifies that we want to use the AWS provider and creates an EC2 instance with the specified AMI and instance type.
+The non-obvious lines are the ones that show up in security reviews later: `http_tokens = "required"` enforces IMDSv2, closing the credential-theft path that made SSRF attacks against EC2 metadata infamous; the root volume is encrypted; and the security group allows egress only — no inbound SSH from the world. The `create_before_destroy` lifecycle on the security group avoids the chicken-and-egg failure when Terraform tries to replace a security group that an instance still references.
 
-### Creating an S3 Bucket
-To create an S3 bucket, add the following resource block to your main.tf file:
+## Creating an S3 Bucket
 
-```main.tf
+S3 is where "it worked in the demo" and "it leaked customer data" are separated by about six lines of configuration. Note that bucket ACLs are deprecated — modern buckets use ownership controls and public access blocks:
+
+```hcl title="s3.tf"
 resource "aws_s3_bucket" "example" {
-  bucket = "my-unique-bucket-name-123"
-  acl    = "private"
+  bucket = "myorg-example-data-use1" # globally unique; a naming convention beats improvisation
 
   tags = {
-    Name        = "ExampleBucket"
-    Environment = "Dev"
+    Name = "ExampleBucket"
   }
 }
 
-This script will create an S3 bucket with a unique name and private access.
+resource "aws_s3_bucket_public_access_block" "example" {
+  bucket                  = aws_s3_bucket.example.id
+  block_public_acls       = true
+  block_public_policy     = true
+  ignore_public_acls      = true
+  restrict_public_buckets = true
+}
 
-### Setting Up an RDS Instance
-To set up an RDS instance, include the following configuration:
+resource "aws_s3_bucket_versioning" "example" {
+  bucket = aws_s3_bucket.example.id
+  versioning_configuration {
+    status = "Enabled"
+  }
+}
 
-```main.tf
+resource "aws_s3_bucket_server_side_encryption_configuration" "example" {
+  bucket = aws_s3_bucket.example.id
+  rule {
+    apply_server_side_encryption_by_default {
+      sse_algorithm = "aws:kms"
+    }
+  }
+}
+```
+
+Public access blocked at the bucket level (belt *and* suspenders — account-level blocks are worth setting too), versioning on (your undo button for both accidental deletion and ransomware), KMS encryption by default. This is the baseline; scanners like Checkov or Trivy will hold you to roughly this standard in CI, so writing it correctly the first time is cheaper than remediating findings later.
+
+## Setting Up an RDS Instance
+
+The RDS example is where most tutorials teach an actively dangerous habit: a plaintext `password = "password"` that lands in Git *and* in the state file. Let AWS manage the secret instead:
+
+```hcl title="rds.tf"
 resource "aws_db_instance" "example" {
-  allocated_storage    = 20
-  engine               = "mysql"
-  engine_version       = "5.7"
-  instance_class       = "db.t2.micro"
-  name                 = "mydb"
-  username             = "admin"
-  password             = "password"
-  parameter_group_name = "default.mysql5.7"
-  skip_final_snapshot  = true
+  identifier        = "example-mysql"
+  allocated_storage = 20
+  engine            = "mysql"
+  engine_version    = "8.0"
+  instance_class    = "db.t3.micro"
+  db_name           = "mydb"
+  username          = "admin"
+
+  manage_master_user_password = true # password generated & stored in Secrets Manager, never in state
+
+  storage_encrypted       = true
+  backup_retention_period = 7
+  multi_az                = false # true in production; doubles cost, removes single-AZ failure mode
+  deletion_protection     = true
+  skip_final_snapshot     = false
+  final_snapshot_identifier = "example-mysql-final"
 
   tags = {
     Name = "ExampleDBInstance"
   }
 }
 ```
-This script provisions a MySQL database instance with the specified parameters.
 
-### Applying the Configuration
-Once you have defined your infrastructure in the main.tf file, you can apply the configuration using the following commands:
+Every flag here is a lesson someone learned the hard way. `manage_master_user_password` keeps the credential out of your repo and your state file entirely. `deletion_protection` plus a required final snapshot means a fat-fingered `terraform destroy` cannot silently take your data with it — the two settings that distinguish "database as code" from "outage as code." Backups are on with a week of retention, storage is encrypted, and the `multi_az` flag is written down explicitly so the production/dev difference is a one-line, reviewable change rather than tribal knowledge.
 
-1. Initialize the Terraform configuration:
+## The Workflow: Plan Is the Product
 
-```main.tf
-terraform init
+With the configuration in place, the lifecycle is:
+
+```bash
+terraform init      # download providers, connect the backend
+terraform fmt       # canonical formatting
+terraform validate  # catch syntax/type errors before touching AWS
+terraform plan -out=tfplan
+terraform apply tfplan
 ```
 
-2. Validate the configuration:
+The detail that matters: `plan -out` followed by `apply tfplan` guarantees that what gets applied is *exactly* what was reviewed — no time-of-review to time-of-apply gap. That property is the foundation of every mature Terraform workflow: in a team setting, `plan` runs in CI on the pull request, a human reads the diff ("3 to add, 1 to change, **0 to destroy**" — always read the destroy count), and the saved plan applies on merge. The plan output *is* the change request.
 
-```main.tf
-terraform validate
-```
+## Where to Go Next: Modules
 
-Apply the configuration:
-
-```main.tf
-terraform apply
-```
-
-You'll be prompted to confirm the action. Type `yes` to proceed.
+Once the same patterns repeat — every service needs the same shape of bucket, the same hardened instance — you stop copy-pasting and extract **modules**: parameterized, versioned packages of resources. A `module "app_bucket"` with your security defaults baked in means the secure configuration becomes the *easy* configuration, and a platform team can publish standards as code rather than enforce them in review comments. That composability, more than any individual resource block, is what Terraform actually scales on.
 
 ## Conclusion
-In this post, we covered how to create custom Terraform scripts to automate the provisioning of AWS services like EC2 instances, S3 buckets, and RDS instances. Terraform provides a powerful way to manage your infrastructure as code, making it easy to version control and share configurations.
 
-Feel free to expand these scripts to include more complex resources and configurations based on your needs. Happy automating!
+We covered the same ground every Terraform tutorial covers — EC2, S3, RDS — but with the decisions that production demands: remote state with locking and encryption, pinned versions, data sources over hard-coded IDs, IMDSv2 and egress-only security groups, public access blocks and versioning on buckets, managed database credentials and deletion protection. None of it is exotic; all of it is the difference between Terraform as a demo and Terraform as the system of record for your infrastructure. Start with these patterns, extract modules as they repeat, wire `plan` into code review — and the configuration files become what they're supposed to be: the most trustworthy documentation your infrastructure has. Happy automating!
