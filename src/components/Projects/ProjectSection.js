@@ -42,8 +42,9 @@ const gridItemVariants = {
 };
 
 const ProjectSection = () => {
-  const featuredProjects = projects.filter((project) => project.featured);
-  const gridProjects = projects.filter((project) => !project.featured);
+  const sortedProjects = [...projects].sort((a, b) => a.id - b.id);
+  const featuredProjects = sortedProjects.filter((project) => project.featured);
+  const gridProjects = sortedProjects.filter((project) => !project.featured);
 
   return (
     <section className="text-dark dark:text-light px-5 sm:px-10 md:px-24 sxl:px-32 pb-24">
