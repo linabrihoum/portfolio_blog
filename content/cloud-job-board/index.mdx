@@ -1,0 +1,97 @@
+---
+title: "Building a Cloud Job Board"
+description: "How I built an open-source, self-updating job board for cloud and SRE roles — a static-first Next.js architecture with no database, a daily sourcing pipeline that discovers companies on its own, and the CI/CD gotchas I hit along the way."
+image: "../../public/blogs/cloudboard.jpg"
+publishedAt: "2026-07-19"
+updatedAt: "2026-07-19"
+author: "Lina Brihoum"
+isPublished: true
+tags: 
+- Website Development
+---
+# Building a Cloud Job Board
+
+## Introduction
+
+While searching for cloud and SRE roles, I kept running into the same three problems on every job board: listings that had been filled months ago, duplicates of the same posting from five aggregators, and "Apply" buttons that routed me through some middleman site before I ever reached the company. So I built my own board, with three rules baked in from day one:
+
+1. **Every listing links straight to the company's own posting.** No aggregator pages, no redirects.
+2. **Every listing is verified.** If a job disappears from the company's hiring system, it disappears from my board the next morning.
+3. **Free for job seekers, always.** No paywall, no account required.
+
+The board is live at [cloud-job-board.vercel.app](https://cloud-job-board.vercel.app/), and the project is open source under AGPL-3.0. 
+
+<Image
+  src="/blogs/cloudjobs.png"
+  width="800"
+  height="500"
+  alt="The Cloud Job Board homepage"
+  sizes="100vw"
+/>
+
+## The Architecture: Static-First, No Database
+
+The site is a Next.js app deployed on Vercel, and the entire "database" is a JSON file committed to the repo:
+
+```
+Discovery (HN threads, company directories)
+        |
+        v
+Company hiring systems ----> daily pipeline ----> src/data/jobs.json
+(Greenhouse, Lever, Ashby,   (fetch, filter,            |
+ Workable, SmartRecruiters,   dedupe, verify)           v
+ USAJobs)                                        Next.js build (SSG)
+                                                        |
+                                                        v
+                                                  Vercel CDN
+```
+
+Why no database? Because visitors only *read* job listings, and the data only changes when the pipeline runs. A Postgres instance would be a running service with nothing to do. With a JSON file, every page is baked to static HTML at build time: instant loads, nothing to secure, zero hosting cost.
+
+Every job passes through a zod schema before it can be written. Unknown tags, malformed dates, broken URLs, or duplicate entries fail validation, and a validation failure aborts the write entirely. Bad data cannot reach production because the build itself consumes the validated loader.
+
+## Sourcing: Companies Are Discovered, Not Curated
+
+The interesting part of a job board is where the jobs come from. I decided early not to scrape sites like Indeed (they actively fight scrapers, so scrapers break constantly) and not to use aggregator feeds (their terms require linking back to their listing pages, which violates my direct-apply rule).
+
+The answer turned out to be sitting in plain sight: most tech companies run hiring on one of a handful of applicant tracking systems, and Greenhouse, Lever, Ashby, Workable, and SmartRecruiters all expose free public APIs of each company's live openings. If you know a company's board exists, you can pull its real jobs — with real posting dates and descriptions — straight from the source.
+
+So the pipeline's first job is *finding boards*. It mines Hacker News "Who is hiring?" threads for hiring-system links, and it walks public company directories (the Y Combinator directory, the CNCF landscape, and community lists like Hiring Without Whiteboards), probing each name against all five systems. A cursor file tracks sweep progress so every daily run continues where the last one stopped. Any board with relevant open roles joins a self-growing registry, which means startups get discovered the same way household names do. Nobody hand-picks the company list.
+
+After fetching comes filtering, which taught me a lesson I did not expect: **job titles lie**. When the board discovered SpaceX, my title filter happily accepted about seventy "Reliability Engineers" and "Systems Engineers" that turned out to be rocket-valve and PCB manufacturing roles. Keyword matching alone cannot tell a Kubernetes SRE from an Equipment Reliability Engineer, so the relevance gate now pairs positive keywords with a negative filter for hardware, aerospace, and manufacturing vocabulary, plus a per-company cap so no single employer floods the board.
+
+The final steps: dedupe by normalized company and title, drop anything older than 45 days, re-check hand-picked listings' URLs, and validate the whole file. Because the board is rebuilt every run from what is live on each company's system *right now*, dead postings vanish automatically. The verification rule costs nothing extra; it falls out of the architecture.
+
+## CI/CD: Every Change Through a PR, and a Bot That Ships at 8am
+
+The repo follows a strict flow: every change, including docs, goes through an issue, a branch, and a pull request. GitHub Actions runs linting, the full test suite, and a production build on every PR, and branch protection on `main` requires that check to pass before anything merges. Vercel builds a preview deployment for every PR, so I can see any change on a real URL before it lands, and deploys `main` to production on merge.
+
+The daily refresh is a scheduled GitHub Actions workflow (12:00 UTC, which is 8am Eastern) that runs the whole pipeline, then validates the result with the exact same lint, test, and build commands as CI, then opens a data PR and merges it automatically. Two gotchas here were worth writing down:
+
+- GitHub Actions **cannot create pull requests** until you enable a repo-level setting ("Allow GitHub Actions to create and approve pull requests"). Nothing warns you when you write the workflow; it just fails on its first scheduled run.
+- PRs opened with the built-in Actions token **do not trigger other workflows**, so the required CI check would never run on the bot's PRs. The fix: the refresh workflow runs the validation itself and reports the required status on the data commit before merging. The protection gate stays honest; the validation genuinely ran.
+
+The result is a site that updates itself every morning while I have coffee. If the pipeline produces invalid data, validation fails and yesterday's board stays live: a safe failure mode by default.
+
+## The Frontend
+
+The design brief was "a job board that does not feel like a spreadsheet." The site has a dark, cosmic top section (a CSS-only starfield with two parallax layers, floating gradient orbs, the occasional shooting star) that transitions through a curved divider into an off-white content band where the listings live. All motion is transforms and opacity, the whole effects layer costs about 0.1 kB of JavaScript, and everything switches off under `prefers-reduced-motion`.
+
+For SEO, the important move was making sure the job list is server-rendered into the HTML rather than hydrated client-side (my filter system originally forced the whole list to render in the browser, which meant crawlers saw an empty page). Every job page also emits JobPosting structured data with salary ranges where companies publish them, which is what makes listings eligible for Google's job search experience.
+
+## What's Next: Supabase for the User Layer
+
+The static-first rule has a planned expiration date for one feature area: user accounts. Email alerts (a daily digest of new roles matching your filters) and saved jobs both need somewhere to store user data, and that is where Supabase comes in: hosted Postgres with authentication and row-level security, which pairs naturally with a Next.js app on Vercel.
+
+The key design decision is that Supabase will hold *user data only*. Listings stay in the JSON file with the same validation pipeline, because nothing about accounts changes the fact that job data is read-only for visitors. The static core stays static.
+
+## Lessons Learned
+
+- **"Build passes" does not mean "styles exist."** I ran Tailwind v3 directives under the v4 pipeline for a while; the build was green and no utility classes were generated at all.
+- **Titles lie; filter negatively too.** The SpaceX story above.
+- **Public APIs rate-limit.** Probing hundreds of companies earned me a 429 from Workable. The pipeline now treats "unreachable" and "removed" as different things: a board that fails to respond keeps yesterday's listings, and only a posting missing from a successful fetch is considered gone.
+- **A scheduled workflow is not done until it has run from the scheduler.** Permissions differ between local testing, manual dispatch, and cron.
+
+## Conclusion
+
+The board currently carries a couple hundred verified listings across dozens of companies and grows every morning. The architecture decisions that felt austere at the start — no database, no scraping, everything through PRs — turned out to be the reasons it runs itself: static means nothing to operate, sourcing from ATS APIs means nothing to un-break, and the PR-gated pipeline means a bad data run can never take down a good board. If you are hunting for cloud, SRE, DevOps, or platform engineering work, the board is live at [cloud-job-board.vercel.app](https://cloud-job-board.vercel.app/) — and if you want to read the pipeline code, the whole project is open source on [GitHub](https://github.com/linabrihoum/cloud-job-board).

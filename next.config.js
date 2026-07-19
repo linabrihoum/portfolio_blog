@@ -8,7 +8,7 @@ const nextConfig = {
   // output: "export", // Uncomment if needed
 
   images: {
-    domains: ["assets.aceternity.com", "images.unsplash.com"],
+    domains: ["assets.aceternity.com", "images.unsplash.com", "unsplash.com"],
   },
 
   // Uncomment and set your environment variables if needed
