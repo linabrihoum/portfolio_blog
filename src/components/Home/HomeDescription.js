@@ -6,20 +6,20 @@ import { Highlight } from "../ui/Highlight";
 
 const HomeDescription = () => {
   return (
-    <div className="relative w-full lg:h-[60vh] md:h-[50vh] sm:h-[40vh] h-[50vh] flex flex-col md:flex-row items-center justify-center text-dark dark:text-light mt-10 md:mt-24 sm:mt-10 overflow-hidden">
+    <div className="relative w-full h-[calc(100vh-4rem)] flex flex-col md:flex-row items-center justify-center text-dark dark:text-light overflow-hidden">
       {/* Background Beams */}
-      <div className="absolute inset-0 w-screen h-full z-0">
+      <div className="absolute inset-0 w-full h-full z-0">
         <BackgroundBeamsDemo />
       </div>
 
-      <div className="relative w-screen md:w-1/2 flex flex-col text-center md:text-left items-center md:items-start justify-center px-5 xs:p-10 pb-10 lg:px-16 z-10">
+      <div className="relative z-10 w-full flex flex-col items-center justify-center text-center px-5 sm:px-10">
         <motion.h2
           initial={{ opacity: 0 }}
           animate={{ opacity: 1, y: -30 }}
           transition={{ delay: 1 }}
-          className="font-bold text-4xl xs:text-5xl sxl:text-6xl pt-8"
+          className="font-bold whitespace-nowrap pt-8 text-[length:4.4vw] md:text-[length:clamp(1.75rem,3.2vw,3.75rem)]"
         >
-          Hey there! My name is <span className="text-bold"> </span>
+          Hey there! My name is{" "}
           <Highlight className="text-black dark:text-white">
             Lina Brihoum
           </Highlight>
@@ -28,10 +28,10 @@ const HomeDescription = () => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1, y: -30 }}
           transition={{ delay: 3.5 }}
-          className="font-medium mt-4 text-2xl pt-8"
+          className="font-medium mt-3 text-2xl"
         >
-          I'm a Cloud Architect specializing in Site Reliability, DevSecOps,
-          and Artificial Intelligence. <br />
+          I'm a Cloud Architect specializing in DevSecOps, Software
+          and Artificial Intelligence.
         </motion.p>
       </div>
     </div>
