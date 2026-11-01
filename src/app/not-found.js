@@ -11,7 +11,7 @@ export default function NotFound() {
         <h2
           className="font-bold text-4xl xs:text-5xl sxl:text-6xl  text-center lg:text-left"
         >
-          Oh no! We couldn't find this page :( <span className="text-bold"> </span>
+          Oh no! We couldn&apos;t find this page :( <span className="text-bold"> </span>
         </h2>
       </div>
 

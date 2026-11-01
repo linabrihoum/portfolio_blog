@@ -30,7 +30,7 @@ const HomeDescription = () => {
           transition={{ delay: 3.5 }}
           className="font-medium mt-3 text-2xl"
         >
-          I'm a Cloud Architect specializing in DevSecOps, Software
+          I&apos;m a Cloud Architect specializing in DevSecOps, Software
           and Artificial Intelligence.
         </motion.p>
       </div>

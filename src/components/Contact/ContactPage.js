@@ -110,8 +110,8 @@ const ContactPage = () => {
             <h1 className="text-3xl font-bold text-indigo-800">Contact Me!</h1>
             <p className="mt-3 text-lg text-neutral-500">
               Thank you for your interest in reaching out! Have a question or
-              want to collaborate? I'm always excited to connect with fellow
-              tech enthusiasts and professionals. Fill out the form and let's
+              want to collaborate? I&apos;m always excited to connect with fellow
+              tech enthusiasts and professionals. Fill out the form and let&apos;s
               create something amazing together!
             </p>
             <div className="mt-5">
