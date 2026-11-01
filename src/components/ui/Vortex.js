@@ -6,6 +6,7 @@ import { motion } from "framer-motion";
 export const Vortex = (props) => {
   const canvasRef = useRef(null);
   const containerRef = useRef(null);
+  const animationFrameId = useRef(null);
   const particleCount = props.particleCount || 700;
   const particlePropCount = 9;
   const particlePropsLength = particleCount * particlePropCount;
@@ -90,7 +91,7 @@ export const Vortex = (props) => {
     renderGlow(canvas, ctx);
     renderToScreen(canvas, ctx);
 
-    window.requestAnimationFrame(() => draw(canvas, ctx));
+    animationFrameId.current = window.requestAnimationFrame(() => draw(canvas, ctx));
   };
 
   const drawParticles = (ctx) => {
@@ -189,13 +190,21 @@ export const Vortex = (props) => {
 
   useEffect(() => {
     setup();
-    window.addEventListener("resize", () => {
+    const handleResize = () => {
       const canvas = canvasRef.current;
       const ctx = canvas?.getContext("2d");
       if (canvas && ctx) {
         resize(canvas, ctx);
       }
-    });
+    };
+    window.addEventListener("resize", handleResize);
+
+    // Stop the animation loop when leaving the page; otherwise it keeps
+    // redrawing (with full-screen blur) on every other page you visit.
+    return () => {
+      window.cancelAnimationFrame(animationFrameId.current);
+      window.removeEventListener("resize", handleResize);
+    };
   }, []);
 
   return (
