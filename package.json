@@ -7,7 +7,7 @@
     "build": "next build",
     "postbuild": "next-sitemap",
     "start": "next start",
-    "lint": "next lint",
+    "lint": "eslint .",
     "test": "vitest run"
   },
   "engines": {
@@ -24,8 +24,6 @@
     "clsx": "^2.1.1",
     "contentlayer2": "^0.5.8",
     "date-fns": "^2.30.0",
-    "eslint": "8.48.0",
-    "eslint-config-next": "14.2.0",
     "framer-motion": "^10.18.0",
     "github-slugger": "^2.0.0",
     "mini-svg-data-uri": "^1.4.4",
@@ -49,8 +47,11 @@
   },
   "devDependencies": {
     "encoding": "^0.1.13",
+    "eslint": "^9.39.5",
+    "eslint-config-next": "^16.4.3",
     "prettier": "^3.1.1",
     "sharp": "^0.32.6",
+    "typescript": "~6.0.0",
     "vitest": "^4.1.12"
   }
 }

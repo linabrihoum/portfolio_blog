@@ -31,10 +31,6 @@ export function useThemeSwitch() {
   const [mode, setMode] = useState(getUserPreference());
 
   useEffect(() => {
-    setMode(getUserPreference());
-  }, []);
-
-  useEffect(() => {
     toggleTheme(mode);
   }, [mode]);
 

@@ -35,6 +35,8 @@ const RenderMdx = ({ blog }) => {
 
     "
     >
+      {/* useMDXComponent memoizes the component per post, so it isn't recreated on every render */}
+      {/* eslint-disable-next-line react-hooks/static-components */}
       <MDXContent components={mdxComponents} />
     </div>
   );
