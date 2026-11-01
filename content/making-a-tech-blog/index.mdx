@@ -6,11 +6,13 @@ publishedAt: "2023-10-04"
 updatedAt: "2023-10-04"
 author: "Lina Brihoum"
 isPublished: true
+takeaways:
+- "Pre-rendering every page gives search engines complete HTML, which made SEO a solved problem rather than a feature."
+- "Treating posts as type-checked files in Git means a front-matter typo fails the build instead of breaking a page."
+- "The stack is the easy part; choose tools boring enough that they never become an excuse not to write."
 tags:
 - Software
 ---
-
-# Building a Tech Blog with Next.JS, Contentlayer, Supabase, and More
 
 Hi there! This is my very first post :) I started this blog to share new and exciting technology surrounding Cloud Technology, DevSecOps, and Artificial Intelligence. I knew with my website though I didn't want to use Wix, SquareSpace, or any website builder or template to fully support the notion I am a competent programmer (lol).
 
@@ -41,7 +43,7 @@ With all this in mind: Next.JS/React with Tailwind CSS and framer-motion on the 
 - <ins>Server-Side Rendering (SSR):</ins> the page is rendered **per request**. Necessary when content is personalized or changes constantly; wasteful for content that changes weekly. I use it nowhere on this site, deliberately.
 - <ins>Client-side rendering:</ins> reserved for the bits that are genuinely dynamic per-visitor — like the view counter, which hydrates after page load and talks to Supabase from the browser.
 
-The SEO payoff of pre-rendering is mechanical, not magical: crawlers receive complete HTML with real `<title>`, meta description, Open Graph tags, and JSON-LD structured data (each post on this site emits a `NewsArticle` schema), instead of an empty `<div id="root">` and a promise. Add the automatic per-route code splitting, build-time image optimization with proper `srcset` generation, and font optimization, and the framework is doing most of the Core Web Vitals work for me.
+The SEO payoff of pre-rendering is mechanical, not magical: crawlers receive complete HTML with real `<title>`, meta description, Open Graph tags, and JSON-LD structured data (each post on this site emits a `BlogPosting` schema), instead of an empty `<div id="root">` and a promise. Add the automatic per-route code splitting, build-time image optimization with proper `srcset` generation, and font optimization, and the framework is doing most of the Core Web Vitals work for me.
 
 ```js title="blogs/[slug]/page.js"
 import { allBlogs } from "contentlayer/generated";
@@ -93,6 +95,10 @@ $$ language sql;
 One `ON CONFLICT` upsert: creates the row on a post's first-ever view, atomically increments it forever after, no read-modify-write window at all. The client component fires this once on mount and separately fetches the current count to display. It's a tiny feature, but the shape of the solution — *move contended writes into the database, where atomicity lives* — is the same shape that matters at much larger scales.
 
 Supabase also brings authentication, storage with a CDN, and real-time subscriptions — none of which this blog needs yet, which is itself part of the appeal: the platform has room for the site to grow into without a re-architecture.
+
+<Callout kind="note" title="Update, November 2026">
+I've since removed the view counter (and Supabase with it) during a redesign of this site. Nobody was looking at the numbers, and a static site with no database is one less thing to run. The atomic-increment pattern above is still the right way to build a counter if you need one.
+</Callout>
 
 ---
 ## Frontend: Tailwind CSS and Framer Motion
