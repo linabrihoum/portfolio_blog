@@ -12,6 +12,9 @@
 /.next/
 /out/
 
+# speed check results
+/.lighthouseci/
+
 # production
 /build
 
