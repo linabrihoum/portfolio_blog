@@ -1,12 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
-import NavLink from "./NavLink";
+import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
-import { GithubIcon, LinkedinIcon, InstagramIcon } from "./Icons.js";
-import { useRouter } from "next/navigation";
-import siteMetadata from "@/src/utils/siteMetaData";
+import { cx } from "@/src/utils";
+import NavLink from "./NavLink";
+import { SocialLinks } from "./SocialLinks";
 
 const links = [
   { url: "/", title: "Home" },
@@ -16,161 +16,95 @@ const links = [
   { url: "/contact", title: "Contact" },
 ];
 
+// Blog posts and category pages all count as "Blogs".
+const isActive = (url, pathname) =>
+  url === "/categories/all"
+    ? pathname.startsWith("/categories") || pathname.startsWith("/blogs")
+    : pathname === url;
+
+const barTransition = { duration: 0.3 };
+
 const Header = () => {
   const [open, setOpen] = useState(false);
-  const router = useRouter();
+  const [scrolled, setScrolled] = useState(false);
+  const pathname = usePathname();
 
-  const topVariants = {
-    closed: {
-      rotate: 0,
-    },
-    opened: {
-      rotate: 45,
-      backgroundColor: "rgb(255,255,255)",
-    },
-  };
-  const centerVariants = {
-    closed: {
-      opacity: 1,
-    },
-    opened: {
-      opacity: 0,
-    },
-  };
-
-  const bottomVariants = {
-    closed: {
-      rotate: 0,
-    },
-    opened: {
-      rotate: -45,
-      backgroundColor: "rgb(255,255,255)",
-    },
-  };
-
-  const listVariants = {
-    closed: {
-      x: "100vw",
-    },
-    opened: {
-      x: 0,
-      transition: {
-        when: "beforeChildren",
-        staggerChildren: 0.2,
-      },
-    },
-  };
-
-  const listItemVariants = {
-    closed: {
-      x: -10,
-      opacity: 0,
-    },
-    opened: {
-      x: 0,
-      opacity: 1,
-    },
-  };
+  // Transparent over the page at the very top; frosted glass once you scroll.
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 8);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   return (
-    <header className="w-full p-4 px-5 sm:px-10 flex items-center justify-between sticky top-0 z-50 bg-light dark:bg-dark">
-      {/* Rest of the component remains the same */}
-
+    <header
+      data-scrolled={scrolled}
+      className={cx(
+        "w-full p-4 px-5 sm:px-10 flex items-center justify-between sticky top-0 z-50 border-b transition-[background-color,border-color] duration-300",
+        scrolled
+          ? "bg-[rgba(8,7,23,.62)] backdrop-saturate-[1.4] backdrop-blur-[14px] border-[var(--border-subtle)]"
+          : "bg-transparent border-transparent"
+      )}
+    >
       {/* LINKS */}
-      <div className="hidden md:flex gap-4">
+      <nav className="hidden md:flex gap-4">
         {links.map((link) => (
-          <NavLink link={link} key={link.title} />
+          <NavLink link={link} active={isActive(link.url, pathname)} key={link.title} />
         ))}
-      </div>
+      </nav>
 
-      {/* LOGO */}
-      <Link href="/" className="mr-4 semi-bold dark:text-light">
-        <span className="">Lina Brihoum</span>
+      {/* NAME */}
+      <Link href="/" className="font-semibold tracking-[.01em] text-fg-1">
+        Lina Brihoum
       </Link>
 
       {/* SOCIAL */}
-      <div className="hidden md:flex gap-4">
-        <motion.a
-          target={"_blank"}
-          className="w-6 m-1 mx-3 bg-light rounded-full dark:bg-dark sm:mx-1 dark:fill-light"
-          href={siteMetadata.github}
-          whileHover={{ y: -2 }}
-          whileTap={{ scale: 0.9 }}
-          aria-label="Checkout my github profile"
-        >
-          <GithubIcon />
-        </motion.a>
-        <motion.a
-          target={"_blank"}
-          className="w-6 m-1 mx-3 sm:mx-1"
-          href={siteMetadata.linkedin}
-          whileHover={{ y: -2 }}
-          whileTap={{ scale: 0.9 }}
-          aria-label="Checkout my linkedin profile"
-        >
-          <LinkedinIcon />
-        </motion.a>
-        <motion.a
-          target={"_blank"}
-          className="w-6 m-1 mx-3 sm:mx-1"
-          href={siteMetadata.instagram}
-          whileHover={{ y: -2 }}
-          whileTap={{ scale: 0.9 }}
-          aria-label="Checkout my dribbble profile"
-        >
-          <InstagramIcon />
-        </motion.a>
-      </div>
+      <SocialLinks className="hidden md:flex" />
 
-      {/* RESPONSIVE MENU */}
+      {/* MOBILE MENU */}
       <div className="md:hidden">
-        {/* MENU BUTTON */}
         <button
-          className="w-10 h-8 flex flex-col justify-between z-50 relative"
+          aria-label={open ? "Close menu" : "Open menu"}
+          aria-expanded={open}
+          className="w-10 h-8 flex flex-col justify-between z-[60] relative"
           onClick={() => setOpen((prev) => !prev)}
         >
-          <motion.div
-            variants={topVariants}
-            animate={open ? "opened" : "closed"}
-            className="w-10 h-1 bg-black dark:bg-white rounded origin-left"
-          ></motion.div>
-          <motion.div
-            variants={centerVariants}
-            animate={open ? "opened" : "closed"}
-            className="w-10 h-1 bg-black dark:bg-white rounded"
-          ></motion.div>
-          <motion.div
-            variants={bottomVariants}
-            animate={open ? "opened" : "closed"}
-            className="w-10 h-1 bg-black dark:bg-white rounded origin-left"
-          ></motion.div>
+          <motion.span
+            animate={{ rotate: open ? 45 : 0 }}
+            transition={barTransition}
+            className="w-10 h-1 bg-fg-1 rounded origin-left"
+          />
+          <motion.span
+            animate={{ opacity: open ? 0 : 1 }}
+            transition={barTransition}
+            className="w-10 h-1 bg-fg-1 rounded"
+          />
+          <motion.span
+            animate={{ rotate: open ? -45 : 0 }}
+            transition={barTransition}
+            className="w-10 h-1 bg-fg-1 rounded origin-left"
+          />
         </button>
-        {/* MENU LIST */}
         {open && (
-          <motion.div
-            variants={listVariants}
-            initial="closed"
-            animate="opened"
-            className="absolute top-0 left-0 w-screen h-screen bg-black text-white  flex flex-col items-center justify-center gap-8 text-4xl z-40"
-          >
-            {links.map((link) => (
+          <div className="fixed inset-0 z-[55] bg-space-1000 flex flex-col items-center justify-center gap-8">
+            {links.map((link, index) => (
               <motion.div
-                variants={listItemVariants}
-                className=""
                 key={link.title}
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, ease: "easeOut", delay: index * 0.08 }}
               >
-                <button
-                  className=""
-                  onClick={() => {
-                    setOpen((prev) => !prev);
-                    router.push(link.url);
-                  }}
+                <Link
+                  href={link.url}
+                  onClick={() => setOpen(false)}
+                  className="text-4xl font-semibold text-white"
                 >
                   {link.title}
-                </button>
+                </Link>
               </motion.div>
             ))}
-          </motion.div>
+          </div>
         )}
       </div>
     </header>
