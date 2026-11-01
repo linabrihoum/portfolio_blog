@@ -47,3 +47,6 @@ next-env.d.ts
 CNAME
 
 package-lock.json
+
+/design
+/docs
