@@ -1,7 +1,3 @@
-const svgToDataUri = require("mini-svg-data-uri");
-const flattenColorPalette =
-  require("tailwindcss/lib/util/flattenColorPalette").default;
-
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [
@@ -9,19 +5,45 @@ module.exports = {
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
   ],
+  // The site is dark only: <html> always has the "dark" class (see layout.js),
+  // so the dark: styles on pages that aren't redesigned yet keep applying.
   darkMode: "class",
   theme: {
     extend: {
       colors: {
-        // TODO:
+        // Legacy colors, still used by pages that aren't redesigned yet
         dark: "#1b1b1b",
         light: "#EEF0E5",
         accent: "#304D30",
         accentDark: "#B6C4B6",
         gray: "#747474",
+        // Comet design tokens (defined in src/styles/colors.css)
+        space: {
+          1000: "var(--space-1000)",
+          950: "var(--space-950)",
+          900: "var(--space-900)",
+          850: "var(--space-850)",
+          800: "var(--space-800)",
+          700: "var(--space-700)",
+          600: "var(--space-600)",
+        },
+        comet: {
+          cyan: "#18CCFC",
+          indigo: "#6344F5",
+          violet: "#AE48FF",
+          pink: "#FF5FC8",
+        },
+        fg: {
+          1: "var(--fg-1)",
+          2: "var(--fg-2)",
+          3: "var(--fg-3)",
+        },
+      },
+      boxShadow: {
+        lift: "0 25px 50px -12px rgba(99,68,245,.25)",
       },
       fontFamily: {
-        mr: ["var(--font--mr)"],
+        mr: ["var(--font-mr)"],
         in: ["var(--font-in)"],
       },
       animation: {
@@ -39,35 +61,7 @@ module.exports = {
         xs: "480px",
         // @media (min-width: 480px){...}
       },
-      // Add this to enable smooth scrolling
     },
   },
-  plugins: [
-    require("@tailwindcss/forms"),
-    require("@tailwindcss/typography"),
-    addVariablesForColors,
-    function ({ matchUtilities, theme }) {
-      matchUtilities(
-        {
-          "bg-dot-thick": (value) => ({
-            backgroundImage: `url("${svgToDataUri(
-              `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="16" height="16" fill="none"><circle fill="${value}" id="pattern-circle" cx="10" cy="10" r="2.5"></circle></svg>`
-            )}")`,
-          }),
-        },
-        { values: flattenColorPalette(theme("backgroundColor")), type: "color" }
-      );
-    },
-  ],
+  plugins: [require("@tailwindcss/forms"), require("@tailwindcss/typography")],
 };
-
-function addVariablesForColors({ addBase, theme }) {
-  const allColors = flattenColorPalette(theme("colors"));
-  const newVars = Object.fromEntries(
-    Object.entries(allColors).map(([key, val]) => [`--${key}`, val])
-  );
-
-  addBase({
-    ":root": newVars,
-  });
-}

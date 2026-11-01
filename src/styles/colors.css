@@ -1,0 +1,28 @@
+:root{
+/* ---- Legacy (exact values from tailwind.config.js) ---- */
+--legacy-dark:#1b1b1b;--legacy-light:#EEF0E5;--legacy-accent:#304D30;--legacy-accent-dark:#B6C4B6;--legacy-gray:#747474;
+/* ---- Comet beam stops (exact, from BackgroundBeams.js) ---- */
+--comet-cyan:#18CCFC;--comet-indigo:#6344F5;--comet-violet:#AE48FF;
+/* ---- Cosmos: deep-space surfaces ---- */
+--space-1000:#05040F;--space-950:#080717;--space-900:#0E0C26;--space-850:#141137;--space-800:#1A1647;--space-700:#251F63;--space-600:#352C8A;
+/* ---- Cosmos: accents ---- */
+--indigo-300:#B9ACFF;--indigo-400:#8D78FF;--indigo-500:#6344F5;--indigo-600:#4E31D6;
+--violet-300:#D7A6FF;--violet-500:#AE48FF;
+--cyan-300:#8FE6FE;--cyan-500:#18CCFC;
+--comet-pink:#FF5FC8;--solar-amber:#FFB547;--solar-flare:#FF7A3D;--aurora:#5CF2B0;
+--moon:#EEF0E5;--star:#F5F3FF;
+/* ---- Text ---- */
+--fg-1:#F5F3FF;--fg-2:#C3BDEB;--fg-3:#8E88C2;--fg-inverse:#0E0C26;
+/* ---- Semantic ---- */
+--success:#5CF2B0;--warning:#FFB547;--danger:#FF5A7A;--info:#18CCFC;
+/* ---- Semantic aliases ---- */
+--surface-page:var(--space-900);--surface-deep:var(--space-950);--surface-card:var(--space-850);--surface-raised:var(--space-800);--surface-inverse:var(--moon);
+--border-subtle:rgba(185,172,255,.14);--border-strong:rgba(185,172,255,.32);--border-solid:var(--fg-1);
+--text-body:var(--fg-2);--text-heading:var(--fg-1);--text-muted:var(--fg-3);--text-link:var(--indigo-300);--text-link-hover:var(--cyan-300);
+--accent:var(--indigo-400);--accent-strong:var(--indigo-500);--accent-soft:rgba(99,68,245,.16);--accent-on:#FFFFFF;
+--highlight-from:rgba(99,102,241,.5);--highlight-to:rgba(168,85,247,.6);
+--gradient-comet:linear-gradient(90deg,rgba(24,204,252,0) 0%,#18CCFC 8%,#6344F5 32.5%,rgba(174,72,255,0) 100%);/* @kind color */
+--gradient-highlight:linear-gradient(90deg,var(--highlight-from),var(--highlight-to));/* @kind color */
+--gradient-sky:linear-gradient(180deg,#080717 0%,#0E0C26 45%,#1A1647 100%);/* @kind color */
+--gradient-scrim:linear-gradient(180deg,rgba(14,12,38,0) 0%,rgba(14,12,38,.9) 100%);/* @kind color */
+}

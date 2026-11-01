@@ -3,8 +3,8 @@ import { cx } from "@/src/utils";
 import { Inter, Manrope } from "next/font/google";
 import Header from "@/src/components/Header";
 import Footer from "../components/Footer";
+import { HideOnContact } from "../components/Footer/HideOnContact";
 import siteMetadata from "../utils/siteMetaData";
-import ThemeScript from "../components/ThemeScript";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -55,18 +55,19 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" data-scroll-behavior="smooth">
-      <body
-        className={cx(
-          inter.variable,
-          manrope.variable,
-          "font-mr bg-light dark:bg-dark"
-        )}
-      >
-        <ThemeScript />
+    // "dark" is permanent: the site is dark only, and pages that aren't
+    // redesigned yet still rely on their dark: styles.
+    <html
+      lang="en"
+      data-scroll-behavior="smooth"
+      className={cx("dark", inter.variable, manrope.variable)}
+    >
+      <body className="font-mr">
         <Header />
         {children}
-        <Footer />
+        <HideOnContact>
+          <Footer />
+        </HideOnContact>
       </body>
     </html>
   );
