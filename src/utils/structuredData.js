@@ -1,5 +1,36 @@
 // JSON-LD ("structured data") that tells search engines what a page is about.
 
+// Blog post: the article itself (author linked to /about), plus Home > category > post.
+export const blogPostingJsonLd = (site, blog, { categoryName, categorySlug, imageUrl }) => {
+  const url = `${site.siteUrl}${blog.url}`;
+  const author = { "@type": "Person", name: blog.author || site.author, url: `${site.siteUrl}/about` };
+  return {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "BlogPosting",
+        headline: blog.title,
+        description: blog.description,
+        image: [imageUrl],
+        datePublished: new Date(blog.publishedAt).toISOString(),
+        dateModified: new Date(blog.updatedAt || blog.publishedAt).toISOString(),
+        mainEntityOfPage: url,
+        keywords: blog.tags.join(", "),
+        author,
+        publisher: author,
+      },
+      {
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          { name: "Home", item: site.siteUrl },
+          { name: categoryName, item: `${site.siteUrl}/categories/${categorySlug}` },
+          { name: blog.title, item: url },
+        ].map((crumb, index) => ({ "@type": "ListItem", position: index + 1, ...crumb })),
+      },
+    ],
+  };
+};
+
 // Category page: a collection of posts, plus its breadcrumb trail (Home > Blogs > category).
 export const categoryJsonLd = (site, { slug, name, intro, posts }) => {
   const url = `${site.siteUrl}/categories/${slug}`;
