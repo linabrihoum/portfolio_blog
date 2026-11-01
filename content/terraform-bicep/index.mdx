@@ -6,6 +6,10 @@ publishedAt: "2024-01-13"
 updatedAt: "2024-01-13"
 author: "Lina Brihoum"
 isPublished: true
+takeaways:
+- "The real difference is where the source of truth lives: Bicep trusts Azure Resource Manager, while Terraform keeps its own state."
+- "Bicep removes state management entirely but only works on Azure and can leave orphaned resources."
+- "Terraform gives exact plans, imports and refactoring across many providers, at the cost of running state as its own small production system."
 tags:
 - DevSecOps
 ---

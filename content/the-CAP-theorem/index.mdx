@@ -6,6 +6,10 @@ publishedAt: "2024-03-17"
 updatedAt: "2024-03-17"
 author: "Lina Brihoum"
 isPublished: true
+takeaways:
+- "\"Pick two of three\" is misleading: partition tolerance isn't optional, and CAP says nothing about normal operation."
+- "What CAP really says is that during a network partition, each operation must choose between possibly stale data and no answer."
+- "Modern databases turn that choice into a dial with quorums and per-query consistency, and PACELC adds the latency trade-off of everyday operation."
 tags:
 - Software
 ---
