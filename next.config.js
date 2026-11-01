@@ -8,7 +8,11 @@ const nextConfig = {
   // output: "export", // Uncomment if needed
 
   images: {
-    domains: ["assets.aceternity.com", "images.unsplash.com", "unsplash.com"],
+    remotePatterns: [
+      { protocol: "https", hostname: "assets.aceternity.com" },
+      { protocol: "https", hostname: "images.unsplash.com" },
+      { protocol: "https", hostname: "unsplash.com" },
+    ],
   },
 
   // Uncomment and set your environment variables if needed
