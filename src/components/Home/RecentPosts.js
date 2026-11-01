@@ -1,34 +1,43 @@
 import { sortBlogs } from "@/src/utils";
-import Link from "next/link";
-import React from "react";
-import BlogLayoutThree from "../Blog/BlogLayoutThree";
+import { BlogCard } from "../Blog/BlogCard";
+import { BlogCardFeature } from "../Blog/BlogCardFeature";
+import { SectionHeading } from "../Elements/SectionHeading";
+import { ParallaxLayer } from "../ui/ParallaxLayer";
+import { Reveal } from "../ui/Reveal";
+import { Starfield } from "../ui/Starfield";
+
+// Newest published post first: 1 featured card + 6 grid cards.
+export const pickRecentPosts = (blogs) => {
+  const [featured, ...rest] = sortBlogs(blogs.filter((blog) => blog.isPublished));
+  return { featured, grid: rest.slice(0, 6) };
+};
 
 const RecentPosts = ({ blogs }) => {
-  const sortedBlogs = sortBlogs(blogs);
-  var lengthBlog = sortedBlogs.length;
+  const { featured, grid } = pickRecentPosts(blogs);
 
   return (
-    <section className="w-full  mt-16 sm:mt-24  md:mt-32 px-5 sm:px-10 md:px-12  sxl:px-16 flex flex-col items-center justify-center">
-      <div className="w-full flex  justify-between">
-        <h2 className="w-fit inline-block font-bold capitalize text-2xl md:text-4xl text-dark dark:text-light">
-          Recent Blog Posts
-        </h2>
-        <Link
-          href="/categories/all"
-          className="inline-block font-medium text-accent dark:text-accentDark underline underline-offset-2      text-base md:text-lg"
-        >
-          view all
-        </Link>
-      </div>
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 grid-rows-2 gap-16 mt-16">
-        {sortedBlogs.slice(0, lengthBlog).map((blog, index) => {
-          return (
-            <article key={index} className="col-span-1 row-span-1 relative">
-              <BlogLayoutThree blog={blog} />
-            </article>
-          );
-        })}
+    <section id="recent" className="relative overflow-hidden pt-24 pb-8">
+      <ParallaxLayer speed={0.12}>
+        <Starfield density={70} twinkle={8} seed={19} />
+      </ParallaxLayer>
+      <div className="relative mx-auto max-w-[1280px] px-5 sm:px-10 md:px-16">
+        <Reveal>
+          <SectionHeading align="split" title="Recent Blog Posts" linkLabel="view all" linkHref="/categories/all" />
+        </Reveal>
+        {featured && (
+          <Reveal delay={0.1} className="mt-12">
+            <BlogCardFeature blog={featured} />
+          </Reveal>
+        )}
+        <div className="mt-16 grid grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-16">
+          {grid.map((blog, index) => (
+            <Reveal key={blog._id} delay={(index % 3) * 0.12}>
+              <article>
+                <BlogCard blog={blog} />
+              </article>
+            </Reveal>
+          ))}
+        </div>
       </div>
     </section>
   );
