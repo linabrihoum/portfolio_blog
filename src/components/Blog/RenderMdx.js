@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import { useMDXComponent } from "next-contentlayer/hooks";
+import { useMDXComponent } from "next-contentlayer2/hooks";
 import Image from "next/image";
 
 // TODO: Add more components to my blog?
@@ -35,6 +35,8 @@ const RenderMdx = ({ blog }) => {
 
     "
     >
+      {/* useMDXComponent memoizes the component per post, so it isn't recreated on every render */}
+      {/* eslint-disable-next-line react-hooks/static-components */}
       <MDXContent components={mdxComponents} />
     </div>
   );
