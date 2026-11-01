@@ -1,18 +1,20 @@
 import React, { useState, useEffect } from "react";
+import siteMetadata from "@/src/utils/siteMetaData";
+import { CONTACT_FIELDS, validateContactField } from "@/src/utils/contact";
 
 const ContactPage = () => {
   const [formStarted, setFormStarted] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
-  const [submitted, setSubmitted] = useState(false);
-  const [submitSuccess, setSubmitSuccess] = useState(false);
+  const [status, setStatus] = useState("idle"); // idle | sending | error
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     message: "",
+    website: "", // honeypot: hidden from people, filled in by bots
   });
   const [errors, setErrors] = useState({});
 
-  const steps = ["name", "email", "message"];
+  const steps = CONTACT_FIELDS;
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -22,28 +24,9 @@ const ContactPage = () => {
     });
   };
 
-  const validateField = (field) => {
-    let error = "";
-    switch (field) {
-      case "name":
-      case "message":
-        if (!formData[field]) error = `${field} is a required field`;
-        break;
-      case "email":
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!formData[field]) error = "Email is a required field";
-        else if (!emailRegex.test(formData[field]))
-          error = "Must be a valid email address";
-        break;
-      default:
-        break;
-    }
-    return error;
-  };
-
   const validateCurrentStep = () => {
     const currentField = steps[currentStep];
-    const error = validateField(currentField);
+    const error = validateContactField(currentField, formData[currentField]);
     setErrors({
       ...errors,
       [currentField]: error,
@@ -59,32 +42,32 @@ const ContactPage = () => {
     if (currentStep > 0) setCurrentStep((prev) => prev - 1);
   };
 
+  const sendMessage = async () => {
+    setStatus("sending");
+    try {
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+      if (!response.ok) {
+        throw new Error(`Contact request failed with status ${response.status}`);
+      }
+      setStatus("idle");
+      setCurrentStep(steps.length); // thank-you screen, only after a real send
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      setStatus("error");
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (currentStep === steps.length) {
-      // Submit the form
-      setSubmitted(true);
-      try {
-        const response = await fetch("https://api.web3forms.com/submit", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Accept: "application/json",
-          },
-          body: JSON.stringify({
-            access_key: "YOUR_ACCESS_KEY_HERE",
-            ...formData,
-          }),
-        });
-        const result = await response.json();
-        setSubmitSuccess(result.success);
-        setCurrentStep((prev) => prev + 1); // Move to thank you step
-      } catch (error) {
-        console.error("Error submitting form:", error);
-        setSubmitSuccess(false);
-      }
-    } else {
+    if (currentStep >= steps.length || status === "sending") return;
+    if (currentStep < steps.length - 1) {
       nextStep();
+    } else if (validateCurrentStep()) {
+      await sendMessage();
     }
   };
 
@@ -131,7 +114,7 @@ const ContactPage = () => {
                   <div
                     key={index}
                     className={`w-full h-3 rounded ${
-                      index <= currentStep || submitted
+                      index <= currentStep
                         ? "bg-purple-500"
                         : "border border-purple-500"
                     }`}
@@ -207,13 +190,36 @@ const ContactPage = () => {
                 {currentStep === steps.length - 1 && (
                   <button
                     type="submit"
-                    className="px-4 py-2 text-xl font-medium text-white bg-black rounded-md shadow hover:bg-neutral-800 focus:bg-neutral-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-neutral-300"
+                    disabled={status === "sending"}
+                    className="px-4 py-2 text-xl font-medium text-white bg-black rounded-md shadow hover:bg-neutral-800 focus:bg-neutral-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-neutral-300 disabled:opacity-60"
                   >
-                    Submit
+                    {status === "sending" ? "Sending..." : "Submit"}
                   </button>
                 )}
               </div>
             )}
+
+            {status === "error" && (
+              <p role="alert" className="mt-3 text-sm text-red-600">
+                Sorry, your message couldn&apos;t be sent. Please try again, or
+                email me at{" "}
+                <a href={`mailto:${siteMetadata.email}`} className="underline">
+                  {siteMetadata.email}
+                </a>
+                .
+              </p>
+            )}
+
+            <input
+              type="text"
+              name="website"
+              value={formData.website}
+              onChange={handleInputChange}
+              tabIndex={-1}
+              autoComplete="off"
+              aria-hidden="true"
+              className="hidden"
+            />
           </form>
         )}
       </div>
