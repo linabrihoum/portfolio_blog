@@ -19,6 +19,10 @@ Items tagged *(Comet redesign)* are being handled by the redesign in progress, a
 - [ ] Add pagination or infinite scroll to blog list pages
 - [ ] Add a newsletter signup (Mailchimp) — the redesign builds the signup component but leaves where to place it for later
 
+## Speed
+
+- [ ] After the redesign, check the speed of every page (`npm run check:speed` and `npm run check:lag`) and fix anything slow. Known today: the Contact page's particle background stutters at phone speed, and the home page is slow to show its main content on phones *(Comet redesign)*
+
 ## New Blog Posts
 
 - [x] **GitOps** — `content/gitops/index.mdx`
