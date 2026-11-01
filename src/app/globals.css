@@ -36,66 +36,84 @@ h2 > a, h3 > a{
 
 }
 
-code {
+/* ---- Blog post text: Tailwind typography recolored with the Comet tokens ---- */
+.post-prose{
+    --tw-prose-body: var(--text-body);
+    --tw-prose-headings: var(--text-heading);
+    --tw-prose-lead: var(--fg-1);
+    --tw-prose-links: var(--text-link);
+    --tw-prose-bold: var(--fg-1);
+    --tw-prose-counters: var(--accent);
+    --tw-prose-bullets: var(--accent);
+    --tw-prose-hr: var(--border-subtle);
+    --tw-prose-quotes: var(--fg-1);
+    --tw-prose-quote-borders: var(--accent);
+    --tw-prose-captions: var(--text-muted);
+    --tw-prose-code: var(--cyan-300);
+    --tw-prose-th-borders: var(--border-strong);
+    --tw-prose-td-borders: var(--border-subtle);
+    font-family: var(--font-prose);
+    max-width: 68ch;
+}
+.post-prose :where(h1,h2,h3,h4){ font-family: var(--font-display); scroll-margin-top: 96px; }
+.post-prose h2{ font-size: 30px; line-height: 1.3; margin: 2em 0 .8em; font-weight: 700; }
+.post-prose h3{ font-size: 22px; margin: 1.6em 0 .6em; font-weight: 600; }
+/* First paragraph: larger, with a drop cap */
+.post-prose > p:first-of-type{ font-size: 20px; color: var(--fg-1); }
+.post-prose > p:first-of-type::first-letter{
+    float: left; margin: 6px 8px 0 0; font-size: 48px; line-height: 1; font-weight: 700; color: var(--fg-1);
+}
+.post-prose a{
+    text-decoration-color: rgba(185,172,255,.45); text-underline-offset: 3px;
+    transition: text-decoration-color var(--dur-fast), color var(--dur-fast);
+}
+.post-prose a:hover{ color: var(--text-link-hover); text-decoration-color: var(--cyan-300); }
+.post-prose :not(pre) > code{
+    background: rgba(185,172,255,.12); padding: 2px 6px; border-radius: 4px; font-size: .88em; font-weight: 400;
+}
+.post-prose :not(pre) > code::before,
+.post-prose :not(pre) > code::after{ content: none; }
+.post-prose img{ border-radius: 12px; }
+.post-prose blockquote{
+    font-style: normal; background: var(--accent-soft); padding: 8px 24px; border-radius: 0 8px 8px 0;
+}
+
+/* ---- Code blocks (rehype-pretty-code inside CodeFrame) ---- */
+.code-frame pre{
+    margin: 0; padding: 14px 0; overflow-x: auto; border-radius: 0;
+    background: #0d1117 !important; font: var(--type-code); color: #e6edf3;
+}
+.code-frame code > [data-line]{ padding: 0 20px 0 0; }
+code{
     counter-reset: line;
-  }
-   
-  code > [data-line]::before {
+}
+code > [data-line]::before{
     counter-increment: line;
     content: counter(line);
-   
-    /* Other styling */
     display: inline-block;
-    width: 1rem;
-    margin-right: 2rem;
+    width: 44px;
+    padding-right: 16px;
     text-align: right;
-    color: gray;
-  }
-   
-  code[data-line-numbers-max-digits='2'] > [data-line]::before {
-    width: 2rem;
-  }
-   
-  code[data-line-numbers-max-digits='3'] > [data-line]::before {
-    width: 3rem;
-  }
-
+    color: #6e7681;
+}
+code[data-line-numbers-max-digits='3'] > [data-line]::before{
+    width: 52px;
+}
+/* Lines marked like ```yaml {3,5} */
 [data-highlighted-line]{
-    background-color: rgba(255, 255, 255, 0.1) !important;
-    padding: 2px;
-    padding-left: 0;
-    padding-right: 4x;
-    border-radius: 2px;
-    border-left: 2px solid #fff;
+    background-color: rgba(99,68,245,.22) !important;
+    box-shadow: inset 3px 0 0 #18CCFC;
 }
-
 [data-highlighted-chars]{
-    background-color: rgba(255, 255, 255, 0.2) !important;
+    background-color: rgba(99,68,245,.35) !important;
     padding: 2px;
     border-radius: 2px;
 }
-
-[data-rehype-pretty-code-fragment]{
-    position: relative;
-}
-
-[data-rehype-pretty-code-title]{
-    position: absolute;
-    right: 0;
-    background-color: #304D30;
-    color: #fff;
-    padding: 4px 8px ;
-    font-size: 1rem;
-    border-end-end-radius: 4px;
-}
-
 [data-rehype-pretty-code-caption]{
-    position: absolute;
-    top: 100%;
-    width: 100%;
+    padding: 8px 20px;
     text-align: center;
-    font-size: 1rem;
-    color: #747474;
+    font-size: 14px;
+    color: var(--text-muted);
 }
 
 @keyframes marquee {

@@ -2,39 +2,29 @@
 import React from "react";
 import { useMDXComponent } from "next-contentlayer2/hooks";
 import Image from "next/image";
+import { CodeFrame } from "./mdx/CodeFrame";
+import { Callout } from "./mdx/Callout";
+import { Figure } from "./mdx/Figure";
 
-// TODO: Add more components to my blog?
+// rehype-pretty-code wraps every code block in <div data-rehype-pretty-code-fragment>;
+// those get the CodeFrame header. Any other div renders as usual.
+const MdxDiv = (props) =>
+  props["data-rehype-pretty-code-fragment"] !== undefined ? <CodeFrame {...props} /> : <div {...props} />;
+
 const mdxComponents = {
   Image,
+  Callout,
+  Figure,
+  div: MdxDiv,
 };
 
+// Post body, styled by .post-prose in globals.css (Tailwind typography recolored
+// with the Comet tokens: 18px Inter, 68-character lines).
 const RenderMdx = ({ blog }) => {
   const MDXContent = useMDXComponent(blog.body.code);
 
   return (
-    <div
-      className="col-span-12  lg:col-span-8 font-in prose sm:prose-base md:prose-lg max-w-max
-    prose-blockquote:bg-accent/20 
-    prose-blockquote:p-2
-    prose-blockquote:px-6
-    prose-blockquote:border-accent
-    prose-blockquote:not-italic
-    prose-blockquote:rounded-r-lg
-
-    prose-li:marker:text-accent
-
-    dark:prose-invert
-    dark:prose-blockquote:border-accentDark
-    dark:prose-blockquote:bg-accentDark/20
-    dark:prose-li:marker:text-accentDark
-
-    first-letter:text-3xl
-    sm:first-letter:text-5xl
-    
-
-
-    "
-    >
+    <div className="post-prose prose prose-lg prose-invert">
       {/* useMDXComponent memoizes the component per post, so it isn't recreated on every render */}
       {/* eslint-disable-next-line react-hooks/static-components */}
       <MDXContent components={mdxComponents} />
