@@ -1,24 +1,29 @@
 # Portfolio Blog — Outstanding Fixes & Improvements
 
+Items tagged *(Comet redesign)* are being handled by the redesign in progress, and get checked off when it goes live.
+
 ## Quick Fixes
 
-- [ ] Fix CAP Theorem post (`content/the-CAP-theorem/index.mdx`) — expand the `description` field beyond "CAP" and add a proper `# The CAP Theorem` H1 title at the top
-- [ ] Fix `becoming-a-cloud-engineer` post — the folder slug says `becoming-a-cloud-engineer` but the title is "Becoming a DevOps Architect"; make them consistent
+- [x] Fix CAP Theorem post (`content/the-CAP-theorem/index.mdx`) — expand the `description` field beyond "CAP" and add a proper `# The CAP Theorem` H1 title at the top
+- [ ] Fix `becoming-a-cloud-engineer` post — the folder slug says `becoming-a-cloud-engineer` but the title is now "Becoming a DevSecOps Architect"; make them consistent (renaming the slug needs a redirect from the old URL) *(Comet redesign)*
+- [ ] Fix duplicate H1s — the post page already shows the title as the H1, so posts that also start with `# Title` (like the CAP Theorem fix above) end up with two *(Comet redesign)*
 - [ ] Replace placeholder Unsplash images in `src/components/Projects/projectsData.js` with real project screenshots
-- [ ] New blog posts reuse existing images (`github-deploy-action.png`, `devops-lifecycle.jpeg`, `aws-azure.jpg`, `cloud_compute.jpeg`) — swap in dedicated cover images when available
+- [x] New blog posts reuse existing images (`github-deploy-action.png`, `devops-lifecycle.jpeg`, `aws-azure.jpg`, `cloud_compute.jpeg`) — swap in dedicated cover images when available
+- [ ] Custom social-share (Open Graph) images per post — today each post's cover photo is used
 
 ## Structural Improvements
 
-- [ ] Move `SkillsMarquee` component (already in `src/components/Projects/`) to the About page to visually surface your tech stack
-- [ ] Add an author bio block at the bottom of each blog post — small reusable component with "Written by Lina Brihoum"
-- [ ] Add client-side blog search (e.g. Fuse.js) to the `/categories/all` page
+- [ ] Move `SkillsMarquee` component (already in `src/components/Projects/`) to the About page to visually surface your tech stack, using real tech logos *(Comet redesign)*
+- [ ] Add an author bio block at the bottom of each blog post — small reusable component with "Written by Lina Brihoum" *(Comet redesign)*
+- [ ] Add client-side blog search (e.g. Fuse.js) to the `/categories/all` page *(Comet redesign)*
 - [ ] Add pagination or infinite scroll to blog list pages
+- [ ] Add a newsletter signup (Mailchimp) — the redesign builds the signup component but leaves where to place it for later
 
 ## New Blog Posts
 
 - [x] **GitOps** — `content/gitops/index.mdx`
 - [x] **Networking essentials in the cloud** (cloud agnostic) — `content/cloud-networking-essentials/index.mdx`
-- [x] **The shift left approach** — `content/shift-left/index.mdx` (needs its own cover image; currently reuses devops-lifecycle.jpeg)
+- [x] **The shift left approach** — `content/shift-left/index.mdx`
 - [ ] **Architecture for a standard Azure enterprise tenant**
 - [ ] **How to optimize cost in the cloud**
 - [ ] **Cool terraform extensions** — ones that genuinely help make IaC easier to control

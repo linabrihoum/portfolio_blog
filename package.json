@@ -7,7 +7,8 @@
     "build": "next build",
     "postbuild": "next-sitemap",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "test": "vitest run"
   },
   "engines": {
     "node": ">=20.0.0"
@@ -56,6 +57,7 @@
   "devDependencies": {
     "encoding": "^0.1.13",
     "prettier": "^3.1.1",
-    "sharp": "^0.32.6"
+    "sharp": "^0.32.6",
+    "vitest": "^4.1.12"
   }
 }
