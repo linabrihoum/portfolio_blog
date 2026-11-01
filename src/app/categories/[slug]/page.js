@@ -1,80 +1,84 @@
 import { allBlogs } from "@/.contentlayer/generated";
-import BlogLayoutThree from "@/src/components/Blog/BlogLayoutThree";
-import Categories from "@/src/components/Blog/Categories";
-import GithubSlugger from "github-slugger";
-import { slug } from "github-slugger";
+import { notFound } from "next/navigation";
+import { BlogList } from "@/src/components/Blog/BlogList";
+import { Breadcrumbs } from "@/src/components/Blog/Breadcrumbs";
+import { CategoryBar } from "@/src/components/Blog/CategoryBar";
+import { CometField } from "@/src/components/ui/CometField";
+import { Starfield } from "@/src/components/ui/Starfield";
+import siteMetadata from "@/src/utils/siteMetaData";
+import { CATEGORY_INTROS, getCategories, getPostsInCategory } from "@/src/utils/categories";
+import { categoryJsonLd } from "@/src/utils/structuredData";
 
-// Return a list of `params` to populate the [slug] dynamic segment
-// https://nextjs.org/docs/app/api-reference/functions/generate-static-params
-
-const slugger = new GithubSlugger();
+// Only real categories get a page; anything else is a 404.
+export const dynamicParams = false;
 
 export async function generateStaticParams() {
-  const categories = [];
-  const paths = [{ slug: "all" }];
-
-  allBlogs.map((blog) => {
-    if (blog.isPublished) {
-      blog.tags.map((tag) => {
-        let slugified = slugger.slug(tag);
-        if (!categories.includes(slugified)) {
-          categories.push(slugified);
-          paths.push({ slug: slugified });
-        }
-      });
-    }
-  });
-
-  return paths;
+  return getCategories(allBlogs).map((category) => ({ slug: category.slug }));
 }
 
-// Dynamic metadata
+const findCategory = (categorySlug) => getCategories(allBlogs).find((c) => c.slug === categorySlug);
+
 export async function generateMetadata({ params }) {
   const { slug: categorySlug } = await params;
+  const category = findCategory(categorySlug);
+  if (!category) return {};
 
   return {
-    title: `${categorySlug.replaceAll("-", " ")} Blogs`,
-    description: `Learn more about ${categorySlug === "all" ? "SRE, DevSecOps, and AI" : categorySlug.replaceAll("-", " ")}!`,
+    title: categorySlug === "all" ? "All Blogs" : `${category.name} Blogs`,
+    description: CATEGORY_INTROS[categorySlug],
+    alternates: { canonical: `/categories/${categorySlug}` },
   };
 }
 
 const CategoryPage = async ({ params }) => {
   const { slug: categorySlug } = await params;
-  const allCategories = ["all"];
-  const blogs = allBlogs.filter((blog) => {
-    return blog.tags.some((tag) => {
-      const slugified = slug(tag);
-      if (!allCategories.includes(slugified)) {
-        allCategories.push(slugified);
-      }
-      if (categorySlug === "all") {
-        return true;
-      }
-      return slugified === categorySlug;
-    });
-  });
+  const category = findCategory(categorySlug);
+  if (!category) notFound();
+
+  const posts = getPostsInCategory(allBlogs, categorySlug);
+  const intro = CATEGORY_INTROS[categorySlug];
+  // Only what the cards and the search box need goes to the browser
+  const cards = posts.map(({ url, title, description, tags, publishedAt, image }) => ({
+    url,
+    title,
+    description,
+    tags,
+    publishedAt,
+    image,
+  }));
 
   return (
-    
-    <article className="mt-12 flex flex-col text-dark dark:text-light">
-      <div className=" px-5 sm:px-10  md:px-24  sxl:px-32 flex flex-col">
-        <h1 className="mt-6 font-semibold text-2xl md:text-4xl lg:text-5xl capitalize">
-          {categorySlug}
-        </h1>
-        <span className="mt-2 inline-block">
-          My blogs regarding all things tech :)
-        </span>
-      </div>
-      <Categories categories={allCategories} currentSlug={categorySlug} />
+    <main className="pb-8">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(categoryJsonLd(siteMetadata, { slug: categorySlug, name: category.name, intro, posts })),
+        }}
+      />
 
-      <div className="grid  grid-cols-1 sm:grid-cols-2  lg:grid-cols-3 grid-rows-2 gap-16 mt-5 sm:mt-10 md:mt-24 sxl:mt-32 px-5 sm:px-10 md:px-24 sxl:px-32">
-        {blogs.map((blog, index) => (
-          <article key={index} className="col-span-1 row-span-1 relative">
-            <BlogLayoutThree blog={blog} />
-          </article>
-        ))}
-      </div>
-    </article>
+      <section className="relative -mt-16 overflow-hidden px-5 sm:px-10 md:px-24 sxl:px-32 pt-28 pb-2">
+        <Starfield density={90} twinkle={10} seed={8} />
+        <CometField count={6} seed={13} />
+        <div className="relative max-w-[820px]">
+          <Breadcrumbs
+            items={[
+              { label: "Home", href: "/" },
+              { label: "Blogs", href: "/categories/all" },
+              ...(categorySlug === "all" ? [] : [{ label: category.name }]),
+            ]}
+          />
+          <h1 className="mt-5 font-bold capitalize text-4xl md:text-5xl lg:text-[56px] leading-[1.1] tracking-[-0.02em] text-fg-1">
+            {categorySlug === "all" ? "All things tech :)" : category.name}
+          </h1>
+          <p className="mt-4 text-lg md:text-[19px] leading-relaxed text-fg-2 [text-wrap:pretty]">{intro}</p>
+        </div>
+      </section>
+
+      <BlogList
+        posts={cards}
+        categoryBar={<CategoryBar categories={getCategories(allBlogs)} current={categorySlug} />}
+      />
+    </main>
   );
 };
 
