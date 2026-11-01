@@ -10,8 +10,6 @@ tags:
 - DevSecOps
 ---
 
-# Automating AWS with Custom Terraform Templates
-
 Terraform is an open-source infrastructure as code (IaC) tool that lets you define cloud resources in version-controlled, human-readable configuration files, then create, change, and destroy them through a predictable plan/apply workflow. Every tutorial shows you the ten-line `main.tf` that boots an EC2 instance. This post goes further: we'll build the same core resources — an EC2 instance, an S3 bucket, an RDS database — the way you'd actually want them in a real environment, and cover the scaffolding around them (remote state, modules, secrets, workflow) that turns Terraform from a demo into an operating practice.
 
 We'll cover:

@@ -9,8 +9,6 @@ isPublished: true
 tags:
 - DevSecOps
 ---
-# Exploring Website Hosting Methods and Automation in Backend, Hosting, and CI/CD
-
 ## Introduction
 
 For teams using Git and GitHub, GitHub Actions offers a seamless way to automate everything between `git push` and a live website. But before automating a deployment, it's worth being deliberate about *what kind of deployment you're automating* — because "hosting a website" is really three different problems depending on how your site is built, and the right pipeline follows from that choice. This guide covers the hosting models and their trade-offs, then builds a real GitHub Actions pipeline for a static Next.js site — including the caching, permissions, and concurrency details that separate a workflow that works from one that works *well*.

@@ -10,8 +10,6 @@ tags:
 - Cloud
 ---
 
-# Understanding the Differences Between Kubernetes, OpenShift, and Istio
-
 ## Introduction
 
 Kubernetes, OpenShift, and Istio get mentioned in the same breath so often that it's easy to assume they compete. They don't — they stack. Kubernetes is the orchestration engine; OpenShift is a distribution *of* Kubernetes with opinions and enterprise machinery bolted on; Istio is a service mesh that runs *on top of* either one and takes over the traffic between your services. Confusing the layers leads to real architectural mistakes — like buying OpenShift for features Kubernetes already has, or adopting Istio for a problem a load balancer already solves. So it's worth being precise about what each layer actually does, and what it costs.
