@@ -32,6 +32,22 @@ describe("Header", () => {
     expect(about.querySelector("span").className).toContain("w-0");
   });
 
+  // The header's glass blur traps full-screen children inside the header,
+  // so after scrolling the menu only covered the header strip.
+  it("draws the mobile menu outside the header so it covers the whole screen", () => {
+    const { container } = render(<Header />);
+    act(() => {
+      window.scrollY = 20;
+      fireEvent.scroll(window);
+    });
+    fireEvent.click(screen.getByRole("button", { name: "Open menu" }));
+
+    const menuLink = screen.getAllByRole("link", { name: "Projects" }).at(-1);
+    const overlay = menuLink.closest(".fixed");
+    expect(overlay.parentElement).toBe(document.body);
+    expect(container.querySelector("header").contains(overlay)).toBe(false);
+  });
+
   it("opens and closes the mobile menu", () => {
     render(<Header />);
     fireEvent.click(screen.getByRole("button", { name: "Open menu" }));

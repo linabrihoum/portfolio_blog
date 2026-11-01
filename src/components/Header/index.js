@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
 import { cx } from "@/src/utils";
@@ -86,8 +87,11 @@ const Header = () => {
             className="w-10 h-1 bg-fg-1 rounded origin-left"
           />
         </button>
-        {open && (
-          <div className="fixed inset-0 z-[55] bg-space-1000 flex flex-col items-center justify-center gap-8">
+        {/* Rendered on <body>: the header's glass blur would otherwise trap this
+            "full screen" overlay inside the header's own box. It sits just under
+            the header (z-40 vs z-50), so the name and close button stay on top. */}
+        {open && createPortal(
+          <div className="fixed inset-0 z-40 bg-space-1000 flex flex-col items-center justify-center gap-8">
             {links.map((link, index) => (
               <motion.div
                 key={link.title}
@@ -104,7 +108,8 @@ const Header = () => {
                 </Link>
               </motion.div>
             ))}
-          </div>
+          </div>,
+          document.body
         )}
       </div>
     </header>
