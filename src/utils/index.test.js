@@ -1,5 +1,18 @@
 import { describe, expect, it } from "vitest";
-import { cn, cx, sortBlogs } from "./index";
+import { cn, cx, formatPostDate, postImageSrc, sortBlogs } from "./index";
+
+describe("formatPostDate", () => {
+  it("shows the stored date, whatever the build machine's timezone", () => {
+    expect(formatPostDate("2026-03-20T00:00:00.000Z")).toBe("March 20, 2026");
+    expect(formatPostDate("2025-01-05T00:00:00.000Z")).toBe("January 05, 2025");
+  });
+});
+
+describe("postImageSrc", () => {
+  it("turns Contentlayer's file path into a public URL", () => {
+    expect(postImageSrc({ image: { filePath: "../public/blogs/gitops.jpg" } })).toBe("/blogs/gitops.jpg");
+  });
+});
 
 describe("sortBlogs", () => {
   it("puts the newest post first", () => {

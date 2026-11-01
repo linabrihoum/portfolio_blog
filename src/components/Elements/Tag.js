@@ -1,14 +1,23 @@
 import React from "react";
 import Link from "next/link";
-import { cx } from "@/src/utils";
+import { cn } from "@/src/utils";
 
-const Tag = ({ link = "#", name, ...props }) => {
+const SIZES = {
+  sm: "px-6 py-1 text-xs border",
+  md: "px-6 py-2 text-sm border-2",
+  lg: "px-10 py-3 text-base border-2",
+};
+
+// Dark pill that links to a blog category. Grows slightly with a soft glow on hover.
+const Tag = ({ link = "#", name, size = "md", className }) => {
   return (
     <Link
       href={link}
-      className={cx(
-        "inline-block py-2 sm:py-3 px-6 sm:px-10  bg-dark text-light rounded-full capitalize font-semibold border-2 border-solid border-light hover:scale-105 transition-all ease duration-200 text-sm sm:text-base",
-        props.className
+      className={cn(
+        "inline-block rounded-full bg-space-900 font-semibold capitalize leading-normal text-[var(--star)] border-[var(--star)]",
+        "transition-[transform,box-shadow] duration-200 hover:scale-105 hover:shadow-[0_0_18px_rgba(141,120,255,.45)]",
+        SIZES[size],
+        className
       )}
     >
       {name}
