@@ -3,6 +3,7 @@ import { cx } from "@/src/utils";
 import { Inter, Manrope } from "next/font/google";
 import Header from "@/src/components/Header";
 import Footer from "../components/Footer";
+import { HideOnContact } from "../components/Footer/HideOnContact";
 import siteMetadata from "../utils/siteMetaData";
 
 const inter = Inter({
@@ -64,7 +65,9 @@ export default function RootLayout({ children }) {
       <body className="font-mr">
         <Header />
         {children}
-        <Footer />
+        <HideOnContact>
+          <Footer />
+        </HideOnContact>
       </body>
     </html>
   );
