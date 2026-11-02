@@ -1,6 +1,6 @@
 import { sortBlogs } from "./index";
 
-const published = (blogs) => blogs.filter((blog) => blog.isPublished);
+export const published = (blogs) => blogs.filter((blog) => blog.isPublished);
 
 // The posts published just before ("previous", older) and after ("next", newer) this one.
 export const getAdjacentPosts = (blogs, current) => {

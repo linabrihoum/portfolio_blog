@@ -1,4 +1,5 @@
 import "./globals.css";
+import { alternatesFor } from "@/src/utils/metadata";
 import { cx } from "@/src/utils";
 import { Inter, Manrope } from "next/font/google";
 import Header from "@/src/components/Header";
@@ -25,6 +26,8 @@ export const metadata = {
     default: siteMetadata.title, // a default is required when creating a template
   },
   description: siteMetadata.description,
+  // Lets browsers and feed readers find the RSS feed from any page
+  alternates: alternatesFor(),
   openGraph: {
     title: siteMetadata.title,
     description: siteMetadata.description,

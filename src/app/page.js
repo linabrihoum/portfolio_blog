@@ -1,4 +1,5 @@
 import { allBlogs } from "contentlayer/generated";
+import { alternatesFor } from "@/src/utils/metadata";
 import { Hero } from "../components/Home/Hero";
 import RecentPosts from "../components/Home/RecentPosts";
 import { ProjectStrip } from "../components/Home/ProjectStrip";
@@ -8,7 +9,7 @@ import siteMetadata from "../utils/siteMetaData";
 import { homeJsonLd } from "../utils/structuredData";
 
 export const metadata = {
-  alternates: { canonical: "/" },
+  alternates: alternatesFor("/"),
 };
 
 export default function Home() {

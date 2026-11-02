@@ -1,4 +1,5 @@
 import { AboutIntro } from "@/src/components/About/AboutIntro";
+import { alternatesFor } from "@/src/utils/metadata";
 import { ProfileLinks } from "@/src/components/About/ProfileLinks";
 import { Timeline, TimelineItem } from "@/src/components/About/Timeline";
 import { CometPass } from "@/src/components/ui/CometPass";
@@ -6,7 +7,7 @@ import { CometPass } from "@/src/components/ui/CometPass";
 export const metadata = {
   title: "About Me!",
   description: "DevSecOps Architect specializing in Site Reliability, Artificial Intelligence, and Software: my experience, education and where to find my certifications.",
-  alternates: { canonical: "/about" },
+  alternates: alternatesFor("/about"),
 };
 
 export default function About() {
