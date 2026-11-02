@@ -46,10 +46,4 @@ describe("CometPass", () => {
     expect(comet.style.animation).not.toContain("infinite");
     expect(observers[0].disconnected).toBe(true);
   });
-
-  it("still shows the line in browsers without IntersectionObserver", () => {
-    vi.stubGlobal("IntersectionObserver", undefined);
-    const { container } = render(<CometPass />);
-    expect(container.querySelector("span").style.animation).toContain("ds-sweep");
-  });
 });

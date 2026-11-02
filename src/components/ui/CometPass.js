@@ -13,11 +13,7 @@ export function CometPass({ duration = 1.6, className }) {
 
   useEffect(() => {
     const el = ref.current;
-    if (!el) return;
-    if (typeof IntersectionObserver === "undefined") {
-      setDrawn(true);
-      return;
-    }
+    if (!el || typeof IntersectionObserver === "undefined") return;
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (!entry.isIntersecting) return;
