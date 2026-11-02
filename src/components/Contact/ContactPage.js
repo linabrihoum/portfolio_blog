@@ -1,12 +1,24 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import siteMetadata from "@/src/utils/siteMetaData";
-import { CONTACT_FIELDS, validateContactField } from "@/src/utils/contact";
+import { CONTACT_FIELDS, CONTACT_MAX_LENGTH, validateContactField } from "@/src/utils/contact";
 import { Button } from "../Elements/Button";
 
 // Frosted glass over the Vortex: see-through dark purple with a blur.
 const CARD =
-  "relative z-10 flex w-full max-w-screen-md flex-col items-center rounded-lg border border-[var(--border-subtle)] bg-[rgba(20,17,55,.72)] px-5 py-8 shadow-[0_20px_60px_rgba(5,4,15,.6)] [backdrop-filter:var(--glass-blur)]";
+  "relative z-10 flex w-full max-w-[900px] flex-col items-center rounded-lg border border-[var(--border-subtle)] bg-[rgba(20,17,55,.72)] px-5 py-8 shadow-[0_20px_60px_rgba(5,4,15,.6)] [backdrop-filter:var(--glass-blur)] sm:px-10 sm:py-12";
+
+const FIELD =
+  "mt-3 w-full border-0 border-b-2 border-fg-3 bg-transparent px-0 py-2 text-xl text-fg-1 transition-colors duration-200 placeholder:text-fg-3 focus:border-[var(--cyan-500)] focus:outline-none focus:ring-0";
+
+// The message box grows with what's typed (CSS caps it at half the screen, then it scrolls).
+const fitToContent = (textarea) => {
+  if (!textarea) return;
+  textarea.style.height = "auto";
+  textarea.style.height = `${textarea.scrollHeight}px`;
+};
+
+const IS_MAC = typeof navigator !== "undefined" && /Mac|iPhone|iPad/.test(navigator.platform);
 
 const ContactPage = () => {
   const [formStarted, setFormStarted] = useState(false);
@@ -78,7 +90,9 @@ const ContactPage = () => {
   };
 
   const handleKeyDown = (e) => {
-    if (e.key === "Enter") {
+    // In the message box, Enter is a new line; Ctrl/⌘ + Enter sends.
+    const inMessageBox = e.target?.tagName === "TEXTAREA";
+    if (e.key === "Enter" && (!inMessageBox || e.ctrlKey || e.metaKey)) {
       e.preventDefault();
       handleSubmit(e);
     }
@@ -94,7 +108,7 @@ const ContactPage = () => {
   return (
     <div className={CARD}>
       {!formStarted ? (
-        <div className="w-full max-w-lg text-center">
+        <div className="w-full max-w-xl text-center">
           <h1 className="text-3xl font-bold text-[var(--indigo-300)]">Contact Me!</h1>
           <p className="mt-3 text-lg leading-relaxed text-[var(--text-body)]">
             Thank you for your interest in reaching out! Have a question or want to collaborate? I&apos;m always
@@ -108,7 +122,7 @@ const ContactPage = () => {
           </div>
         </div>
       ) : (
-        <form onSubmit={handleSubmit} className="w-full max-w-lg">
+        <form onSubmit={handleSubmit} className="w-full max-w-[670px]">
           {/* One segment per field; filled segments glow indigo → violet */}
           <div className="mb-5 flex items-stretch gap-2" aria-hidden="true">
             {steps.map((step, index) => (
@@ -133,15 +147,40 @@ const ContactPage = () => {
                       <label htmlFor={field} className="block text-xl font-medium text-[var(--indigo-300)]">
                         {field.charAt(0).toUpperCase() + field.slice(1)}*
                       </label>
-                      <input
-                        type={field === "email" ? "email" : "text"}
-                        name={field}
-                        id={field}
-                        value={formData[field]}
-                        onChange={handleInputChange}
-                        className="mt-3 w-full border-0 border-b-2 border-fg-3 bg-transparent py-2 text-xl text-fg-1 transition-colors duration-200 placeholder:text-fg-3 focus:border-[var(--cyan-500)] focus:outline-none focus:ring-0"
-                        placeholder="Type your answer here..."
-                      />
+                      {field === "message" ? (
+                        <>
+                          <textarea
+                            ref={fitToContent}
+                            name={field}
+                            id={field}
+                            rows={6}
+                            value={formData[field]}
+                            onChange={(e) => {
+                              handleInputChange(e);
+                              fitToContent(e.target);
+                            }}
+                            className={`${FIELD} max-h-[50vh] resize-none overflow-y-auto leading-relaxed`}
+                            placeholder="Type your answer here..."
+                          />
+                          <p
+                            className={`mt-1 text-right text-sm ${
+                              formData.message.length > CONTACT_MAX_LENGTH.message ? "text-[var(--danger)]" : "text-fg-3"
+                            }`}
+                          >
+                            {formData.message.length} / {CONTACT_MAX_LENGTH.message}
+                          </p>
+                        </>
+                      ) : (
+                        <input
+                          type={field === "email" ? "email" : "text"}
+                          name={field}
+                          id={field}
+                          value={formData[field]}
+                          onChange={handleInputChange}
+                          className={FIELD}
+                          placeholder="Type your answer here..."
+                        />
+                      )}
                       {errors[field] && <p className="mt-2 text-sm text-[var(--danger)]">{errors[field]}</p>}
                     </div>
                   )
@@ -165,9 +204,13 @@ const ContactPage = () => {
               )}
               {currentStep < steps.length - 1 && <Button onClick={nextStep}>Next</Button>}
               {currentStep === steps.length - 1 && (
-                <Button type="submit" disabled={status === "sending"} className="disabled:opacity-60">
-                  {status === "sending" ? "Sending..." : "Submit"}
-                </Button>
+                <>
+                  <Button type="submit" disabled={status === "sending"} className="disabled:opacity-60">
+                    {status === "sending" ? "Sending..." : "Submit"}
+                  </Button>
+                  {/* Phones have no shortcut keys, so the hint is desktop only */}
+                  <span className="ml-2 hidden text-sm text-fg-3 sm:inline">{IS_MAC ? "⌘" : "Ctrl"} + Enter to send</span>
+                </>
               )}
             </div>
           )}

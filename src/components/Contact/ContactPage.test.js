@@ -58,6 +58,43 @@ describe("ContactPage", () => {
     expect(screen.queryByText(/Thank you for reaching out/)).toBeNull();
   });
 
+  const goToMessage = () => {
+    fireEvent.click(screen.getByText("Start"));
+    type("Name*", "Ada");
+    fireEvent.click(screen.getByText("Next"));
+    type("Email*", "ada@example.com");
+    fireEvent.click(screen.getByText("Next"));
+  };
+
+  it("gives the message a multi-line box with a character count", () => {
+    goToMessage();
+    const box = screen.getByLabelText("Message*");
+    expect(box.tagName).toBe("TEXTAREA");
+    type("Message*", "Hello!");
+    expect(screen.getByText("6 / 5000")).toBeTruthy();
+  });
+
+  it("adds a new line on Enter in the message box, and sends on Ctrl+Enter", async () => {
+    fetchMock.mockResolvedValue(new Response("{}", { status: 200 }));
+    goToMessage();
+    type("Message*", "Hello!");
+    const box = screen.getByLabelText("Message*");
+
+    fireEvent.keyDown(box, { key: "Enter" });
+    expect(fetchMock).not.toHaveBeenCalled();
+
+    fireEvent.keyDown(box, { key: "Enter", ctrlKey: true });
+    expect(await screen.findByText("Thank you for reaching out, Ada!")).toBeTruthy();
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+  });
+
+  it("still moves on with Enter in the name and email fields", () => {
+    fireEvent.click(screen.getByText("Start"));
+    type("Name*", "Ada");
+    fireEvent.keyDown(screen.getByLabelText("Name*"), { key: "Enter" });
+    expect(screen.getByLabelText("Email*")).toBeTruthy();
+  });
+
   it("fills one more progress segment per step", () => {
     const filled = () => document.querySelectorAll("[data-filled]").length;
     fireEvent.click(screen.getByText("Start"));
