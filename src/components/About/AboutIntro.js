@@ -27,7 +27,7 @@ export function AboutIntro() {
       {/* The home page's sunrise glow without the planet; the comet divider draws the horizon line */}
       <PlanetHorizon planet={false} height={220} />
 
-      <div className="relative flex w-full flex-wrap items-center gap-12 px-5 py-8 sm:px-10 md:px-16">
+      <div className="relative mx-auto flex w-full max-w-[1200px] flex-wrap items-center justify-center gap-12 px-5 py-8 sm:px-10 md:px-16">
         <Reveal className="flex-[1_1_420px]">
           <h1 className="text-4xl font-bold leading-[1.1] text-fg-1 sm:text-5xl lg:text-[60px]">
             Hey there! I&apos;m Lina Brihoum :)
