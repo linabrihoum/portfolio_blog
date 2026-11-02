@@ -32,7 +32,7 @@ describe("CometPass", () => {
     expect(container.firstChild.getAttribute("aria-hidden")).toBe("true");
   });
 
-  it("waits off screen until the band is in view, then flies once", () => {
+  it("waits off screen until the band is in view, then draws once and stays", () => {
     const { container } = render(<CometPass />);
     const comet = container.querySelector("span");
     expect(comet.style.animation).toBe("");
@@ -41,7 +41,8 @@ describe("CometPass", () => {
     expect(comet.style.animation).toBe("");
 
     act(() => observers[0].callback([{ isIntersecting: true }]));
-    expect(comet.style.animation).toContain("ds-comet");
+    // "both" keeps the end frame (the full-width line) after the animation ends
+    expect(comet.style.animation).toMatch(/ds-sweep .* both/);
     expect(comet.style.animation).not.toContain("infinite");
     expect(observers[0].disconnected).toBe(true);
   });

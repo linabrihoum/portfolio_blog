@@ -7,7 +7,8 @@ const FLARES = {
 
 // A glowing planet curve rising from the bottom edge of a section. Its surface fades
 // into the page color, so the next section continues seamlessly.
-export function PlanetHorizon({ height = 260, flare = "solar", className, style }) {
+// planet={false} keeps only the glow, brightest along the section's bottom edge.
+export function PlanetHorizon({ height = 260, flare = "solar", planet = true, className, style }) {
   return (
     <div
       aria-hidden="true"
@@ -19,25 +20,26 @@ export function PlanetHorizon({ height = 260, flare = "solar", className, style 
           position: "absolute",
           left: "-10%",
           right: "-10%",
-          top: -height * 0.5,
-          height: height * 1.1,
+          ...(planet ? { top: -height * 0.5, height: height * 1.1 } : { bottom: 0, height }),
           background: FLARES[flare] || FLARES.solar,
           filter: "blur(14px)",
         }}
       />
-      <div
-        style={{
-          position: "absolute",
-          left: "-70%",
-          right: "-70%",
-          top: height * 0.5,
-          height: height * 8,
-          borderRadius: "50%",
-          background: "linear-gradient(180deg, #2E57C9 0%, #1A2F8A 3%, #141137 9%, var(--surface-page) 16%)",
-          boxShadow:
-            "0 -2px 0 rgba(143,230,254,.9), 0 -10px 40px rgba(24,204,252,.45), 0 -40px 120px rgba(99,68,245,.35)",
-        }}
-      />
+      {planet ? (
+        <div
+          style={{
+            position: "absolute",
+            left: "-70%",
+            right: "-70%",
+            top: height * 0.5,
+            height: height * 8,
+            borderRadius: "50%",
+            background: "linear-gradient(180deg, #2E57C9 0%, #1A2F8A 3%, #141137 9%, var(--surface-page) 16%)",
+            boxShadow:
+              "0 -2px 0 rgba(143,230,254,.9), 0 -10px 40px rgba(24,204,252,.45), 0 -40px 120px rgba(99,68,245,.35)",
+          }}
+        />
+      ) : null}
     </div>
   );
 }

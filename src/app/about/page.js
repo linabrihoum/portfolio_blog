@@ -13,7 +13,8 @@ export default function About() {
   return (
     <main>
       <AboutIntro />
-      <CometPass />
+      {/* Pulled up so the comet line sits exactly on the intro's bottom edge */}
+      <CometPass className="-mt-8" />
       <Timeline title="Experience">
         <TimelineItem
           title="Engineering Manager - Cloud & AI"
