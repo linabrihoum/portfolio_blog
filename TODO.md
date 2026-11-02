@@ -13,7 +13,7 @@ Items tagged *(Comet redesign)* are being handled by the redesign in progress, a
 
 ## Structural Improvements
 
-- [ ] Move `SkillsMarquee` component (already in `src/components/Projects/`) to the About page to visually surface your tech stack, using real tech logos *(Comet redesign)*
+- [x] ~~Move `SkillsMarquee` to the About page~~ Dropped: the About page doesn't need a skills strip, so the component was deleted *(Comet redesign)*
 - [ ] Add an author bio block at the bottom of each blog post — small reusable component with "Written by Lina Brihoum" *(Comet redesign)*
 - [ ] Add client-side blog search (e.g. Fuse.js) to the `/categories/all` page *(Comet redesign)*
 - [ ] Add pagination or infinite scroll to blog list pages

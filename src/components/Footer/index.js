@@ -18,7 +18,7 @@ const Footer = () => {
       />
 
       <h3 className="relative mt-16 px-4 font-medium text-center capitalize text-2xl sm:text-3xl lg:text-4xl leading-tight [text-wrap:balance]">
-        Cloud Technology, Cyber Security, Artificial Intelligence
+        Cloud Technology, Software Engineering, Artificial Intelligence
       </h3>
 
       <SocialLinks motionStyle="scale" className="relative mt-8" />

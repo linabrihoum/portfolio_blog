@@ -18,6 +18,7 @@ const siteMetadata = {
   youtube: "https://www.youtube.com/@techwithlina",
   instagram: "https://www.instagram.com/codinglina/",
   linkedin: "https://www.linkedin.com/in/lina-brihoum/",
+  credly: "https://www.credly.com/users/lina-brihoum",
   pinterest: "https://www.pinterest.com/techwithlina",
   locale: "en-US",
 };
