@@ -27,12 +27,12 @@ describe("Timeline", () => {
   it("shows a subtitle and leaves out the parts an entry doesn't have", () => {
     render(
       <Timeline title="Education">
-        <TimelineItem title="Masters of Science in Computer Science" subtitle="Specalization in Artificial Intelligence" time="Georgia Institute of Technology" />
+        <TimelineItem title="Masters of Science in Computer Science" subtitle="Specialization in Artificial Intelligence" time="Georgia Institute of Technology" />
       </Timeline>
     );
 
     const item = screen.getByRole("listitem");
-    expect(within(item).getByRole("heading", { level: 4 }).textContent).toBe("Specalization in Artificial Intelligence");
+    expect(within(item).getByRole("heading", { level: 4 }).textContent).toBe("Specialization in Artificial Intelligence");
     expect(within(item).getByRole("heading", { level: 3 }).textContent).not.toContain("@");
     expect(item.querySelector("p")).toBeNull();
   });

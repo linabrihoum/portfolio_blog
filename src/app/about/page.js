@@ -41,12 +41,12 @@ export default function About() {
       <Timeline title="Education">
         <TimelineItem
           title="Masters of Science in Computer Science"
-          subtitle="Specalization in Artificial Intelligence"
+          subtitle="Specialization in Artificial Intelligence"
           time="Georgia Institute of Technology"
         />
         <TimelineItem
           title="Bachelors of Science in Computer Science"
-          subtitle="Specalization in Cyber Security"
+          subtitle="Specialization in Cyber Security"
           time="Florida Polytechnic University"
         />
       </Timeline>
