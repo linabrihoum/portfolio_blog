@@ -2,6 +2,7 @@
 
 const { withContentlayer } = require("next-contentlayer2");
 const categoryRedirects = require("./src/utils/categoryRedirects");
+const postRedirects = require("./src/utils/postRedirects");
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
@@ -17,7 +18,7 @@ const nextConfig = {
   },
 
   async redirects() {
-    return categoryRedirects;
+    return [...categoryRedirects, ...postRedirects];
   },
 
   // Uncomment and set your environment variables if needed
