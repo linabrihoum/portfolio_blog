@@ -4,9 +4,11 @@ import siteMetadata from "@/src/utils/siteMetaData";
 import { CONTACT_FIELDS, CONTACT_MAX_LENGTH, validateContact, validateContactField } from "@/src/utils/contact";
 import { Button } from "../Elements/Button";
 
-// Frosted glass over the Vortex: see-through dark purple with a blur.
+// Nearly solid dark purple over the Vortex. No backdrop blur: the browser has to
+// re-blur the moving particles behind the whole card every frame, which pushed
+// Contact past the lag limit once the card held the full form.
 const CARD =
-  "relative z-10 flex w-full max-w-[900px] flex-col items-center rounded-lg border border-[var(--border-subtle)] bg-[rgba(20,17,55,.72)] px-5 py-8 shadow-[0_20px_60px_rgba(5,4,15,.6)] [backdrop-filter:var(--glass-blur)] sm:px-10 sm:py-12";
+  "relative z-10 flex w-full max-w-[900px] flex-col items-center rounded-lg border border-[var(--border-subtle)] bg-[rgba(20,17,55,.9)] px-5 py-8 shadow-[0_20px_60px_rgba(5,4,15,.6)] sm:px-10 sm:py-12";
 
 const FIELD =
   "mt-3 w-full border-0 border-b-2 border-fg-3 bg-transparent px-0 py-2 text-xl text-fg-1 transition-colors duration-200 placeholder:text-fg-3 focus:border-[var(--cyan-500)] focus:outline-none focus:ring-0";
