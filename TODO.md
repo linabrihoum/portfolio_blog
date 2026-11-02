@@ -21,7 +21,7 @@ Items tagged *(Comet redesign)* are being handled by the redesign in progress, a
 
 ## Speed
 
-- [ ] After the redesign, check the speed of every page (`npm run check:speed` and `npm run check:lag`) and fix anything slow. Known today: the Contact page's particle background stutters at phone speed, and the home page is slow to show its main content on phones *(Comet redesign)*
+- [ ] After the redesign, check the speed of every page (`npm run check:speed` and `npm run check:lag`) and fix anything slow. Known today: the home page is slow to show its main content on phones. (The Contact page stutter is fixed: 97% → 0%.) *(Comet redesign)*
 
 ## New Blog Posts
 

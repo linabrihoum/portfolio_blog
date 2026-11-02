@@ -1,11 +1,39 @@
-import React, { useState, useEffect } from "react";
+"use client";
+import React, { useRef, useState } from "react";
 import siteMetadata from "@/src/utils/siteMetaData";
-import { CONTACT_FIELDS, validateContactField } from "@/src/utils/contact";
+import {
+  CONTACT_FIELDS,
+  CONTACT_MAX_LENGTH,
+  capitalize,
+  validateContact,
+  validateContactField,
+} from "@/src/utils/contact";
+import { Button } from "../Elements/Button";
 
+// Nearly solid dark purple over the Vortex. No backdrop blur: the browser has to
+// re-blur the moving particles behind the whole card every frame, which pushed
+// Contact past the lag limit once the card held the full form.
+const CARD =
+  "relative z-10 flex w-full max-w-[900px] flex-col items-center rounded-lg border border-[var(--border-subtle)] bg-[rgba(20,17,55,.9)] px-5 py-8 shadow-[0_20px_60px_rgba(5,4,15,.6)] sm:px-10 sm:py-12";
+
+const FIELD =
+  "mt-3 w-full border-0 border-b-2 border-fg-3 bg-transparent px-0 py-2 text-xl text-fg-1 transition-colors duration-200 placeholder:text-fg-3 focus:border-[var(--cyan-500)] focus:outline-none focus:ring-0";
+
+// The message box grows with what's typed (CSS caps it at half the screen, then it scrolls).
+const fitToContent = (textarea) => {
+  if (!textarea) return;
+  textarea.style.height = "auto";
+  textarea.style.height = `${textarea.scrollHeight}px`;
+};
+
+const IS_MAC = typeof navigator !== "undefined" && /Mac|iPhone|iPad/.test(navigator.platform);
+
+const label = (field) => `${capitalize(field)}*`;
+
+// All three fields on one card with a single Submit. Every field is checked on
+// submit; the message is only sent once they all pass.
 const ContactPage = () => {
-  const [formStarted, setFormStarted] = useState(false);
-  const [currentStep, setCurrentStep] = useState(0);
-  const [status, setStatus] = useState("idle"); // idle | sending | error
+  const [status, setStatus] = useState("idle"); // idle | sending | sent | error
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -13,33 +41,13 @@ const ContactPage = () => {
     website: "", // honeypot: hidden from people, filled in by bots
   });
   const [errors, setErrors] = useState({});
-
-  const steps = CONTACT_FIELDS;
+  const formRef = useRef(null);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
-  };
-
-  const validateCurrentStep = () => {
-    const currentField = steps[currentStep];
-    const error = validateContactField(currentField, formData[currentField]);
-    setErrors({
-      ...errors,
-      [currentField]: error,
-    });
-    return !error;
-  };
-
-  const nextStep = () => {
-    if (validateCurrentStep()) setCurrentStep((prev) => prev + 1);
-  };
-
-  const previousStep = () => {
-    if (currentStep > 0) setCurrentStep((prev) => prev - 1);
+    setFormData({ ...formData, [name]: value });
+    // Once a field has shown an error, re-check it as it's corrected
+    if (errors[name]) setErrors({ ...errors, [name]: validateContactField(name, value) });
   };
 
   const sendMessage = async () => {
@@ -53,8 +61,7 @@ const ContactPage = () => {
       if (!response.ok) {
         throw new Error(`Contact request failed with status ${response.status}`);
       }
-      setStatus("idle");
-      setCurrentStep(steps.length); // thank-you screen, only after a real send
+      setStatus("sent"); // thank-you screen, only after a real send
     } catch (error) {
       console.error("Error submitting form:", error);
       setStatus("error");
@@ -63,165 +70,127 @@ const ContactPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (currentStep >= steps.length || status === "sending") return;
-    if (currentStep < steps.length - 1) {
-      nextStep();
-    } else if (validateCurrentStep()) {
-      await sendMessage();
+    if (status === "sending") return;
+    const found = validateContact(formData);
+    setErrors(found);
+    const firstInvalid = CONTACT_FIELDS.find((field) => found[field]);
+    if (firstInvalid) {
+      formRef.current?.elements[firstInvalid]?.focus();
+      return;
     }
+    await sendMessage();
   };
 
+  // Enter in name or email moves to the next field; in the message it's a new
+  // line, and Ctrl/⌘ + Enter sends.
   const handleKeyDown = (e) => {
-    if (e.key === "Enter") {
-      e.preventDefault();
+    if (e.key !== "Enter") return;
+    if (e.ctrlKey || e.metaKey) {
       handleSubmit(e);
+    } else if (e.target.tagName === "INPUT") {
+      e.preventDefault();
+      const next = CONTACT_FIELDS[CONTACT_FIELDS.indexOf(e.target.name) + 1];
+      formRef.current?.elements[next]?.focus();
     }
   };
 
-  useEffect(() => {
-    window.addEventListener("keydown", handleKeyDown);
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-    };
-  }, [currentStep, formData]);
+  if (status === "sent") {
+    return (
+      <div className={CARD}>
+        <div className="text-center">
+          <h1 className="text-2xl font-bold text-[var(--indigo-300)]">Thank you for reaching out, {formData.name}!</h1>
+          <p className="mt-3 text-lg text-[var(--text-body)]">We will be in touch soon.</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="relative flex items-center justify-center h-screen bg-gray-100 dark:bg-gray-900">
-      <div className="relative flex flex-col items-center justify-center w-full max-w-screen-md px-5 py-8 bg-white dark:bg-gray-800 rounded-lg shadow-md z-10">
-        {!formStarted ? (
-          <div className="text-center w-full max-w-lg">
-            <h1 className="text-3xl font-bold text-indigo-800">Contact Me!</h1>
-            <p className="mt-3 text-lg text-neutral-500">
-              Thank you for your interest in reaching out! Have a question or
-              want to collaborate? I&apos;m always excited to connect with fellow
-              tech enthusiasts and professionals. Fill out the form and let&apos;s
-              create something amazing together!
-            </p>
-            <div className="mt-5">
-              <button
-                onClick={() => setFormStarted(true)}
-                className="px-4 py-3 text-xl font-bold text-white bg-black rounded-md shadow hover:bg-neutral-800 focus:bg-neutral-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-neutral-300"
-              >
-                Start
-              </button>
-            </div>
-          </div>
-        ) : (
-          <form onSubmit={handleSubmit} className="w-full max-w-lg">
-            <div className="mb-5">
-              <div className="flex items-stretch gap-2">
-                {steps.map((step, index) => (
-                  <div
-                    key={index}
-                    className={`w-full h-3 rounded ${
-                      index <= currentStep
-                        ? "bg-purple-500"
-                        : "border border-purple-500"
+    <div className={CARD}>
+      <div className="w-full max-w-[670px]">
+        <h1 className="text-3xl font-bold text-[var(--indigo-300)]">Contact Me!</h1>
+        <p className="mt-3 text-lg leading-relaxed text-[var(--text-body)]">
+          Thank you for your interest in reaching out! Have a question or want to collaborate? I&apos;m always excited
+          to connect with fellow tech enthusiasts and professionals. Fill out the form and let&apos;s create something
+          amazing together!
+        </p>
+
+        <form ref={formRef} onSubmit={handleSubmit} onKeyDown={handleKeyDown} noValidate className="mt-8 grid gap-6">
+          {CONTACT_FIELDS.map((field) => (
+            <div key={field}>
+              <label htmlFor={field} className="block text-xl font-medium text-[var(--indigo-300)]">
+                {label(field)}
+              </label>
+              {field === "message" ? (
+                <>
+                  <textarea
+                    ref={fitToContent}
+                    name={field}
+                    id={field}
+                    rows={6}
+                    value={formData[field]}
+                    onChange={(e) => {
+                      handleInputChange(e);
+                      fitToContent(e.target);
+                    }}
+                    aria-invalid={Boolean(errors[field])}
+                    className={`${FIELD} max-h-[50vh] resize-none overflow-y-auto leading-relaxed`}
+                    placeholder="Type your answer here..."
+                  />
+                  <p
+                    className={`mt-1 text-right text-sm ${
+                      formData.message.length > CONTACT_MAX_LENGTH.message ? "text-[var(--danger)]" : "text-fg-3"
                     }`}
-                  ></div>
-                ))}
-                {currentStep === steps.length && (
-                  <div className="w-full h-3 rounded bg-purple-500"></div>
-                )}
-              </div>
+                  >
+                    {formData.message.length} / {CONTACT_MAX_LENGTH.message}
+                  </p>
+                </>
+              ) : (
+                <input
+                  type={field === "email" ? "email" : "text"}
+                  name={field}
+                  id={field}
+                  value={formData[field]}
+                  onChange={handleInputChange}
+                  aria-invalid={Boolean(errors[field])}
+                  autoComplete={field === "email" ? "email" : "name"}
+                  className={FIELD}
+                  placeholder="Type your answer here..."
+                />
+              )}
+              {errors[field] && <p className="mt-2 text-sm text-[var(--danger)]">{errors[field]}</p>}
             </div>
+          ))}
 
-            {currentStep < steps.length ? (
-              <div className="mb-5">
-                {steps.map(
-                  (field, index) =>
-                    currentStep === index && (
-                      <div key={field}>
-                        <label
-                          htmlFor={field}
-                          className="block text-xl font-medium text-indigo-800"
-                        >
-                          {field.charAt(0).toUpperCase() + field.slice(1)}*
-                        </label>
-                        <input
-                          type={field === "email" ? "email" : "text"}
-                          name={field}
-                          id={field}
-                          value={formData[field]}
-                          onChange={handleInputChange}
-                          className="w-full mt-3 text-xl font-normal border-0 border-b-2 border-neutral-400 focus:border-black focus:outline-none focus:ring-0 placeholder:text-neutral-300"
-                          placeholder="Type your answer here..."
-                        />
-                        {errors[field] && (
-                          <p className="mt-2 text-sm text-red-600">
-                            {errors[field]}
-                          </p>
-                        )}
-                      </div>
-                    )
-                )}
-              </div>
-            ) : (
-              <div className="text-center">
-                <h2 className="text-2xl font-bold text-indigo-800">
-                  Thank you for reaching out, {formData.name}!
-                </h2>
-                <p className="mt-3 text-lg text-neutral-500">
-                  We will be in touch soon.
-                </p>
-              </div>
-            )}
+          <div className="flex items-center gap-2">
+            <Button type="submit" disabled={status === "sending"} className="disabled:opacity-60">
+              {status === "sending" ? "Sending..." : "Submit"}
+            </Button>
+            {/* Phones have no shortcut keys, so the hint is desktop only */}
+            <span className="ml-2 hidden text-sm text-fg-3 sm:inline">{IS_MAC ? "⌘" : "Ctrl"} + Enter to send</span>
+          </div>
 
-            {currentStep < steps.length && (
-              <div className="flex items-center gap-2">
-                {currentStep > 0 && (
-                  <button
-                    type="button"
-                    onClick={previousStep}
-                    className="px-4 py-2 text-xl font-medium text-white bg-black rounded-md shadow hover:bg-neutral-800 focus:bg-neutral-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-neutral-300"
-                  >
-                    Previous
-                  </button>
-                )}
-                {currentStep < steps.length - 1 && (
-                  <button
-                    type="button"
-                    onClick={nextStep}
-                    className="px-4 py-2 text-xl font-medium text-white bg-black rounded-md shadow hover:bg-neutral-800 focus:bg-neutral-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-neutral-300"
-                  >
-                    Next
-                  </button>
-                )}
-                {currentStep === steps.length - 1 && (
-                  <button
-                    type="submit"
-                    disabled={status === "sending"}
-                    className="px-4 py-2 text-xl font-medium text-white bg-black rounded-md shadow hover:bg-neutral-800 focus:bg-neutral-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-neutral-300 disabled:opacity-60"
-                  >
-                    {status === "sending" ? "Sending..." : "Submit"}
-                  </button>
-                )}
-              </div>
-            )}
+          {status === "error" && (
+            <p role="alert" className="text-sm text-[var(--danger)]">
+              Sorry, your message couldn&apos;t be sent. Please try again, or email me at{" "}
+              <a href={`mailto:${siteMetadata.email}`} className="underline">
+                {siteMetadata.email}
+              </a>
+              .
+            </p>
+          )}
 
-            {status === "error" && (
-              <p role="alert" className="mt-3 text-sm text-red-600">
-                Sorry, your message couldn&apos;t be sent. Please try again, or
-                email me at{" "}
-                <a href={`mailto:${siteMetadata.email}`} className="underline">
-                  {siteMetadata.email}
-                </a>
-                .
-              </p>
-            )}
-
-            <input
-              type="text"
-              name="website"
-              value={formData.website}
-              onChange={handleInputChange}
-              tabIndex={-1}
-              autoComplete="off"
-              aria-hidden="true"
-              className="hidden"
-            />
-          </form>
-        )}
+          <input
+            type="text"
+            name="website"
+            value={formData.website}
+            onChange={handleInputChange}
+            tabIndex={-1}
+            autoComplete="off"
+            aria-hidden="true"
+            className="hidden"
+          />
+        </form>
       </div>
     </div>
   );

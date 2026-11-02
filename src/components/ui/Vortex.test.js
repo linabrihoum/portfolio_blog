@@ -27,4 +27,30 @@ describe("Vortex", () => {
     expect(cancelFrame).toHaveBeenCalledWith(42);
     expect(removeListener).toHaveBeenCalledWith("resize", expect.any(Function));
   });
+
+  // Blurring and re-drawing the whole canvas every frame made Contact stutter
+  // 97% of the time at phone speed. Each frame should only draw the particles.
+  it("draws particles without full-screen blur or copy passes", () => {
+    const filters = [];
+    const drawImage = vi.fn();
+    const stroke = vi.fn();
+    const context = new Proxy(
+      { drawImage, stroke },
+      {
+        get: (target, key) => target[key] ?? vi.fn(),
+        set: (target, key, value) => {
+          if (key === "filter") filters.push(value);
+          return true;
+        },
+      }
+    );
+    vi.spyOn(HTMLCanvasElement.prototype, "getContext").mockReturnValue(context);
+    vi.spyOn(window, "requestAnimationFrame").mockReturnValue(1);
+
+    render(<Vortex particleCount={10} />);
+
+    expect(stroke).toHaveBeenCalled();
+    expect(drawImage).not.toHaveBeenCalled();
+    expect(filters).toEqual([]);
+  });
 });

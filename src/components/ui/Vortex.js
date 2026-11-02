@@ -1,3 +1,4 @@
+"use client";
 import { cn } from "@/src/utils";
 import React, { useEffect, useRef } from "react";
 import { createNoise3D } from "simplex-noise";
@@ -7,7 +8,7 @@ export const Vortex = (props) => {
   const canvasRef = useRef(null);
   const containerRef = useRef(null);
   const animationFrameId = useRef(null);
-  const particleCount = props.particleCount || 700;
+  const particleCount = props.particleCount || 600;
   const particlePropCount = 9;
   const particlePropsLength = particleCount * particlePropCount;
   const rangeY = props.rangeY || 100;
@@ -23,7 +24,7 @@ export const Vortex = (props) => {
   const xOff = 0.00125;
   const yOff = 0.00125;
   const zOff = 0.0005;
-  const backgroundColor = props.backgroundColor || "transparent"; // Transparent background
+  const streak = 6; // each frame's step, as in the design: long enough to read as a streak
   let tick = 0;
   const noise3D = createNoise3D();
   let particleProps = new Float32Array(particlePropsLength);
@@ -87,9 +88,13 @@ export const Vortex = (props) => {
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+    // Particles only, with overlapping light adding up. The old version then
+    // re-drew the whole canvas onto itself three times (two blurred) every frame
+    // for a glow, which made Contact stutter 97% of the time at phone speed. The
+    // glow is now a CSS drop-shadow on the canvas, as in the design.
+    ctx.globalCompositeOperation = "lighter";
     drawParticles(ctx);
-    renderGlow(canvas, ctx);
-    renderToScreen(canvas, ctx);
+    ctx.globalCompositeOperation = "source-over";
 
     animationFrameId.current = window.requestAnimationFrame(() => draw(canvas, ctx));
   };
@@ -122,8 +127,8 @@ export const Vortex = (props) => {
     life = particleProps[i5];
     ttl = particleProps[i6];
     speed = particleProps[i7];
-    x2 = x + vx * speed;
-    y2 = y + vy * speed;
+    x2 = x + vx * speed * streak;
+    y2 = y + vy * speed * streak;
     radius = particleProps[i8];
     hue = particleProps[i9];
 
@@ -157,35 +162,14 @@ export const Vortex = (props) => {
     return x > canvas.width || x < 0 || y > canvas.height || y < 0;
   };
 
+  // Fill the Vortex's own box (which can be taller than the window), not the window.
   const resize = (canvas, ctx) => {
-    const { innerWidth, innerHeight } = window;
-
-    canvas.width = innerWidth;
-    canvas.height = innerHeight;
+    const box = containerRef.current;
+    canvas.width = box?.offsetWidth || window.innerWidth;
+    canvas.height = box?.offsetHeight || window.innerHeight;
 
     center[0] = 0.5 * canvas.width;
     center[1] = 0.5 * canvas.height;
-  };
-
-  const renderGlow = (canvas, ctx) => {
-    ctx.save();
-    ctx.filter = "blur(8px) brightness(200%)";
-    ctx.globalCompositeOperation = "lighter";
-    ctx.drawImage(canvas, 0, 0);
-    ctx.restore();
-
-    ctx.save();
-    ctx.filter = "blur(4px) brightness(200%)";
-    ctx.globalCompositeOperation = "lighter";
-    ctx.drawImage(canvas, 0, 0);
-    ctx.restore();
-  };
-
-  const renderToScreen = (canvas, ctx) => {
-    ctx.save();
-    ctx.globalCompositeOperation = "lighter";
-    ctx.drawImage(canvas, 0, 0);
-    ctx.restore();
   };
 
   useEffect(() => {
@@ -200,7 +184,7 @@ export const Vortex = (props) => {
     window.addEventListener("resize", handleResize);
 
     // Stop the animation loop when leaving the page; otherwise it keeps
-    // redrawing (with full-screen blur) on every other page you visit.
+    // redrawing on every other page you visit.
     return () => {
       window.cancelAnimationFrame(animationFrameId.current);
       window.removeEventListener("resize", handleResize);
@@ -215,7 +199,7 @@ export const Vortex = (props) => {
         ref={containerRef}
         className="absolute h-full w-full inset-0 z-0 bg-transparent flex items-center justify-center"
       >
-        <canvas ref={canvasRef}></canvas>
+        <canvas ref={canvasRef} aria-hidden="true" className="[filter:drop-shadow(0_0_4px_rgba(99,68,245,.8))]"></canvas>
       </motion.div>
 
       <div className={cn("relative z-10", props.className)}>
