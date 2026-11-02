@@ -162,11 +162,11 @@ export const Vortex = (props) => {
     return x > canvas.width || x < 0 || y > canvas.height || y < 0;
   };
 
+  // Fill the Vortex's own box (which can be taller than the window), not the window.
   const resize = (canvas, ctx) => {
-    const { innerWidth, innerHeight } = window;
-
-    canvas.width = innerWidth;
-    canvas.height = innerHeight;
+    const box = containerRef.current;
+    canvas.width = box?.offsetWidth || window.innerWidth;
+    canvas.height = box?.offsetHeight || window.innerHeight;
 
     center[0] = 0.5 * canvas.width;
     center[1] = 0.5 * canvas.height;

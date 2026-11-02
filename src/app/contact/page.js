@@ -11,10 +11,16 @@ export const metadata = {
 
 export default function Contact() {
   return (
-    // Pulled up under the see-through header so the background fills the whole screen
-    <main className="relative -mt-16 h-screen min-h-[620px] overflow-hidden bg-[var(--surface-deep)] pt-16">
+    // Pulled up under the see-through header so the background fills the whole screen.
+    // At least one screen tall; grows if the card needs more room (short laptop screens).
+    <main className="relative -mt-16 flex min-h-screen flex-col overflow-hidden bg-[var(--surface-deep)] pt-16">
       <Starfield density={80} seed={22} />
-      <Vortex particleCount={600} rangeY={140} className="flex h-full items-center justify-center px-5">
+      <Vortex
+        particleCount={600}
+        rangeY={140}
+        containerClassName="flex flex-1"
+        className="flex w-full items-center justify-center px-5 py-10"
+      >
         <ContactPage />
       </Vortex>
     </main>
