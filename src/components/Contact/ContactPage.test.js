@@ -58,6 +58,17 @@ describe("ContactPage", () => {
     expect(screen.queryByText(/Thank you for reaching out/)).toBeNull();
   });
 
+  it("fills one more progress segment per step", () => {
+    const filled = () => document.querySelectorAll("[data-filled]").length;
+    fireEvent.click(screen.getByText("Start"));
+    expect(filled()).toBe(1);
+    type("Name*", "Ada");
+    fireEvent.click(screen.getByText("Next"));
+    expect(filled()).toBe(2);
+    fireEvent.click(screen.getByText("Previous"));
+    expect(filled()).toBe(1);
+  });
+
   it("doesn't move on until the current field is valid", () => {
     fireEvent.click(screen.getByText("Start"));
     fireEvent.click(screen.getByText("Next"));
