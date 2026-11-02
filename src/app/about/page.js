@@ -1,6 +1,7 @@
 import { AboutIntro } from "@/src/components/About/AboutIntro";
 import { ProfileLinks } from "@/src/components/About/ProfileLinks";
 import { Timeline, TimelineItem } from "@/src/components/About/Timeline";
+import { CometPass } from "@/src/components/ui/CometPass";
 
 export const metadata = {
   title: "About Me!",
@@ -12,6 +13,7 @@ export default function About() {
   return (
     <main>
       <AboutIntro />
+      <CometPass />
       <Timeline title="Experience">
         <TimelineItem
           title="Engineering Manager - Cloud & AI"

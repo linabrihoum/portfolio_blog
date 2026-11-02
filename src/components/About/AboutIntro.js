@@ -23,6 +23,8 @@ export function AboutIntro() {
       <ParallaxLayer speed={0.3}>
         <Nebula preset="horizon" intensity={0.3} />
       </ParallaxLayer>
+      {/* Fades the glow into the page so the section has no hard bottom edge */}
+      <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 bottom-0 h-40 bg-gradient-to-b from-transparent to-[var(--surface-page)]" />
 
       <div className="relative flex w-full flex-wrap items-center gap-12 px-5 py-8 sm:px-10 md:px-16">
         <Reveal className="flex-[1_1_420px]">
