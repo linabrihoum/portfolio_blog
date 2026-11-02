@@ -3,9 +3,9 @@ import { CONTACT_MAX_LENGTH, validateContact, validateContactField } from "./con
 
 describe("validateContactField", () => {
   it("requires every field", () => {
-    expect(validateContactField("name", "")).toBe("name is a required field");
+    expect(validateContactField("name", "")).toBe("Name is a required field");
     expect(validateContactField("email", "   ")).toBe("Email is a required field");
-    expect(validateContactField("message", undefined)).toBe("message is a required field");
+    expect(validateContactField("message", undefined)).toBe("Message is a required field");
   });
 
   it("rejects an invalid email address", () => {
@@ -15,7 +15,7 @@ describe("validateContactField", () => {
 
   it("rejects text over the length limit", () => {
     const tooLong = "a".repeat(CONTACT_MAX_LENGTH.message + 1);
-    expect(validateContactField("message", tooLong)).toBe("message must be 5000 characters or fewer");
+    expect(validateContactField("message", tooLong)).toBe("Message must be 5000 characters or fewer");
   });
 });
 

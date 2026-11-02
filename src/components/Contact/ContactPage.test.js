@@ -69,17 +69,17 @@ describe("ContactPage", () => {
     fireEvent.click(screen.getByText("Submit"));
 
     expect(screen.getByText("Must be a valid email address")).toBeTruthy();
-    expect(screen.getByText("message is a required field")).toBeTruthy();
-    expect(screen.queryByText("name is a required field")).toBeNull();
+    expect(screen.getByText("Message is a required field")).toBeTruthy();
+    expect(screen.queryByText("Name is a required field")).toBeNull();
     expect(document.activeElement).toBe(screen.getByLabelText("Email*"));
     expect(fetchMock).not.toHaveBeenCalled();
   });
 
   it("clears a field's error once it's corrected", () => {
     fireEvent.click(screen.getByText("Submit"));
-    expect(screen.getByText("name is a required field")).toBeTruthy();
+    expect(screen.getByText("Name is a required field")).toBeTruthy();
     type("Name*", "Ada");
-    expect(screen.queryByText("name is a required field")).toBeNull();
+    expect(screen.queryByText("Name is a required field")).toBeNull();
   });
 
   it("counts the message's characters against the limit", () => {

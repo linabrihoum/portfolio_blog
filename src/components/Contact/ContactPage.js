@@ -1,7 +1,13 @@
 "use client";
 import React, { useRef, useState } from "react";
 import siteMetadata from "@/src/utils/siteMetaData";
-import { CONTACT_FIELDS, CONTACT_MAX_LENGTH, validateContact, validateContactField } from "@/src/utils/contact";
+import {
+  CONTACT_FIELDS,
+  CONTACT_MAX_LENGTH,
+  capitalize,
+  validateContact,
+  validateContactField,
+} from "@/src/utils/contact";
 import { Button } from "../Elements/Button";
 
 // Nearly solid dark purple over the Vortex. No backdrop blur: the browser has to
@@ -22,7 +28,7 @@ const fitToContent = (textarea) => {
 
 const IS_MAC = typeof navigator !== "undefined" && /Mac|iPhone|iPad/.test(navigator.platform);
 
-const label = (field) => `${field.charAt(0).toUpperCase() + field.slice(1)}*`;
+const label = (field) => `${capitalize(field)}*`;
 
 // All three fields on one card with a single Submit. Every field is checked on
 // submit; the message is only sent once they all pass.
