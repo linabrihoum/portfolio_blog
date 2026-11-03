@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
-import { COMET_GRADIENTS } from "./CometField";
+import { COMET_GRADIENTS } from "./cometGradients";
 
 // A full-width divider drawn by a comet: the first time the band is fully on
 // screen, the comet flies in from the left and stops with its head at the right

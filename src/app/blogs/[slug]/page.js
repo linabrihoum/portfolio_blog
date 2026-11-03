@@ -31,7 +31,6 @@ export async function generateMetadata({ params }) {
   const blog = findPost(blogSlug);
   if (!blog) return {};
 
-  const images = [{ url: imageUrl(blog) }];
   return {
     title: blog.title,
     description: blog.description,
@@ -45,14 +44,12 @@ export async function generateMetadata({ params }) {
       type: "article",
       publishedTime: new Date(blog.publishedAt).toISOString(),
       modifiedTime: new Date(blog.updatedAt || blog.publishedAt).toISOString(),
-      images,
       authors: [blog.author || siteMetadata.author],
     },
     twitter: {
       card: "summary_large_image",
       title: blog.title,
       description: blog.description,
-      images,
     },
   };
 }
