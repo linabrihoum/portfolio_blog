@@ -6,12 +6,12 @@ import siteMetadata from "@/src/utils/siteMetaData";
 export const size = OG_SIZE;
 export const contentType = "image/png";
 
-// One image per post, with the post title as its alt text
-export async function generateImageMetadata({ params }) {
-  const { slug } = await params;
-  const blog = allBlogs.find((post) => post._raw.flattenedPath === slug);
-  return [{ id: "card", alt: blog ? blog.title : siteMetadata.title, size, contentType }];
-}
+export const alt = `A blog post by ${siteMetadata.author}`;
+
+// Built for every post at build time, so nothing renders on the server when a
+// link is shared (on demand, Vercel's function was missing the font files).
+export const dynamicParams = false;
+export const generateStaticParams = () => allBlogs.map((blog) => ({ slug: blog._raw.flattenedPath }));
 
 // Long titles get a smaller size so they still fit in three lines
 const titleSize = (title) => (title.length > 70 ? 54 : title.length > 45 ? 64 : 76);

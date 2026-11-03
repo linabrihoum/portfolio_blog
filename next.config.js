@@ -17,6 +17,12 @@ const nextConfig = {
     ],
   },
 
+  // The link preview images read their font files at runtime, and the build
+  // can't tell on its own, so copy the fonts into those routes' server functions
+  outputFileTracingIncludes: {
+    "/**/opengraph-image*": ["./src/assets/fonts/*"],
+  },
+
   async redirects() {
     return [...categoryRedirects, ...postRedirects];
   },

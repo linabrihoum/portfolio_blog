@@ -110,6 +110,7 @@ Every pull request runs these on GitHub Actions ([.github/workflows/ci.yml](.git
 | `npm run lint` | ESLint. Look at the exit code: it's `0` when there are no errors. |
 | `npm test` | Unit and component tests (Vitest) |
 | `npm run build` | The site builds, including every post's front matter |
+| `npm run check:previews` | Every link preview image was built ahead of time and its fonts are bundled. Needs a build first. |
 | `npm run check:speed` | Lighthouse page speed on the main pages, with mobile settings. Limits are in `lighthouserc.js`. Needs a build first. |
 | `npm run check:lag` | Animation stutter: opens each page in Chrome slowed down to phone speed and fails if a page spends over 25% of its time in slow frames. Needs `npm run start` running in another terminal, and `npx playwright install chromium` once. |
 
