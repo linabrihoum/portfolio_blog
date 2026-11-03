@@ -3,7 +3,7 @@ title: "Making a Tech Blog with Next.JS, Contentlayer, Supabase, and More"
 description: "How I built this tech blog — the rendering strategy, the MDX pipeline, the view-counter architecture, and the reasoning behind every tool choice."
 image: "../../public/blogs/making-a-tech-blog.jpeg"
 publishedAt: "2023-10-04"
-updatedAt: "2023-10-04"
+updatedAt: "2026-11-02"
 author: "Lina Brihoum"
 isPublished: true
 takeaways:
@@ -30,7 +30,7 @@ Tool lists are boring without the constraints that produced them, so here were m
 - **SEO as a hard requirement** — a blog nobody can find is a diary. That means server-rendered or pre-rendered HTML, correct metadata and Open Graph tags on every page, structured data, and a sitemap. This constraint alone eliminates purely client-rendered React.
 - **Content as files, not a CMS** — I wanted posts in Git: versioned, reviewable, written in my editor, with zero risk of a CMS vendor sunsetting my archive. That pointed to Markdown/MDX and away from headless CMS platforms.
 - **Aesthetics and animation without paying for it in performance** — animations that live on the compositor, images that are optimized at build time, and a Lighthouse score I'm not embarrassed by.
-- **At least one technology I didn't already know** — this project was also my TypeScript learning vehicle. A side project that teaches you nothing is a missed opportunity.
+- **At least one technology I didn't already know** — this project was also how I learned the Next.js App Router and MDX. A side project that teaches you nothing is a missed opportunity.
 
 With all this in mind: Next.JS/React with Tailwind CSS and framer-motion on the front, Contentlayer for the content pipeline, Supabase for the database, and Mailchimp for the newsletter.
 
@@ -41,7 +41,7 @@ With all this in mind: Next.JS/React with Tailwind CSS and framer-motion on the 
 
 - <ins>Static Site Generation (SSG):</ins> the page is rendered to HTML **once, at build time**, and served from a CDN forever after. This is the correct mode for blog posts — the content changes only when I commit, so there is no reason to render it more than once. Every post on this site is SSG'd: at build time, Next calls `generateStaticParams()` with every slug Contentlayer knows about and pre-renders the lot.
 - <ins>Server-Side Rendering (SSR):</ins> the page is rendered **per request**. Necessary when content is personalized or changes constantly; wasteful for content that changes weekly. I use it nowhere on this site, deliberately.
-- <ins>Client-side rendering:</ins> reserved for the bits that are genuinely dynamic per-visitor — like the view counter, which hydrates after page load and talks to Supabase from the browser.
+- <ins>Client-side rendering:</ins> reserved for the bits that are genuinely dynamic per-visitor — like the view counter (since removed; see the update below), which hydrated after page load and talked to Supabase from the browser.
 
 The SEO payoff of pre-rendering is mechanical, not magical: crawlers receive complete HTML with real `<title>`, meta description, Open Graph tags, and JSON-LD structured data (each post on this site emits a `BlogPosting` schema), instead of an empty `<div id="root">` and a promise. Add the automatic per-route code splitting, build-time image optimization with proper `srcset` generation, and font optimization, and the framework is doing most of the Core Web Vitals work for me.
 
@@ -67,7 +67,7 @@ export async function generateMetadata({ params }) {
 ---
 ## Contentlayer: Content as Type-Safe Data
 
-[Contentlayer](https://www.contentlayer.dev/) is the piece that turns a folder of MDX files into something a TypeScript application can trust. Every post is a file with YAML frontmatter (title, description, publish date, tags), and Contentlayer validates each one against a schema *at build time* — so a missing description or a typo'd date is a build failure on my machine, not a broken page in production. Since content errors are caught where code errors are caught, content effectively *is* code.
+[Contentlayer](https://www.contentlayer.dev/) is the piece that turns a folder of MDX files into something a JavaScript application can trust. Every post is a file with YAML frontmatter (title, description, publish date, tags), and Contentlayer validates each one against a schema *at build time* — so a missing description or a typo'd date is a build failure on my machine, not a broken page in production. Since content errors are caught where code errors are caught, content effectively *is* code.
 
 The part I find genuinely elegant is **computed fields** — derived data generated during the build rather than maintained by hand:
 
@@ -103,7 +103,7 @@ I've since removed the view counter (and Supabase with it) during a redesign of 
 ---
 ## Frontend: Tailwind CSS and Framer Motion
 
-[Tailwind CSS](https://tailwindcss.com/) is a utility-first CSS framework, and the honest pitch for it is about *maintenance*, not speed of writing: utilities keep styling colocated with markup (no orphaned CSS files whose selectors may or may not still match anything), and the build's purge step means the shipped stylesheet contains only the classes actually used — a few kilobytes, no matter how large the design system behind it. Dark mode on this site is Tailwind's `class` strategy plus a small script that runs *before* first paint to read the stored preference — the difference between a site that remembers your theme and one that flashes white at you first.
+[Tailwind CSS](https://tailwindcss.com/) is a utility-first CSS framework, and the honest pitch for it is about *maintenance*, not speed of writing: utilities keep styling colocated with markup (no orphaned CSS files whose selectors may or may not still match anything), and the build's purge step means the shipped stylesheet contains only the classes actually used — a few kilobytes, no matter how large the design system behind it. Since the redesign the site is dark only: the `dark` class is part of the server-rendered HTML, so there's no stored theme to read and nothing to flash white before the page loads.
 
 [Framer Motion](https://www.framer.com/motion/) handles animation with a declarative API, and the performance rule I follow with it is simple: animate only `transform` and `opacity` — properties the browser can composite on the GPU without triggering layout or paint. Scale and translate freely; never animate `width`, `height`, or `top`. Respecting that line is most of the difference between animation that feels expensive and animation that's free.
 
@@ -121,7 +121,7 @@ return (
 );
 ```
 
-[Mailchimp](https://mailchimp.com/) rounds out the stack for the newsletter — email is the one distribution channel no algorithm can take away from you, and starting the list on day one costs nothing.
+I planned a [Mailchimp](https://mailchimp.com/) newsletter too — email is the one distribution channel no algorithm can take away from you. The signup isn't on the site yet; it's on my list.
 
 <Image
   src="/blogs/supabase_metrics.jpg"
