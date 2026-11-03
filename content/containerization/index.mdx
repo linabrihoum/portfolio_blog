@@ -1,16 +1,18 @@
 ---
 title: "Understanding the Differences Between Kubernetes, OpenShift, and Istio"
-description: "How Kubernetes, OpenShift, and Istio actually relate to each other — the reconciliation model that makes Kubernetes work, what OpenShift genuinely adds beyond a UI, and what a service mesh costs you in exchange for what it provides."
+description: "How Kubernetes, OpenShift and Istio relate: the reconciliation model behind Kubernetes, what OpenShift really adds, and what a service mesh costs you."
 image: "../../public/blogs/containerization.png"
 publishedAt: "2025-04-10"
 updatedAt: "2025-04-10"
 author: "Lina Brihoum"
 isPublished: true
-tags: 
-- DevSecOps
+takeaways:
+- "Kubernetes, OpenShift and Istio don't compete, they stack: an orchestration engine, an opinionated distribution of it, and a service mesh on top."
+- "Kubernetes works as a reconciliation machine that keeps nudging what's running toward what you declared."
+- "Istio controls, secures and observes traffic between services without code changes, at the price of running another distributed system."
+tags:
+- Cloud
 ---
-
-# Understanding the Differences Between Kubernetes, OpenShift, and Istio
 
 ## Introduction
 

@@ -22,13 +22,8 @@ const SCENARIOS = [
   { name: "home", path: "/" },
   { name: "about", path: "/about" },
   { name: "projects", path: "/projects" },
-  {
-    name: "contact",
-    path: "/contact",
-    // Reported but doesn't fail the check yet: the Vortex background draws
-    // 700 particles plus two full-screen blurs every frame. Fix in the Contact redesign.
-    knownLaggy: true,
-  },
+  // Used to stutter 97% of the time (full-screen blurs on the Vortex every frame).
+  { name: "contact", path: "/contact" },
   { name: "blog post", path: "/blogs/gitops" },
   // Leaving Contact must not leave its particle animation running behind.
   { name: "home after visiting contact", path: "/contact", thenClick: "Home" },

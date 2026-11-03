@@ -1,79 +1,40 @@
-"use client";
-import React from "react";
-import {
-  GithubIcon,
-  LinkedinIcon,
-  SunIcon,
-  MoonIcon,
-  InstagramIcon,
-} from "../Header/Icons";
 import Link from "next/link";
 import siteMetadata from "@/src/utils/siteMetaData";
-import { cx } from "@/src/utils";
-import { useThemeSwitch } from "../Hooks/useThemeSwitch";
-import { useState } from "react";
+import { SocialLinks } from "../Header/SocialLinks";
+import { Starfield } from "../ui/Starfield";
+import { CometField } from "../ui/CometField";
 
 const Footer = () => {
-
-    const [mode, setMode] = useThemeSwitch();
-    const [click, setClick] = useState(false);
-    const toggle = () => {
-      setClick(!click);
-    };
-    
   return (
-    <footer className="mt-16 md:px-6 rounded-2xl bg-dark dark:bg-accentDark/90 m-2 sm:m-10 flex flex-col items-center text-light dark:text-dark">
-      <h3 className="mt-16 font-medium dark:font-bold text-center capitalize text-2xl sm:text-3xl lg:text-4xl px-4">
-        Cloud Technology, Cyber Security, Artifical Intelligence
+    <footer className="relative overflow-hidden m-2 sm:m-10 mt-16 sm:mt-16 rounded-2xl bg-space-950 border border-[var(--border-subtle)] text-[var(--star)] flex flex-col items-center">
+      <Starfield density={70} twinkle={8} seed={11} />
+      <CometField count={6} seed={21} minDuration={9} maxDuration={16} />
+      <div
+        aria-hidden="true"
+        className="absolute left-1/2 -bottom-[60%] w-[120%] h-full -translate-x-1/2 rounded-[50%] pointer-events-none"
+        style={{
+          background: "radial-gradient(closest-side, rgba(99,68,245,.45), rgba(174,72,255,.15) 60%, transparent)",
+        }}
+      />
+
+      <h3 className="relative mt-16 px-4 font-medium text-center capitalize text-2xl sm:text-3xl lg:text-4xl leading-tight [text-wrap:balance]">
+        Cloud Technology, Software Engineering, Artificial Intelligence
       </h3>
 
-      <div className="flex items-center mt-8">
-        <button
-          onClick={() => setMode(mode === "light" ? "dark" : "light")}
-          className={cx(
-            "w-6 h-6 ease ml-2 flex items-center justify-center rounded-full p-1",
-            mode === "light" ? "bg-dark text-light" : "bg-light text-dark"
-          )}
-          aria-label="theme-switcher"
-        >
-          {mode === "light" ? (
-            <MoonIcon className={"fill-dark"} />
-          ) : (
-            <SunIcon className={"fill-dark"} />
-          )}
-        </button>
+      <SocialLinks motionStyle="scale" className="relative mt-8" />
 
-        <a href={siteMetadata.linkedin} className="inline-block w-6 h-6 mx-4">
-          <LinkedinIcon className="hover:scale-125 transition-all ease duration-200" />
-        </a>
-        <a
-          href={siteMetadata.github}
-          className="inline-block w-6 h-6 mr-4 fill-light"
-        >
-          <GithubIcon className="fill-light dark:fill-dark  hover:scale-125 transition-all ease duration-200" />
-        </a>
-        <a href={siteMetadata.instagram} className="inline-block w-6 h-6 mr-4">
-          <InstagramIcon className="hover:scale-125 transition-all ease duration-200" />
-        </a>
-      </div>
-      <div className="flex items-center mt-8">
-        <Link
-          href={`mailto:${siteMetadata.email}`}
-          className="ml-4 text-lg font-medium capitalize  underline 
-                  md:text-base"
-        >
-          Click here to email me for any inquires!
-        </Link>
-      </div>
+      <a
+        href={`mailto:${siteMetadata.email}`}
+        className="relative mt-8 px-4 text-center text-lg font-medium underline underline-offset-2"
+      >
+        Click here to email me for any inquiries!
+      </a>
 
-      <div className="w-full  mt-16 md:mt-24 relative font-medium border-t border-solid border-light py-6 px-8 flex  flex-col md:flex-row items-center justify-between">
+      <div className="relative w-full mt-16 md:mt-24 py-6 px-8 border-t border-[rgba(245,243,255,.5)] font-medium flex flex-col md:flex-row flex-wrap gap-4 items-center justify-between">
         <span className="text-center">
           &copy; {new Date().getFullYear()} Lina Brihoum. All rights reserved.
         </span>
-        <Link
-          href={"/sitemap.xml"}
-          className="text-center underline my-4 md:my-0"
-        >
+        <Link href="/sitemap.xml" className="text-center underline">
           sitemap.xml
         </Link>
       </div>

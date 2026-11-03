@@ -27,11 +27,11 @@ const projects = [
     id: 2,
     title: "This Website :)",
     description:
-      "My personal portfolio using Next.JS, Javascript, TailwindCSS, and Supabase.",
+      "My personal portfolio and blog using Next.js, JavaScript, Tailwind CSS, and MDX.",
     image:
       "https://images.unsplash.com/photo-1498050108023-c5249f4df085?q=80&w=1200&auto=format&fit=crop",
     link: "https://github.com/linabrihoum/portfolio_blog",
-    tech: ["Next.js", "Javascript", "Supabase"],
+    tech: ["Next.js", "Javascript", "Tailwind CSS"],
     featured: true,
   },
   {

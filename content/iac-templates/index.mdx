@@ -1,16 +1,18 @@
 ---
 title: "Creating custom Terraform templates"
-description: "Building production-grade Terraform for AWS — remote state with locking, reusable modules, secrets handling, and the patterns that separate a demo main.tf from infrastructure you can actually operate."
+description: "Production-grade Terraform for AWS: remote state with locking, reusable modules, secrets handling, and what separates a demo main.tf from real infrastructure."
 image: "../../public/blogs/templates.jpg"
 publishedAt: "2024-06-20"
 updatedAt: "2024-06-20"
 author: "Lina Brihoum"
 isPublished: true
-tags: 
+takeaways:
+- "Set up remote state with locking and encryption before you create any resources."
+- "Production Terraform means pinned versions, data sources over hard-coded IDs, IMDSv2, blocked public bucket access and deletion protection on databases."
+- "Treat `terraform plan` as the product: review it in pull requests, and extract modules once patterns repeat."
+tags:
 - DevSecOps
 ---
-
-# Automating AWS with Custom Terraform Templates
 
 Terraform is an open-source infrastructure as code (IaC) tool that lets you define cloud resources in version-controlled, human-readable configuration files, then create, change, and destroy them through a predictable plan/apply workflow. Every tutorial shows you the ten-line `main.tf` that boots an EC2 instance. This post goes further: we'll build the same core resources — an EC2 instance, an S3 bucket, an RDS database — the way you'd actually want them in a real environment, and cover the scaffolding around them (remote state, modules, secrets, workflow) that turns Terraform from a demo into an operating practice.
 

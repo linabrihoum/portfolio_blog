@@ -5,23 +5,23 @@ Items tagged *(Comet redesign)* are being handled by the redesign in progress, a
 ## Quick Fixes
 
 - [x] Fix CAP Theorem post (`content/the-CAP-theorem/index.mdx`) — expand the `description` field beyond "CAP" and add a proper `# The CAP Theorem` H1 title at the top
-- [ ] Fix `becoming-a-cloud-engineer` post — the folder slug says `becoming-a-cloud-engineer` but the title is now "Becoming a DevSecOps Architect"; make them consistent (renaming the slug needs a redirect from the old URL) *(Comet redesign)*
-- [ ] Fix duplicate H1s — the post page already shows the title as the H1, so posts that also start with `# Title` (like the CAP Theorem fix above) end up with two *(Comet redesign)*
+- [x] Fix `becoming-a-cloud-engineer` post (renamed to `becoming-a-devsecops-architect`, old address redirects) — the folder slug says `becoming-a-cloud-engineer` but the title is now "Becoming a DevSecOps Architect"; make them consistent (renaming the slug needs a redirect from the old URL) *(Comet redesign)*
+- [x] Fix duplicate H1s (removed from the posts) — the post page already shows the title as the H1, so posts that also start with `# Title` (like the CAP Theorem fix above) end up with two *(Comet redesign)*
 - [ ] Replace placeholder Unsplash images in `src/components/Projects/projectsData.js` with real project screenshots
 - [x] New blog posts reuse existing images (`github-deploy-action.png`, `devops-lifecycle.jpeg`, `aws-azure.jpg`, `cloud_compute.jpeg`) — swap in dedicated cover images when available
 - [ ] Custom social-share (Open Graph) images per post — today each post's cover photo is used
 
 ## Structural Improvements
 
-- [ ] Move `SkillsMarquee` component (already in `src/components/Projects/`) to the About page to visually surface your tech stack, using real tech logos *(Comet redesign)*
-- [ ] Add an author bio block at the bottom of each blog post — small reusable component with "Written by Lina Brihoum" *(Comet redesign)*
-- [ ] Add client-side blog search (e.g. Fuse.js) to the `/categories/all` page *(Comet redesign)*
+- [x] ~~Move `SkillsMarquee` to the About page~~ Dropped: the About page doesn't need a skills strip, so the component was deleted *(Comet redesign)*
+- [x] Add an author bio block at the bottom of each blog post (`AuthorCard`) — small reusable component with "Written by Lina Brihoum" *(Comet redesign)*
+- [x] Add client-side blog search to the `/categories/all` page (simple text match, no library needed) *(Comet redesign)*
 - [ ] Add pagination or infinite scroll to blog list pages
-- [ ] Add a newsletter signup (Mailchimp) — the redesign builds the signup component but leaves where to place it for later
+- [ ] Add a newsletter signup (e.g. Mailchimp) — nothing is built yet; the old unused Mailchimp package was removed in the redesign
 
 ## Speed
 
-- [ ] After the redesign, check the speed of every page (`npm run check:speed` and `npm run check:lag`) and fix anything slow. Known today: the Contact page's particle background stutters at phone speed, and the home page is slow to show its main content on phones *(Comet redesign)*
+- [ ] After the redesign, check the speed of every page (`npm run check:speed` and `npm run check:lag`) and fix anything slow. Known today: the home page is slow to show its main content on phones. (The Contact page stutter is fixed: 97% → 0%.) Every page passes today's limits, so this is an after-launch improvement.
 
 ## New Blog Posts
 

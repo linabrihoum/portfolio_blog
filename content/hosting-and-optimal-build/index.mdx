@@ -1,16 +1,18 @@
 ---
 title: "Hosting and automating a website"
-description: "How to choose a hosting model for a modern website — static, serverless, or server — and how to build a GitHub Actions pipeline that deploys it correctly: caching, concurrency, preview builds, and the details that keep deploys fast and safe."
+description: "Choosing between static, serverless and server hosting, then building a GitHub Actions pipeline that deploys fast and safely: caching, concurrency, previews."
 image: "../../public/blogs/hosting-and-optimal-build.jpg"
 publishedAt: "2023-11-06"
 updatedAt: "2023-11-06"
 author: "Lina Brihoum"
 isPublished: true
-tags: 
-- website development
+takeaways:
+- "Choose the hosting model first (static, serverless or server), because cost, speed and pipeline design all follow from it."
+- "A good GitHub Actions pipeline builds reproducibly (npm ci, pinned Node, caching), uses least-privilege permissions and never lets two deploys race."
+- "Stay static until something forces you not to, and automate everything after the push so deploys are identical and boring."
+tags:
+- DevSecOps
 ---
-# Exploring Website Hosting Methods and Automation in Backend, Hosting, and CI/CD
-
 ## Introduction
 
 For teams using Git and GitHub, GitHub Actions offers a seamless way to automate everything between `git push` and a live website. But before automating a deployment, it's worth being deliberate about *what kind of deployment you're automating* — because "hosting a website" is really three different problems depending on how your site is built, and the right pipeline follows from that choice. This guide covers the hosting models and their trade-offs, then builds a real GitHub Actions pipeline for a static Next.js site — including the caching, permissions, and concurrency details that separate a workflow that works from one that works *well*.

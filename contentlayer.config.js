@@ -4,7 +4,7 @@ import rehypeAutolinkHeadings from "rehype-autolink-headings";
 import rehypePrettyCode from "rehype-pretty-code";
 import rehypeSlug from "rehype-slug";
 import remarkGfm from "remark-gfm";
-import GithubSlugger from "github-slugger"
+import { extractHeadings } from "./src/utils/toc.js";
 
 const Blog = defineDocumentType(() => ({
   name: "Blog",
@@ -43,6 +43,12 @@ const Blog = defineDocumentType(() => ({
       type: "list",
       of: { type: "string" },
     },
+    // Optional "Key takeaways" box at the top of a post: about 3 one-sentence bullets
+    takeaways: {
+      type: "list",
+      of: { type: "string" },
+      required: false,
+    },
   },
   computedFields: {
     url: {
@@ -55,24 +61,7 @@ const Blog = defineDocumentType(() => ({
     },
     toc: {
       type: "json",
-      resolve: async (doc) => {
-
-        const regulrExp = /\n(?<flag>#{1,6})\s+(?<content>.+)/g;
-        const slugger = new GithubSlugger();
-        const headings = Array.from(doc.body.raw.matchAll(regulrExp)).map(({groups}) => {
-          const flag = groups?.flag;
-          const content = groups?.content;
-
-          return {
-            level: flag?.length == 1 ? "one" : flag?.length == 2 ? "two" : "three",
-            text: content,
-            slug: content ? slugger.slug(content) : undefined
-          }
-
-        })
-        return headings;
-
-      }
+      resolve: (doc) => extractHeadings(doc.body.raw),
     },
   },
 }));

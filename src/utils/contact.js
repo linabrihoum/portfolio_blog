@@ -11,14 +11,17 @@ export const CONTACT_MAX_LENGTH = {
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
+export const capitalize = (word) => word.charAt(0).toUpperCase() + word.slice(1);
+
 export const validateContactField = (field, value) => {
   const text = typeof value === "string" ? value.trim() : "";
+  const name = capitalize(field);
 
   if (!text) {
-    return field === "email" ? "Email is a required field" : `${field} is a required field`;
+    return `${name} is a required field`;
   }
   if (text.length > CONTACT_MAX_LENGTH[field]) {
-    return `${field} must be ${CONTACT_MAX_LENGTH[field]} characters or fewer`;
+    return `${name} must be ${CONTACT_MAX_LENGTH[field]} characters or fewer`;
   }
   if (field === "email" && !EMAIL_PATTERN.test(text)) {
     return "Must be a valid email address";

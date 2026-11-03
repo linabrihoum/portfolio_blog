@@ -1,16 +1,18 @@
 ---
 title: "Software Architecture Principle SOLID"
-description: "Mastering SOLID Principles in Software Design — what each principle actually claims, the misreadings that lead to over-engineered code, and how the same ideas show up in microservices and infrastructure design."
+description: "What each SOLID principle actually claims, the misreadings that lead to over-engineered code, and how the same ideas appear in microservices and infrastructure."
 image: "../../public/blogs/solid.jpg"
 publishedAt: "2024-08-30"
 updatedAt: "2024-08-30"
 author: "Lina Brihoum"
 isPublished: true
-tags: 
-- software development
+takeaways:
+- "All five SOLID principles manage coupling, so tomorrow's change costs a new file instead of a regression hunt."
+- "Each one has a specific job, from separating things that change for different reasons (SRP) to pointing dependencies at abstractions (DIP)."
+- "Use them as diagnostic tools when change is painful, not as rules to apply up front, or they add indirection that costs more than it saves."
+tags:
+- Software
 ---
-
-# Mastering SOLID Principles in Software Design
 
 In software development, maintaining clean, manageable, and scalable code is paramount. The SOLID principles, popularized by Robert C. Martin, offer a robust framework for achieving it. They are also — and this is the part most write-ups skip — among the most misapplied ideas in software engineering, regularly invoked to justify layers of abstraction that make codebases *worse*. So this post does two jobs: explain each principle precisely, with examples, and mark the boundary where each one stops being good advice.
 

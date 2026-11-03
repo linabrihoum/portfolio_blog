@@ -560,119 +560,22 @@ export const CircularText = ({ className, ...rest }) => (
   </svg>
 );
 
-export const AzureIcon = ({ className, ...rest }) => (
+// Lucide "award" (ISC licence), used for the Credly card on About.
+export const AwardIcon = ({ className, ...rest }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
-    width="496"
-    height="496"
-    viewBox="0 0 496 496"
-    className={`w-full h-auto ${className}`}
+    width={24}
+    height={24}
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth={2}
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    className={cx("w-full h-auto", className)}
     {...rest}
   >
-    <path fill="#0078D4" d="M7 40h12l-7-12-5 8h-2z" />
-    <path fill="#0078D4" d="M29 13H19L10 33h10l7-12h-4z" />
-    <path fill="#0078D4" d="M38 40H25L41 6h9z" />
+    <path d="m15.477 12.89 1.515 8.526a.5.5 0 0 1-.81.47l-3.58-2.687a1 1 0 0 0-1.197 0l-3.586 2.686a.5.5 0 0 1-.81-.469l1.514-8.526" />
+    <circle cx="12" cy="8" r="6" />
   </svg>
 );
-
-
-export const AwsIcon = ({ className, ...rest }) => {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 48 48"
-      width={42}
-      height={42}
-      className={cx(className, "w-full h-auto")}
-      {...rest}
-    >
-      <path fill="#FF9900" d="M8 40h32v-2H8z" />
-      <path
-        fill="#232F3E"
-        d="M24 4L8 30h16l8-16-8-10zm0 5.55L27.54 18h-7.09L24 9.55z"
-      />
-    </svg>
-  );
-};
-
-export const TerraformIcon = ({ className, ...rest }) => {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 48 48"
-      width={42}
-      height={42}
-      className={cx(className, "w-full h-auto")}
-      {...rest}
-    >
-      <path fill="#5C4EE5" d="M12 8v24l12-8V8z" />
-      <path fill="#4A40B9" d="M36 8v24l-12 8V16z" />
-    </svg>
-  );
-};
-
-
-export const DockerIcon = ({ className, ...rest }) => {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 48 48"
-      width={42}
-      height={42}
-      className={cx(className, "w-full h-auto")}
-      {...rest}
-    >
-      <path fill="#0db7ed" d="M6 28h24V18H6z" />
-      <path fill="#0db7ed" d="M30 4h10v24H30z" />
-      <path fill="#066da5" d="M10 14h10v8H10z" />
-    </svg>
-  );
-};
-
-
-export const OpenShiftIcon = ({ className, ...rest }) => {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 48 48"
-      width={42}
-      height={42}
-      className={cx(className, "w-full h-auto")}
-      {...rest}
-    >
-      <circle cx="24" cy="24" r="20" fill="#E00" />
-      <path fill="#FFF" d="M24 10l8 14H16z" />
-    </svg>
-  );
-};
-
-export const AzureDevOpsIcon = ({ className, ...rest }) => {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 48 48"
-      width={42}
-      height={42}
-      className={cx(className, "w-full h-auto")}
-      {...rest}
-    >
-      <path fill="#0078D4" d="M10 14h28l6 8-6 8H10z" />
-    </svg>
-  );
-};
-
-export const AnsibleIcon = ({ className, ...rest }) => {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 48 48"
-      width={42}
-      height={42}
-      className={cx(className, "w-full h-auto")}
-      {...rest}
-    >
-      <circle cx="24" cy="24" r="20" fill="#EE0000" />
-      <path fill="#FFF" d="M20 10h8l6 28h-4l-2-8h-8l-2 8h-4l6-28z" />
-    </svg>
-  );
-};

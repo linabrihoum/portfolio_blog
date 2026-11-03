@@ -1,16 +1,18 @@
 ---
 title: "Shift Left Approach"
-description: "What shifting left actually means in practice: the economics behind it, the tooling that makes it real (pre-commit hooks, SAST, SCA, IaC scanning, policy as code), and the failure modes that turn a good idea into developer misery."
+description: "What shifting left means in practice: the economics, the tooling (pre-commit hooks, SAST, SCA, IaC scanning, policy as code), and how it goes wrong."
 image: "../../public/blogs/shift-left.jpg"
 publishedAt: "2026-03-20"
 updatedAt: "2026-03-20"
 author: "Lina Brihoum"
 isPublished: true
+takeaways:
+- "Shifting left means catching defects at the keyboard, where they're cheapest to fix, through layered checks from pre-commit to CI to policy as code."
+- "Place each check as early as its speed and accuracy allow, and start it as advisory before making it blocking."
+- "Done badly, it becomes a wall of red X's that developers learn to work around, so treat developers as the customers of the system."
 tags:
 - DevSecOps
 ---
-
-# Shift Left Approach
 
 ## Introduction
 

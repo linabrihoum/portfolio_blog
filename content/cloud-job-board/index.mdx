@@ -1,16 +1,18 @@
 ---
 title: "Building a Cloud Job Board"
-description: "How I built an open-source, self-updating job board for cloud and SRE roles — a static-first Next.js architecture with no database, a daily sourcing pipeline that discovers companies on its own, and the CI/CD gotchas I hit along the way."
+description: "How I built an open-source, self-updating job board for cloud and SRE roles: static-first Next.js, no database, and a daily pipeline that finds new companies."
 image: "../../public/blogs/cloudboard.jpg"
 publishedAt: "2026-07-19"
 updatedAt: "2026-07-19"
 author: "Lina Brihoum"
 isPublished: true
-tags: 
-- Website Development
+takeaways:
+- "A static-first design (a validated JSON file instead of a database) keeps the board fast, free to host and with nothing to secure."
+- "Pulling jobs straight from the hiring systems' public APIs keeps every listing verified and linked directly to the company."
+- "A PR-gated daily pipeline lets the site update itself, and if data fails validation, yesterday's board simply stays live."
+tags:
+- Software
 ---
-# Building a Cloud Job Board
-
 ## Introduction
 
 While searching for cloud and SRE roles, I kept running into the same three problems on every job board: listings that had been filled months ago, duplicates of the same posting from five aggregators, and "Apply" buttons that routed me through some middleman site before I ever reached the company. So I built my own board, with three rules baked in from day one:

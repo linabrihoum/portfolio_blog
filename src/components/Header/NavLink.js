@@ -1,25 +1,20 @@
-"use client";
-
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { cx } from "@/src/utils";
 
-const NavLink = ({ link }) => {
-  const pathName = usePathname();
-
+// Active link: a thin solid underline. On hover, a comet-gradient underline sweeps in.
+const NavLink = ({ link, active }) => {
   return (
-    <Link
-  className={`rounded relative group ${
-    pathName === link.url
-      ? "inline-block after:absolute after:inset-x-0 after:bottom-0 after:h-[1px] after:bg-dark after:group-hover:w-full after:transition-[width] after:ease after:duration-300 dark:after:bg-light"
-      : ""
-  }`}
-  href={link.url}
->
-  <span className="group-hover:w-full transition-[width] ease duration-300 text-black dark:text-white">
-    {link.title}
-  </span>
-</Link>
-
+    <Link href={link.url} className="group relative inline-block py-0.5 font-medium text-fg-1">
+      {link.title}
+      <span
+        className={cx(
+          "absolute left-0 bottom-0 h-px transition-[width] duration-300 ease-in-out",
+          active
+            ? "w-full bg-fg-1"
+            : "w-0 group-hover:w-full bg-[image:var(--gradient-comet)]"
+        )}
+      />
+    </Link>
   );
 };
 

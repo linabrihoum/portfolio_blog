@@ -1,6 +1,8 @@
 // next.config.js
 
 const { withContentlayer } = require("next-contentlayer2");
+const categoryRedirects = require("./src/utils/categoryRedirects");
+const postRedirects = require("./src/utils/postRedirects");
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
@@ -15,10 +17,9 @@ const nextConfig = {
     ],
   },
 
-  // Uncomment and set your environment variables if needed
-  // env: {
-  //   MAILCHIMP_API_KEY: process.env.MAILCHIMP_API_KEY,
-  // },
+  async redirects() {
+    return [...categoryRedirects, ...postRedirects];
+  },
 };
 
 module.exports = withContentlayer(nextConfig);
