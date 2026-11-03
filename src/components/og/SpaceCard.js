@@ -32,7 +32,7 @@ const nebula = NEBULA_PRESETS.dusk
 
 // A still frame of the home page hero: stars, comets, the dusk nebula and the
 // glowing planet horizon. The same seed always draws the same sky.
-export function SpaceCard({ seed = 4, background, children }) {
+export function SpaceCard({ seed = 4, children }) {
   const random = seededRandom(seed);
   const stars = Array.from({ length: 90 }, () => ({
     x: random() * OG_SIZE.width,
@@ -59,7 +59,6 @@ export function SpaceCard({ seed = 4, background, children }) {
         overflow: "hidden",
       }}
     >
-      {background}
       <div style={{ position: "absolute", inset: 0, display: "flex", backgroundImage: nebula, opacity: 0.6 }} />
       {stars.map((star, i) => (
         <div
