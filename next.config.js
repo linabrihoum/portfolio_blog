@@ -20,11 +20,6 @@ const nextConfig = {
   async redirects() {
     return [...categoryRedirects, ...postRedirects];
   },
-
-  // Uncomment and set your environment variables if needed
-  // env: {
-  //   MAILCHIMP_API_KEY: process.env.MAILCHIMP_API_KEY,
-  // },
 };
 
 module.exports = withContentlayer(nextConfig);
