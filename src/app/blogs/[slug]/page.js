@@ -1,4 +1,5 @@
 import { allBlogs } from "contentlayer/generated";
+import { alternatesFor } from "@/src/utils/metadata";
 import { slug } from "github-slugger";
 import { notFound } from "next/navigation";
 import { ArticleHero } from "@/src/components/Blog/ArticleHero";
@@ -34,7 +35,7 @@ export async function generateMetadata({ params }) {
   return {
     title: blog.title,
     description: blog.description,
-    alternates: { canonical: blog.url },
+    alternates: alternatesFor(blog.url),
     openGraph: {
       title: blog.title,
       description: blog.description,

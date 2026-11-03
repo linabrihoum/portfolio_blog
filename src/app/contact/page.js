@@ -1,12 +1,13 @@
 import ContactPage from "@/src/components/Contact/ContactPage";
 import { Starfield } from "@/src/components/ui/Starfield";
 import { Vortex } from "@/src/components/ui/Vortex";
+import { alternatesFor } from "@/src/utils/metadata";
 import siteMetadata from "@/src/utils/siteMetaData";
 
 export const metadata = {
   title: "Contact Me!",
   description: `Contact me or email me at ${siteMetadata.email}`,
-  alternates: { canonical: "/contact" },
+  alternates: alternatesFor("/contact"),
 };
 
 export default function Contact() {

@@ -1,4 +1,5 @@
 import { allBlogs } from "@/.contentlayer/generated";
+import { alternatesFor } from "@/src/utils/metadata";
 import { notFound } from "next/navigation";
 import { BlogList } from "@/src/components/Blog/BlogList";
 import { Breadcrumbs } from "@/src/components/Blog/Breadcrumbs";
@@ -26,7 +27,7 @@ export async function generateMetadata({ params }) {
   return {
     title: categorySlug === "all" ? "All Blogs" : `${category.name} Blogs`,
     description: CATEGORY_INTROS[categorySlug],
-    alternates: { canonical: `/categories/${categorySlug}` },
+    alternates: alternatesFor(`/categories/${categorySlug}`),
   };
 }
 

@@ -5,7 +5,7 @@ Items tagged *(Comet redesign)* are being handled by the redesign in progress, a
 ## Quick Fixes
 
 - [x] Fix CAP Theorem post (`content/the-CAP-theorem/index.mdx`) — expand the `description` field beyond "CAP" and add a proper `# The CAP Theorem` H1 title at the top
-- [ ] Fix `becoming-a-cloud-engineer` post — the folder slug says `becoming-a-cloud-engineer` but the title is now "Becoming a DevSecOps Architect"; make them consistent (renaming the slug needs a redirect from the old URL) *(Comet redesign)*
+- [x] Fix `becoming-a-cloud-engineer` post (renamed to `becoming-a-devsecops-architect`, old address redirects) — the folder slug says `becoming-a-cloud-engineer` but the title is now "Becoming a DevSecOps Architect"; make them consistent (renaming the slug needs a redirect from the old URL) *(Comet redesign)*
 - [ ] Fix duplicate H1s — the post page already shows the title as the H1, so posts that also start with `# Title` (like the CAP Theorem fix above) end up with two *(Comet redesign)*
 - [ ] Replace placeholder Unsplash images in `src/components/Projects/projectsData.js` with real project screenshots
 - [x] New blog posts reuse existing images (`github-deploy-action.png`, `devops-lifecycle.jpeg`, `aws-azure.jpg`, `cloud_compute.jpeg`) — swap in dedicated cover images when available
