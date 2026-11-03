@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#080717"/>
+      <stop offset="1" stop-color="#251F63"/>
+    </linearGradient>
+    <radialGradient id="planet" cx="0.35" cy="0.3" r="0.8">
+      <stop offset="0" stop-color="#8D78FF"/>
+      <stop offset="0.55" stop-color="#6344F5"/>
+      <stop offset="1" stop-color="#352C8A"/>
+    </radialGradient>
+    <linearGradient id="tail" x1="1" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#AE48FF" stop-opacity="0"/>
+      <stop offset="0.6" stop-color="#6344F5"/>
+      <stop offset="1" stop-color="#18CCFC"/>
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="14" fill="url(#sky)"/>
+  <circle cx="13" cy="14" r="1.2" fill="#F5F3FF" opacity=".8"/>
+  <circle cx="50" cy="44" r="1" fill="#F5F3FF" opacity=".6"/>
+  <circle cx="30" cy="8" r=".8" fill="#F5F3FF" opacity=".6"/>
+  <path d="M58 6 L33 27" stroke="url(#tail)" stroke-width="4.5" stroke-linecap="round"/>
+  <circle cx="33" cy="27" r="3.2" fill="#E6FAFF"/>
+  <circle cx="24" cy="42" r="13" fill="url(#planet)"/>
+  <ellipse cx="24" cy="42" rx="20" ry="5" fill="none" stroke="#18CCFC" stroke-width="2.5" transform="rotate(-18 24 42)" opacity=".9"/>
+  <path d="M11 42 a13 13 0 0 1 26 0" fill="url(#planet)" transform="rotate(-18 24 42)"/>
+</svg>

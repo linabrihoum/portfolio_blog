@@ -1,4 +1,4 @@
-const FLARES = {
+export const FLARES = {
   solar:
     "radial-gradient(55% 95% at 50% 100%, rgba(255,226,163,.85), rgba(255,122,61,.7) 20%, rgba(255,95,200,.5) 40%, rgba(174,72,255,.35) 60%, transparent 80%)",
   comet: "radial-gradient(60% 100% at 50% 100%, rgba(24,204,252,.5), rgba(99,68,245,.35) 45%, transparent 75%)",

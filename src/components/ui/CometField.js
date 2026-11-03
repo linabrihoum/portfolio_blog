@@ -1,13 +1,8 @@
 "use client";
 import { useMemo } from "react";
 import { seededRandom } from "@/src/utils/seededRandom";
+import { COMET_GRADIENTS } from "./cometGradients";
 import { usePauseOffscreen } from "./usePauseOffscreen";
-
-export const COMET_GRADIENTS = {
-  beam: "linear-gradient(90deg,rgba(174,72,255,0) 0%,#6344F5 55%,#18CCFC 92%,#E6FAFF 100%)",
-  pink: "linear-gradient(90deg,rgba(174,72,255,0),#FF5FC8 75%,#FFE6F7)",
-  aurora: "linear-gradient(90deg,rgba(92,242,176,0),#5CF2B0 70%,#F5F3FF)",
-};
 
 // Diagonal comet streaks in the old BackgroundBeams colors (cyan → indigo → violet),
 // about 1 in 5 pink. Uses the ds-comet keyframe from src/styles/motion.css.

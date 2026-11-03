@@ -9,8 +9,6 @@ const siteMetadata = {
   language: "en-us",
   theme: "system", // system, dark or light
   siteUrl: "https://linabrihoum.com",
-  siteLogo: "/logo.png",
-  socialBanner: "/social-banner.png", // add social banner in the public folder
   // TO DO: Screenshot of the website
   email: "brihoumlina@gmail.com",
   github: "https://github.com/linabrihoum",

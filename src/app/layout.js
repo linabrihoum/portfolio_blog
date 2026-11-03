@@ -33,7 +33,6 @@ export const metadata = {
     description: siteMetadata.description,
     url: siteMetadata.siteUrl,
     siteName: siteMetadata.title,
-    images: [siteMetadata.socialBanner],
     locale: "en_US",
     type: "website",
   },
@@ -52,7 +51,6 @@ export const metadata = {
   twitter: {
     card: "summary_large_image",
     title: siteMetadata.title,
-    images: [siteMetadata.socialBanner],
   },
 };
 
